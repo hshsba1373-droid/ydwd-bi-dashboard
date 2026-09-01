@@ -5,242 +5,204 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>伊甸各产品收款 BI 看板</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg-0: #05060a;
-    --bg-1: #0a0d16;
-    --card: rgba(255,255,255,0.04);
-    --card-border: rgba(255,255,255,0.08);
-    --accent-1: #7c3aed;
-    --accent-2: #06b6d4;
-    --accent-3: #f43f5e;
+    --bg-0: #030308;
+    --violet: #8b5cf6;
+    --cyan: #22d3ee;
+    --rose: #fb7185;
     --gold: #fbbf24;
-    --silver: #cbd5e1;
-    --bronze: #fb923c;
-    --text-1: #f5f6fa;
-    --text-2: #9aa3b8;
+    --text-1: #f5f6fb;
+    --text-2: #8b93ab;
+    --text-3: #565f79;
+    --glass: rgba(255,255,255,0.035);
+    --glass-border: rgba(255,255,255,0.09);
   }
   html, body {
-    background: radial-gradient(circle at 15% 0%, #1a1040 0%, transparent 45%),
-                radial-gradient(circle at 85% 10%, #062935 0%, transparent 40%),
-                radial-gradient(circle at 50% 100%, #200a2e 0%, transparent 50%),
-                var(--bg-0);
-    background-attachment: fixed;
+    background: var(--bg-0);
     color: var(--text-1);
-    font-family: "SF Pro Display", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-family: -apple-system, "SF Pro Display", "PingFang SC", "Microsoft YaHei", sans-serif;
     min-height: 100vh;
+    overflow-x: hidden;
   }
-  .container { max-width: 1400px; margin: 0 auto; padding: 32px 24px 60px; }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -1;
+    background:
+      radial-gradient(ellipse 900px 500px at 10% -10%, rgba(139,92,246,0.28), transparent 60%),
+      radial-gradient(ellipse 800px 600px at 100% 0%, rgba(34,211,238,0.18), transparent 55%),
+      radial-gradient(ellipse 700px 500px at 50% 110%, rgba(251,113,133,0.12), transparent 55%);
+  }
+  .container { max-width: 1440px; margin: 0 auto; padding: 40px 32px 80px; }
 
+  /* ---------- Header ---------- */
   .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 28px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--card-border);
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 16px; margin-bottom: 36px;
   }
-  .header .title-block h1 {
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    background: linear-gradient(90deg, #ffffff, #b3b9ff 60%, #7c3aed);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .header .title-block .sub {
-    color: var(--text-2);
-    font-size: 13px;
-    margin-top: 6px;
-    letter-spacing: 0.3px;
-  }
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(6,182,212,0.12);
-    border: 1px solid rgba(6,182,212,0.35);
-    color: #67e8f9;
-    padding: 8px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 500;
-  }
-  .status-pill .dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #22d3ee;
-    box-shadow: 0 0 8px 2px rgba(34,211,238,0.8);
-    animation: pulse 1.6s infinite;
-  }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
-
-  .kpi-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-bottom: 22px;
-  }
-  .kpi-card {
-    position: relative;
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 18px;
-    padding: 20px 22px;
-    overflow: hidden;
-    backdrop-filter: blur(14px);
-  }
-  .kpi-card::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(124,58,237,0.14), transparent 60%);
-    pointer-events: none;
-  }
-  .kpi-label { font-size: 12px; color: var(--text-2); letter-spacing: 0.4px; margin-bottom: 8px; }
-  .kpi-value { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 0.3px; }
-  .kpi-value.accent-a { color: #a78bfa; }
-  .kpi-value.accent-b { color: #34d399; }
-  .kpi-value.accent-c { color: #22d3ee; }
-  .kpi-foot { font-size: 12px; color: var(--text-2); margin-top: 6px; }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 18px;
-  }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 20px;
-    padding: 22px 24px;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5);
-  }
-  .card h2 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-1);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    letter-spacing: 0.3px;
-  }
-  .card h2::before {
-    content: '';
-    width: 4px; height: 14px;
-    background: linear-gradient(180deg, var(--accent-1), var(--accent-2));
-    border-radius: 3px;
-    display: inline-block;
-  }
-
-  .progress-total {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-  }
-  .ring-wrap { position: relative; width: 108px; height: 108px; flex-shrink: 0; }
-  .ring-wrap svg { transform: rotate(-90deg); }
-  .ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 10; }
-  .ring-fg { fill: none; stroke: url(#ringGrad); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
-  .ring-center {
-    position: absolute; inset: 0;
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-icon {
+    width: 46px; height: 46px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--violet), var(--cyan));
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 700; color: #fff;
+    font-size: 22px; box-shadow: 0 10px 30px -8px rgba(139,92,246,0.6);
   }
-  .progress-detail .num { font-size: 24px; font-weight: 700; color: #fff; }
-  .progress-detail .lbl { font-size: 12px; color: var(--text-2); margin-top: 4px; }
-
-  .row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    font-size: 13px;
+  .brand h1 {
+    font-size: 22px; font-weight: 700; letter-spacing: 0.3px; color: #fff;
   }
-  .row:last-child { border-bottom: none; }
-  .row .name { color: #d7dae4; display: flex; align-items: center; gap: 8px; }
-  .row .bar-mini { width: 60px; height: 5px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
-  .row .bar-mini-fill { height: 100%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); }
-  .row .value { color: #fff; font-weight: 600; }
-  .row .pct { color: #67e8f9; font-size: 11px; margin-left: 6px; }
-
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th {
-    text-align: left; color: var(--text-2); font-weight: 500;
-    padding: 8px 6px; border-bottom: 1px solid var(--card-border);
-    font-size: 11px; letter-spacing: 0.4px; text-transform: uppercase;
+  .brand .sub { color: var(--text-2); font-size: 12.5px; margin-top: 3px; letter-spacing: 0.2px; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.28);
+    color: #67e8f9; padding: 9px 16px; border-radius: 999px; font-size: 12px; font-weight: 500;
+    backdrop-filter: blur(10px);
   }
-  td { padding: 9px 6px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #d7dae4; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-  .medal { font-weight: 700; }
-  .medal.g { color: var(--gold); }
-  .medal.s { color: var(--silver); }
-  .medal.b { color: var(--bronze); }
-  .badge {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 22px; height: 22px; border-radius: 50%;
-    font-size: 11px; font-weight: 700;
-    background: rgba(255,255,255,0.06);
-    color: var(--text-2);
+  .status-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: #22d3ee;
+    box-shadow: 0 0 10px 3px rgba(34,211,238,0.7); animation: pulse 1.6s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; margin-bottom: 22px;
   }
-  .badge.g { background: rgba(251,191,36,0.18); color: var(--gold); }
-  .badge.s { background: rgba(203,213,225,0.14); color: var(--silver); }
-  .badge.b { background: rgba(251,146,60,0.16); color: var(--bronze); }
+  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+  .hero-main {
+    background: linear-gradient(145deg, rgba(139,92,246,0.14), rgba(34,211,238,0.05));
+    border: 1px solid var(--glass-border);
+    border-radius: 26px; padding: 34px 36px; position: relative; overflow: hidden;
+  }
+  .hero-main::after {
+    content: ''; position: absolute; width: 260px; height: 260px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,92,246,0.35), transparent 70%);
+    top: -100px; right: -80px; filter: blur(10px);
+  }
+  .hero-label { color: var(--text-2); font-size: 13px; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .hero-value {
+    font-size: 52px; font-weight: 800; letter-spacing: -1px; line-height: 1;
+    background: linear-gradient(90deg, #fff, #c4b5fd);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-target { color: var(--text-2); font-size: 13.5px; margin-top: 10px; }
+  .hero-target b { color: var(--text-1); font-weight: 600; }
+  .hero-bar-bg { height: 10px; border-radius: 8px; background: rgba(255,255,255,0.07); margin-top: 18px; overflow: hidden; }
+  .hero-bar-fill { height: 100%; border-radius: 8px;
+    background: linear-gradient(90deg, var(--violet), var(--cyan));
+    box-shadow: 0 0 16px rgba(139,92,246,0.5); transition: width 0.8s ease; }
+  .hero-pct { font-size: 13px; color: var(--cyan); margin-top: 8px; font-weight: 600; }
 
-  .chart-wrap { grid-column: 1 / -1; }
-  .chart-canvas-holder { position: relative; height: 260px; }
+  .kpi-stack { display: grid; grid-template-rows: 1fr 1fr; gap: 16px; }
+  .kpi-mini {
+    background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px;
+    padding: 22px 24px; display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(16px);
+  }
+  .kpi-mini .l { color: var(--text-2); font-size: 12.5px; margin-bottom: 6px; }
+  .kpi-mini .v { font-size: 22px; font-weight: 700; color: #fff; }
+  .kpi-mini .v.c1 { color: #c4b5fd; }
+  .kpi-mini .v.c2 { color: #67e8f9; }
+  .kpi-mini .icon {
+    width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; background: rgba(255,255,255,0.06); flex-shrink: 0;
+  }
 
-  .loading { color: var(--text-2); text-align: center; padding: 60px; font-size: 14px; }
+  /* ---------- Grid ---------- */
+  .grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; }
+  @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px;
+    padding: 26px 28px; backdrop-filter: blur(16px);
+    box-shadow: 0 24px 60px -30px rgba(0,0,0,0.6);
+  }
+  .card.span2 { grid-column: 1 / -1; }
+  .card h2 {
+    font-size: 14.5px; font-weight: 600; color: var(--text-1); margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.2px;
+  }
+  .card h2 .tag { font-size: 10.5px; color: var(--text-3); font-weight: 500; letter-spacing: 0.3px; }
+
+  /* horizontal ranking bars (used for biz + product) */
+  .hbar-item { margin-bottom: 16px; }
+  .hbar-item:last-child { margin-bottom: 0; }
+  .hbar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+  .hbar-name { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #e5e7f0; font-weight: 500; }
+  .rank-badge {
+    width: 22px; height: 22px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.06); color: var(--text-2); flex-shrink: 0;
+  }
+  .rank-badge.r1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1c1300; }
+  .rank-badge.r2 { background: linear-gradient(135deg, #e2e8f0, #94a3b8); color: #1c1300; }
+  .rank-badge.r3 { background: linear-gradient(135deg, #fb923c, #ea580c); color: #1c1300; }
+  .hbar-value { font-size: 13px; font-weight: 700; color: #fff; }
+  .hbar-track { height: 8px; border-radius: 6px; background: rgba(255,255,255,0.06); overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 6px; transition: width 0.6s ease; }
+  .hbar-sub { font-size: 11px; color: var(--text-3); margin-top: 5px; }
+
+  .chart-canvas-holder { position: relative; height: 240px; }
+  .chart-canvas-holder.tall { height: 280px; }
+
+  .doughnut-legend { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: 18px; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  .loading { color: var(--text-2); text-align: center; padding: 80px; font-size: 14px; grid-column: 1/-1; }
   .error {
-    color: #fca5a5; background: rgba(244,63,94,0.08);
-    border: 1px solid rgba(244,63,94,0.3);
-    padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 13px;
+    color: #fca5a5; background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.3);
+    padding: 12px 18px; border-radius: 14px; margin-bottom: 18px; font-size: 13px;
   }
-  .footer-note {
-    text-align: center; color: var(--text-2); font-size: 12px; margin-top: 30px; opacity: 0.6;
-  }
-  @media (max-width: 640px) {
-    .header { flex-direction: column; align-items: flex-start; }
-  }
+  .footer-note { text-align: center; color: var(--text-3); font-size: 12px; margin-top: 40px; letter-spacing: 0.3px; }
 </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <div class="title-block">
-        <h1>伊甸各产品收款 BI 看板</h1>
-        <div class="sub">数据源 · Google Sheets 实时同步 &nbsp;·&nbsp; 9月收款明细登记表</div>
+      <div class="brand">
+        <div class="brand-icon">🧧</div>
+        <div>
+          <h1>伊甸各产品收款 BI 看板</h1>
+          <div class="sub">Google Sheets 实时数据同步 · 9月收款明细登记表</div>
+        </div>
       </div>
       <div class="status-pill"><span class="dot"></span><span id="lastUpdated">同步中...</span></div>
     </div>
 
     <div id="errorBox"></div>
-    <div class="kpi-row" id="kpiRow"></div>
+
+    <div class="hero" id="heroSection">
+      <div class="hero-main">
+        <div class="hero-label">本月累计业绩</div>
+        <div class="hero-value" id="heroValue">¥0</div>
+        <div class="hero-target">目标 <b id="heroTarget">¥0</b></div>
+        <div class="hero-bar-bg"><div class="hero-bar-fill" id="heroBarFill" style="width:0%"></div></div>
+        <div class="hero-pct" id="heroPct">0.00% 已完成</div>
+      </div>
+      <div class="kpi-stack">
+        <div class="kpi-mini">
+          <div><div class="l">领先商务</div><div class="v c1" id="topBizName">-</div></div>
+          <div class="icon">🏆</div>
+        </div>
+        <div class="kpi-mini">
+          <div><div class="l">爆款产品</div><div class="v c2" id="topProductName">-</div></div>
+          <div class="icon">🚀</div>
+        </div>
+      </div>
+    </div>
+
     <div class="grid" id="mainGrid">
       <div class="loading">数据加载中，请稍候...</div>
     </div>
 
-    <div class="footer-note">🧧 幸运儿自动看板 · 每 60 秒刷新一次</div>
+    <div class="footer-note">幸运儿自动看板 · 每 60 秒刷新一次</div>
   </div>
-
-  <svg width="0" height="0" style="position:absolute">
-    <defs>
-      <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#7c3aed"/>
-        <stop offset="100%" stop-color="#06b6d4"/>
-      </linearGradient>
-    </defs>
-  </svg>
 
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSP-ZFLFt8CIKNI1V6NTCSdD055J8dZUxUhGYRzs3sEd-qyCjQf-DK12aQ92OUhGRfqYvrARr9IwB5p/pub?output=csv";
     const REFRESH_MS = 60 * 1000;
     let dailyChartInstance = null;
+    let typeChartInstance = null;
+
+    const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635'];
 
     function parseCSV(text) {
       const rows = [];
@@ -261,17 +223,13 @@
       if (field.length || row.length) { row.push(field); rows.push(row); }
       return rows;
     }
-
     function numOf(s) {
       if (!s) return 0;
       const n = parseFloat(String(s).replace(/,/g, ''));
       return isNaN(n) ? 0 : n;
     }
-    function pctOf(target, current) {
-      if (!target) return 0;
-      return Math.min(100, (current / target) * 100);
-    }
-    function fmt(n) { return '¥' + n.toLocaleString(); }
+    function pctOf(target, current) { if (!target) return 0; return Math.min(100, (current / target) * 100); }
+    function fmt(n) { return '¥' + Math.round(n).toLocaleString(); }
 
     async function loadData() {
       try {
@@ -289,19 +247,10 @@
       }
     }
 
-    function ring(pct, size = 108, stroke = 10) {
-      const r = (size - stroke) / 2;
-      const c = 2 * Math.PI * r;
-      const offset = c - (pct / 100) * c;
-      return `
-        <div class="ring-wrap">
-          <svg width="${size}" height="${size}">
-            <circle class="ring-bg" cx="${size/2}" cy="${size/2}" r="${r}"></circle>
-            <circle class="ring-fg" cx="${size/2}" cy="${size/2}" r="${r}"
-              stroke-dasharray="${c}" stroke-dashoffset="${offset}"></circle>
-          </svg>
-          <div class="ring-center">${pct.toFixed(1)}%</div>
-        </div>`;
+    function rankBadge(idx) {
+      const cls = idx === 0 ? 'r1' : idx === 1 ? 'r2' : idx === 2 ? 'r3' : '';
+      const label = idx < 3 ? ['①','②','③'][idx] : (idx + 1);
+      return `<span class="rank-badge ${cls}">${label}</span>`;
     }
 
     function render(rows) {
@@ -311,7 +260,8 @@
       const totalPct = pctOf(totalTarget, totalCurrent);
 
       const typeNames = ['约炮','博彩','直播','黄游','播放器','外围','AI服务','VPN'];
-      const typeRows = rows.filter(r => typeNames.includes(r[0]));
+      const typeRows = rows.filter(r => typeNames.includes(r[0]))
+        .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]) }));
 
       const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','全斗焕','程晨'];
       const bizRows = rows.filter(r => bizNames.includes(r[0]))
@@ -339,147 +289,160 @@
         }
       }
 
-      // --- KPI row ---
+      // --- Hero ---
+      document.getElementById('heroValue').textContent = fmt(totalCurrent);
+      document.getElementById('heroTarget').textContent = fmt(totalTarget);
+      document.getElementById('heroBarFill').style.width = totalPct + '%';
+      document.getElementById('heroPct').textContent = totalPct.toFixed(2) + '% 已完成';
+
       const topBiz = bizRows[0];
       const topProduct = productRows[0];
-      const activeDays = dailyRows.filter(d => d.amount > 0).length;
-      const kpiRow = document.getElementById('kpiRow');
-      kpiRow.innerHTML = `
-        <div class="kpi-card">
-          <div class="kpi-label">本月累计业绩</div>
-          <div class="kpi-value accent-a">${fmt(totalCurrent)}</div>
-          <div class="kpi-foot">目标 ${fmt(totalTarget)}</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">目标完成度</div>
-          <div class="kpi-value accent-c">${totalPct.toFixed(2)}%</div>
-          <div class="kpi-foot">距达标还差 ${fmt(Math.max(0, totalTarget - totalCurrent))}</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">领先商务</div>
-          <div class="kpi-value accent-b">${topBiz ? topBiz.name : '-'}</div>
-          <div class="kpi-foot">${topBiz ? fmt(topBiz.current) : ''}</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">爆款产品</div>
-          <div class="kpi-value">${topProduct ? topProduct.name.split('/')[0] : '-'}</div>
-          <div class="kpi-foot">${topProduct ? fmt(topProduct.total) : ''}</div>
-        </div>`;
+      document.getElementById('topBizName').textContent = topBiz ? `${topBiz.name} · ${fmt(topBiz.current)}` : '暂无数据';
+      document.getElementById('topProductName').textContent = topProduct ? `${topProduct.name.split('/')[0]} · ${fmt(topProduct.total)}` : '暂无数据';
 
       const grid = document.getElementById('mainGrid');
       grid.innerHTML = '';
 
-      // 卡片1: 总进度 (环形图)
-      grid.innerHTML += `
-        <div class="card">
-          <h2>本月总进度</h2>
-          <div class="progress-total">
-            ${ring(totalPct)}
-            <div class="progress-detail">
-              <div class="num">${fmt(totalCurrent)}</div>
-              <div class="lbl">目标 ${fmt(totalTarget)}</div>
-            </div>
-          </div>
-        </div>`;
-
-      // 卡片2: 分类型目标完成度
-      let typeHtml = '<div class="card"><h2>分类型目标完成度</h2>';
-      typeRows.forEach(r => {
-        const target = numOf(r[4]);
-        const current = numOf(r[5]);
-        const pct = pctOf(target, current);
-        typeHtml += `<div class="row">
-          <span class="name">${r[0]}</span>
-          <span style="display:flex;align-items:center;gap:10px;">
-            <span class="bar-mini"><span class="bar-mini-fill" style="width:${pct}%"></span></span>
-            <span class="value">${fmt(current)}</span>
-            <span class="pct">${target ? pct.toFixed(1)+'%' : '-'}</span>
-          </span>
-        </div>`;
-      });
-      typeHtml += '</div>';
-      grid.innerHTML += typeHtml;
-
-      // 卡片3: 商务业绩排名
-      let bizHtml = '<div class="card"><h2>商务业绩排名</h2><table><tr><th>#</th><th>商务</th><th>业绩</th><th>目标</th><th>进度</th></tr>';
+      // 卡片1: 商务业绩排名（横向条形，非表格）
+      let bizHtml = `<div class="card"><h2>商务业绩排名 <span class="tag">TEAM PERFORMANCE</span></h2>`;
+      const maxBiz = Math.max(...bizRows.map(b => b.current), 1);
       bizRows.forEach((b, idx) => {
         const pct = pctOf(b.target, b.current);
-        const cls = idx === 0 ? 'g' : idx === 1 ? 's' : idx === 2 ? 'b' : '';
-        const badge = idx < 3 ? `<span class="badge ${cls}">${idx+1}</span>` : `<span class="badge">${idx+1}</span>`;
-        bizHtml += `<tr><td>${badge}</td><td>${b.name}</td><td>${fmt(b.current)}</td><td>${fmt(b.target)}</td><td>${pct.toFixed(1)}%</td></tr>`;
+        const widthPct = (b.current / maxBiz) * 100;
+        const color = PALETTE[idx % PALETTE.length];
+        bizHtml += `
+          <div class="hbar-item">
+            <div class="hbar-top">
+              <span class="hbar-name">${rankBadge(idx)} ${b.name}</span>
+              <span class="hbar-value">${fmt(b.current)}</span>
+            </div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
+            <div class="hbar-sub">目标 ${fmt(b.target)} · 完成 ${pct.toFixed(1)}%</div>
+          </div>`;
       });
-      bizHtml += '</table></div>';
+      bizHtml += '</div>';
       grid.innerHTML += bizHtml;
 
-      // 卡片4: 产品收款排行
-      let prodHtml = '<div class="card"><h2>产品收款排行</h2><table><tr><th>#</th><th>产品</th><th>收款总额</th></tr>';
-      productRows.slice(0, 10).forEach((p, idx) => {
-        const cls = idx === 0 ? 'g' : idx === 1 ? 's' : idx === 2 ? 'b' : '';
-        const badge = idx < 3 ? `<span class="badge ${cls}">${idx+1}</span>` : `<span class="badge">${idx+1}</span>`;
-        prodHtml += `<tr><td>${badge}</td><td>${p.name}</td><td>${fmt(p.total)}</td></tr>`;
-      });
-      prodHtml += '</table></div>';
-      grid.innerHTML += prodHtml;
-
-      // 卡片5: 每日流水趋势 (Chart.js)
+      // 卡片2: 分类型目标完成度（环形图 Doughnut）
       grid.innerHTML += `
-        <div class="card chart-wrap">
-          <h2>每日流水趋势（9月）</h2>
-          <div class="chart-canvas-holder"><canvas id="dailyChart"></canvas></div>
+        <div class="card">
+          <h2>分类型目标完成度 <span class="tag">BY CATEGORY</span></h2>
+          <div class="chart-canvas-holder"><canvas id="typeChart"></canvas></div>
+          <div class="doughnut-legend" id="typeLegend"></div>
         </div>`;
 
-      if (dailyRows.length) {
-        const ctx = document.getElementById('dailyChart').getContext('2d');
-        const labels = dailyRows.map(d => d.date.split('-').slice(1).join('/'));
-        const data = dailyRows.map(d => d.amount);
-        const gradient = ctx.createLinearGradient(0, 0, 0, 260);
-        gradient.addColorStop(0, 'rgba(124,58,237,0.55)');
-        gradient.addColorStop(1, 'rgba(6,182,212,0.05)');
+      // 卡片3: 产品收款排行（横向条形）
+      let prodHtml = `<div class="card"><h2>产品收款排行 <span class="tag">TOP PRODUCTS</span></h2>`;
+      const topN = productRows.slice(0, 8);
+      const maxProd = Math.max(...topN.map(p => p.total), 1);
+      topN.forEach((p, idx) => {
+        const widthPct = (p.total / maxProd) * 100;
+        const color = PALETTE[idx % PALETTE.length];
+        prodHtml += `
+          <div class="hbar-item">
+            <div class="hbar-top">
+              <span class="hbar-name">${rankBadge(idx)} ${p.name}</span>
+              <span class="hbar-value">${fmt(p.total)}</span>
+            </div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
+          </div>`;
+      });
+      prodHtml += '</div>';
+      grid.innerHTML += prodHtml;
 
-        if (dailyChartInstance) dailyChartInstance.destroy();
-        dailyChartInstance = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels,
-            datasets: [{
-              data,
-              backgroundColor: gradient,
-              borderRadius: 6,
-              borderSkipped: false,
-              maxBarThickness: 22,
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                backgroundColor: '#12141c',
-                borderColor: 'rgba(255,255,255,0.1)',
-                borderWidth: 1,
-                titleColor: '#fff',
-                bodyColor: '#d7dae4',
-                padding: 10,
-                callbacks: { label: (c) => '¥' + c.parsed.y.toLocaleString() }
-              }
-            },
-            scales: {
-              x: {
-                grid: { display: false },
-                ticks: { color: '#9aa3b8', font: { size: 10 } }
-              },
-              y: {
-                grid: { color: 'rgba(255,255,255,0.05)' },
-                ticks: {
-                  color: '#9aa3b8', font: { size: 10 },
-                  callback: (v) => v >= 1000 ? (v/1000) + 'k' : v
-                }
-              }
+      // 卡片4: 每日流水趋势（折线图，span2）
+      grid.innerHTML += `
+        <div class="card span2">
+          <h2>每日流水趋势 <span class="tag">SEPTEMBER DAILY</span></h2>
+          <div class="chart-canvas-holder tall"><canvas id="dailyChart"></canvas></div>
+        </div>`;
+
+      // --- render charts after DOM injected ---
+      renderTypeChart(typeRows);
+      renderDailyChart(dailyRows);
+    }
+
+    function renderTypeChart(typeRows) {
+      const ctx = document.getElementById('typeChart');
+      if (!ctx) return;
+      const labels = typeRows.map(t => t.name);
+      const data = typeRows.map(t => t.current);
+      const hasData = data.some(v => v > 0);
+      const displayData = hasData ? data : typeRows.map(t => t.target || 1);
+      const colors = labels.map((_, i) => PALETTE[i % PALETTE.length]);
+
+      if (typeChartInstance) typeChartInstance.destroy();
+      typeChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels, datasets: [{ data: displayData, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          cutout: '68%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
+              callbacks: { label: (c) => c.label + ': ¥' + c.parsed.toLocaleString() }
             }
           }
-        });
-      }
+        }
+      });
+
+      const legend = document.getElementById('typeLegend');
+      legend.innerHTML = labels.map((l, i) =>
+        `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
+      ).join('');
+    }
+
+    function renderDailyChart(dailyRows) {
+      const ctx = document.getElementById('dailyChart');
+      if (!ctx || !dailyRows.length) return;
+      const c2d = ctx.getContext('2d');
+      const gradient = c2d.createLinearGradient(0, 0, 0, 280);
+      gradient.addColorStop(0, 'rgba(139,92,246,0.45)');
+      gradient.addColorStop(1, 'rgba(34,211,238,0.02)');
+
+      const labels = dailyRows.map(d => d.date.split('-').slice(1).join('/'));
+      const data = dailyRows.map(d => d.amount);
+
+      if (dailyChartInstance) dailyChartInstance.destroy();
+      dailyChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            fill: true,
+            backgroundColor: gradient,
+            borderColor: '#8b5cf6',
+            borderWidth: 2.5,
+            tension: 0.35,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: '#22d3ee',
+            pointHoverBorderColor: '#fff',
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
+              callbacks: { label: (c) => '¥' + c.parsed.y.toLocaleString() }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#8b93ab', font: { size: 10 }, maxRotation: 0 } },
+            y: {
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              ticks: { color: '#8b93ab', font: { size: 10 }, callback: (v) => v >= 1000 ? (v/1000) + 'k' : v }
+            }
+          }
+        }
+      });
     }
 
     loadData();
