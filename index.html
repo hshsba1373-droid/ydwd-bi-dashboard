@@ -274,7 +274,7 @@
         for (let i = summaryIdx + 2; i < rows.length; i++) {
           const r = rows[i];
           if (!r[0] || r[0] === '数据汇总') break;
-          productRows.push({ name: r[0], total: numOf(r[1]) });
+          productRows.push({ name: r[0], total: numOf(r[1]), target: numOf(r[2]) });
         }
       }
       productRows.sort((a,b) => b.total - a.total);
@@ -352,12 +352,12 @@
           </div>
         </div>`;
 
-      // 卡片3: 产品收款排行（横向条形）
-      let prodHtml = `<div class="card"><h2>产品收款排行 <span class="tag">TOP PRODUCTS</span></h2>`;
-      const topN = productRows.slice(0, 8);
-      const maxProd = Math.max(...topN.map(p => p.total), 1);
+      // 卡片3: 伊甸维度产品业绩进度（对标产品本月目标，横向条形）
+      let prodHtml = `<div class="card"><h2>伊甸维度产品业绩进度 <span class="tag">PRODUCT TARGET PROGRESS</span></h2>`;
+      const topN = productRows.slice(0, 10);
       topN.forEach((p, idx) => {
-        const widthPct = (p.total / maxProd) * 100;
+        const pct = pctOf(p.target, p.total);
+        const widthPct = p.target ? pct : 0;
         const color = PALETTE[idx % PALETTE.length];
         prodHtml += `
           <div class="hbar-item">
@@ -366,6 +366,7 @@
               <span class="hbar-value">${fmt(p.total)}</span>
             </div>
             <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
+            <div class="hbar-sub">目标 ${p.target ? fmt(p.target) : '未设定'} · 完成 ${p.target ? pct.toFixed(1)+'%' : '-'}</div>
           </div>`;
       });
       prodHtml += '</div>';
