@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>伊甸各产品收款 BI 看板</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #0f1115;
+    color: #e6e6e6;
+    padding: 20px;
+  }
+  h1 {
+    font-size: 22px;
+    margin-bottom: 4px;
+    color: #fff;
+  }
+  .subtitle {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .updated {
+    color: #6ee7b7;
+    font-size: 12px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .card {
+    background: #1a1d24;
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid #2a2e38;
+  }
+  .card h2 {
+    font-size: 14px;
+    color: #9ca3af;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .big-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .progress-bar-bg {
+    background: #2a2e38;
+    border-radius: 8px;
+    height: 8px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
+    border-radius: 8px;
+    transition: width 0.3s;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #232730;
+    font-size: 13px;
+  }
+  .row:last-child { border-bottom: none; }
+  .row .name { color: #d1d5db; }
+  .row .value { color: #fff; font-weight: 600; }
+  .row .pct { color: #6ee7b7; font-size: 12px; margin-left: 8px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    text-align: left;
+    color: #9ca3af;
+    font-weight: 500;
+    padding: 6px 8px;
+    border-bottom: 1px solid #2a2e38;
+  }
+  td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #1f232b;
+    color: #d1d5db;
+  }
+  .rank-1 { color: #fbbf24; }
+  .rank-2 { color: #d1d5db; }
+  .rank-3 { color: #f97316; }
+  .chart-wrap {
+    grid-column: 1 / -1;
+  }
+  #dailyChart {
+    width: 100%;
+    height: 220px;
+  }
+  .loading {
+    color: #6b7280;
+    text-align: center;
+    padding: 40px;
+  }
+  .error {
+    color: #f87171;
+    background: #2a1a1a;
+    border: 1px solid #7f1d1d;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+</style>
+</head>
+<body>
+  <h1>🧧 伊甸各产品收款 BI 看板</h1>
+  <div class="subtitle">数据源：Google Sheets（9月收款明细登记表）· 每60秒自动刷新</div>
+  <div class="updated" id="lastUpdated">加载中...</div>
+  <div id="errorBox"></div>
+
+  <div class="grid" id="mainGrid">
+    <div class="loading">数据加载中，请稍候...</div>
+  </div>
+
+  <script>
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSP-ZFLFt8CIKNI1V6NTCSdD055J8dZUxUhGYRzs3sEd-qyCjQf-DK12aQ92OUhGRfqYvrARr9IwB5p/pub?output=csv";
+    const REFRESH_MS = 60 * 1000;
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [], field = '', inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQuotes) {
+          if (c === '"') {
+            if (text[i+1] === '"') { field += '"'; i++; }
+            else inQuotes = false;
+          } else field += c;
+        } else {
+          if (c === '"') inQuotes = true;
+          else if (c === ',') { row.push(field); field = ''; }
+          else if (c === '\r') { /* skip */ }
+          else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+          else field += c;
+        }
+      }
+      if (field.length || row.length) { row.push(field); rows.push(row); }
+      return rows;
+    }
+
+    function numOf(s) {
+      if (!s) return 0;
+      const n = parseFloat(String(s).replace(/,/g, ''));
+      return isNaN(n) ? 0 : n;
+    }
+
+    function pctOf(target, current) {
+      if (!target) return 0;
+      return Math.min(100, (current / target) * 100);
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch(CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        const rows = parseCSV(text);
+        render(rows);
+        document.getElementById('errorBox').innerHTML = '';
+        document.getElementById('lastUpdated').textContent =
+          '最后更新：' + new Date().toLocaleString('zh-CN', { hour12: false });
+      } catch (e) {
+        document.getElementById('errorBox').innerHTML =
+          '<div class="error">数据加载失败：' + e.message + '（将在下次刷新时重试）</div>';
+      }
+    }
+
+    function render(rows) {
+      // --- 总进度（数据汇总行）---
+      const summaryRow = rows.find(r => r[0] === '数据汇总' && numOf(r[4]) > 0);
+      const totalTarget = summaryRow ? numOf(summaryRow[4]) : 0;
+      const totalCurrent = summaryRow ? numOf(summaryRow[5]) : 0;
+      const totalPct = pctOf(totalTarget, totalCurrent);
+
+      // --- 分类型目标完成度（约炮/博彩/直播/黄游/播放器/外围/AI服务/VPN）---
+      const typeNames = ['约炮','博彩','直播','黄游','播放器','外围','AI服务','VPN'];
+      const typeRows = rows.filter(r => typeNames.includes(r[0]));
+
+      // --- 商务业绩排名 ---
+      const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','全斗焕','程晨'];
+      const bizRows = rows.filter(r => bizNames.includes(r[0]))
+        .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]) }))
+        .sort((a,b) => b.current - a.current);
+
+      // --- 产品收款排行（各产品收款汇总区块）---
+      const summaryIdx = rows.findIndex(r => r[0] === '各产品收款汇总');
+      const productRows = [];
+      if (summaryIdx >= 0) {
+        for (let i = summaryIdx + 2; i < rows.length; i++) {
+          const r = rows[i];
+          if (!r[0] || r[0] === '数据汇总') break;
+          productRows.push({ name: r[0], total: numOf(r[1]) });
+        }
+      }
+      productRows.sort((a,b) => b.total - a.total);
+
+      // --- 每日流水趋势 ---
+      const dailyStartIdx = rows.findIndex(r => /^\d{4}-\d{1,2}-\d{1,2}$/.test(r[0] || ''));
+      const dailyRows = [];
+      if (dailyStartIdx >= 0) {
+        for (let i = dailyStartIdx; i < rows.length; i++) {
+          const r = rows[i];
+          if (!r[0] || !/^\d{4}-\d{1,2}-\d{1,2}$/.test(r[0])) break;
+          dailyRows.push({ date: r[0], amount: numOf(r[1]) });
+        }
+      }
+
+      const grid = document.getElementById('mainGrid');
+      grid.innerHTML = '';
+
+      // 卡片1: 总进度
+      grid.innerHTML += `
+        <div class="card">
+          <h2>本月总进度</h2>
+          <div class="big-number">¥${totalCurrent.toLocaleString()}</div>
+          <div style="color:#9ca3af;font-size:12px;margin-top:4px;">目标 ¥${totalTarget.toLocaleString()} · ${totalPct.toFixed(2)}%</div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${totalPct}%"></div></div>
+        </div>`;
+
+      // 卡片2: 分类型目标完成度
+      let typeHtml = '<div class="card"><h2>分类型目标完成度</h2>';
+      typeRows.forEach(r => {
+        const target = numOf(r[4]);
+        const current = numOf(r[5]);
+        const pct = pctOf(target, current);
+        typeHtml += `<div class="row"><span class="name">${r[0]}</span><span><span class="value">¥${current.toLocaleString()}</span><span class="pct">${target ? pct.toFixed(1)+'%' : '-'}</span></span></div>`;
+      });
+      typeHtml += '</div>';
+      grid.innerHTML += typeHtml;
+
+      // 卡片3: 商务业绩排名
+      let bizHtml = '<div class="card"><h2>商务业绩排名</h2><table><tr><th>#</th><th>商务</th><th>业绩</th><th>目标</th><th>进度</th></tr>';
+      bizRows.forEach((b, idx) => {
+        const pct = pctOf(b.target, b.current);
+        const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : '';
+        bizHtml += `<tr><td class="${rankClass}">${idx+1}</td><td>${b.name}</td><td>¥${b.current.toLocaleString()}</td><td>¥${b.target.toLocaleString()}</td><td>${pct.toFixed(1)}%</td></tr>`;
+      });
+      bizHtml += '</table></div>';
+      grid.innerHTML += bizHtml;
+
+      // 卡片4: 产品收款排行
+      let prodHtml = '<div class="card"><h2>产品收款排行</h2><table><tr><th>#</th><th>产品</th><th>收款总额</th></tr>';
+      productRows.forEach((p, idx) => {
+        const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : '';
+        prodHtml += `<tr><td class="${rankClass}">${idx+1}</td><td>${p.name}</td><td>¥${p.total.toLocaleString()}</td></tr>`;
+      });
+      prodHtml += '</table></div>';
+      grid.innerHTML += prodHtml;
+
+      // 卡片5: 每日流水趋势（简易柱状图，用SVG画）
+      if (dailyRows.length) {
+        const maxAmt = Math.max(...dailyRows.map(d => d.amount), 1);
+        const barWidth = Math.max(6, Math.floor(700 / dailyRows.length) - 2);
+        let bars = '';
+        dailyRows.forEach((d, i) => {
+          const h = maxAmt ? (d.amount / maxAmt) * 160 : 0;
+          const x = i * (barWidth + 2);
+          const day = d.date.split('-')[2];
+          bars += `<rect x="${x}" y="${180 - h}" width="${barWidth}" height="${h}" fill="#6366f1" rx="2"></rect>`;
+          if (i % 3 === 0 || dailyRows.length < 15) {
+            bars += `<text x="${x + barWidth/2}" y="196" font-size="9" fill="#6b7280" text-anchor="middle">${day}</text>`;
+          }
+        });
+        grid.innerHTML += `
+          <div class="card chart-wrap">
+            <h2>每日流水趋势（9月）</h2>
+            <svg id="dailyChart" viewBox="0 0 ${dailyRows.length * (barWidth+2)} 200" preserveAspectRatio="none">
+              ${bars}
+            </svg>
+          </div>`;
+      }
+    }
+
+    loadData();
+    setInterval(loadData, REFRESH_MS);
+  </script>
+</body>
+</html>
