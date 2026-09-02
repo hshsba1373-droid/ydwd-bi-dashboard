@@ -201,6 +201,7 @@
     const REFRESH_MS = 60 * 1000;
     let dailyChartInstance = null;
     let typeChartInstance = null;
+    let methodChartInstance = null;
 
     const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635'];
 
@@ -289,6 +290,30 @@
         }
       }
 
+      // --- 合作方式占比（CPC/CPA/CPS/CPT...）扫描所有产品区块的明细行 ---
+      // 每个产品区块从第9列(index 8, I列)开始，宽度10列：付款日期,合作群组,产品类型,合作方式,收款金额,收款商务,到期日期,新增/续费,客户名称,(空)
+      const methodTotals = {};
+      const blockStart = 8; // column index for first block (I)
+      const blockWidth = 10;
+      const numBlocks = 18;
+      // detail rows for products live from row index 2 (row 3 in sheet) down to before "各产品收款汇总"
+      const detailEndIdx = rows.findIndex(r => r[0] === '各产品收款汇总');
+      const detailRowsEnd = detailEndIdx >= 0 ? detailEndIdx : rows.length;
+      for (let r = 2; r < detailRowsEnd; r++) {
+        const row = rows[r];
+        if (!row) continue;
+        for (let b = 0; b < numBlocks; b++) {
+          const base = blockStart + b * blockWidth;
+          const method = (row[base + 3] || '').trim().toUpperCase();
+          const amount = numOf(row[base + 4]);
+          if (method && amount) {
+            methodTotals[method] = (methodTotals[method] || 0) + amount;
+          }
+        }
+      }
+      const methodEntries = Object.entries(methodTotals).sort((a,b) => b[1] - a[1]);
+      const methodGrandTotal = methodEntries.reduce((s, [,v]) => s + v, 0);
+
       // --- Hero ---
       document.getElementById('heroValue').textContent = fmt(totalCurrent);
       document.getElementById('heroTarget').textContent = fmt(totalTarget);
@@ -372,7 +397,31 @@
       prodHtml += '</div>';
       grid.innerHTML += prodHtml;
 
-      // 卡片4: 每日流水趋势（折线图，span2）
+      // 卡片4: 合作方式占比（CPC/CPA/CPS/CPT...）
+      let methodHtml = `<div class="card"><h2>合作方式占比 <span class="tag">BY DEAL TYPE</span></h2>`;
+      if (methodEntries.length) {
+        methodHtml += `<div class="chart-canvas-holder" style="height:200px;"><canvas id="methodChart"></canvas></div>
+          <div style="margin-top:18px;">`;
+        methodEntries.forEach(([method, amount], idx) => {
+          const pct = methodGrandTotal ? (amount / methodGrandTotal) * 100 : 0;
+          const color = PALETTE[idx % PALETTE.length];
+          methodHtml += `
+            <div class="hbar-item">
+              <div class="hbar-top">
+                <span class="hbar-name"><span class="legend-dot" style="background:${color}"></span> ${method}</span>
+                <span class="hbar-value">${fmt(amount)} <span style="color:var(--text-3);font-weight:500;">(${pct.toFixed(1)}%)</span></span>
+              </div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
+            </div>`;
+        });
+        methodHtml += `</div>`;
+      } else {
+        methodHtml += `<div style="color:var(--text-3);font-size:13px;padding:20px 0;text-align:center;">暂无合作方式数据</div>`;
+      }
+      methodHtml += '</div>';
+      grid.innerHTML += methodHtml;
+
+      // 卡片5: 每日流水趋势（折线图，span2）
       grid.innerHTML += `
         <div class="card span2">
           <h2>每日流水趋势 <span class="tag">SEPTEMBER DAILY</span></h2>
@@ -381,6 +430,7 @@
 
       // --- render charts after DOM injected ---
       renderTypeChart(typeRows);
+      renderMethodChart(methodEntries);
       renderDailyChart(dailyRows);
     }
 
@@ -415,6 +465,32 @@
       legend.innerHTML = labels.map((l, i) =>
         `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
       ).join('');
+    }
+
+    function renderMethodChart(methodEntries) {
+      const ctx = document.getElementById('methodChart');
+      if (!ctx || !methodEntries.length) return;
+      const labels = methodEntries.map(([m]) => m);
+      const data = methodEntries.map(([,v]) => v);
+      const colors = labels.map((_, i) => PALETTE[i % PALETTE.length]);
+
+      if (methodChartInstance) methodChartInstance.destroy();
+      methodChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          cutout: '62%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
+              callbacks: { label: (c) => c.label + ': ¥' + c.parsed.toLocaleString() }
+            }
+          }
+        }
+      });
     }
 
     function renderDailyChart(dailyRows) {
