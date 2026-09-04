@@ -345,7 +345,7 @@
       const totalCurrent = summaryRow ? numOf(summaryRow[5]) : 0;
       const totalPct = pctOf(totalTarget, totalCurrent);
 
-      const typeNames = ['约炮','博彩','直播','黄游','播放器','外围','AI服务','VPN'];
+      const typeNames = ['约炮','棋牌','直播','黄游','播放器','外围','AI服务','VPN'];
       const typeRows = rows.filter(r => typeNames.includes(r[0]))
         .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]) }));
 
