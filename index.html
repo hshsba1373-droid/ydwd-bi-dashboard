@@ -120,12 +120,14 @@
     transition: all 0.2s ease; backdrop-filter: blur(10px);
     white-space: nowrap;
   }
-  .tab-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-1); }
+  .tab-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-1); transform: scale(1.04); }
+  .tab-btn:active { transform: scale(0.96); }
   .tab-btn.active {
     background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(34,211,238,0.15));
     border-color: rgba(139,92,246,0.4);
     color: #fff;
     box-shadow: 0 4px 16px -4px rgba(139,92,246,0.5);
+    transform: scale(1.05);
   }
   .tab-btn .emoji { font-size: 14px; }
 
@@ -138,6 +140,7 @@
     background: var(--glass); border: 1px solid var(--glass-border); border-radius: 22px;
     padding: 26px 28px; backdrop-filter: blur(16px);
     box-shadow: 0 24px 60px -30px rgba(0,0,0,0.6);
+    transition: box-shadow 0.2s ease;
   }
   .card h2 {
     font-size: 15px; font-weight: 600; color: var(--text-1); margin-bottom: 20px;
@@ -145,12 +148,44 @@
   }
   .card h2 .tag { font-size: 10.5px; color: var(--text-3); font-weight: 500; letter-spacing: 0.3px; }
 
+  /* ---------- Modal (category drill-down) ---------- */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(3,3,8,0.72); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; z-index: 100; padding: 24px;
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+  .modal-box {
+    background: linear-gradient(160deg, rgba(20,20,32,0.98), rgba(12,12,20,0.98));
+    border: 1px solid var(--glass-border); border-radius: 22px;
+    padding: 28px 30px; max-width: 480px; width: 100%; max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8);
+    transform: scale(0.94); animation: modalPop 0.22s ease forwards;
+  }
+  @keyframes modalPop { to { transform: scale(1); } }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--glass-border);
+  }
+  .modal-header h3 { font-size: 16px; font-weight: 700; color: #fff; }
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06);
+    border: none; color: var(--text-2); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+  .modal-total { color: var(--text-2); font-size: 13px; margin-bottom: 18px; }
+  .modal-total b { color: #fff; font-weight: 700; }
+
   /* split layout for panels that combine chart + list */
   .panel-split { display: grid; grid-template-columns: 320px 1fr; gap: 28px; align-items: start; }
   @media (max-width: 800px) { .panel-split { grid-template-columns: 1fr; } }
 
-  .hbar-item { margin-bottom: 16px; }
+  .hbar-item { margin-bottom: 16px; transition: transform 0.15s ease; }
+  .hbar-item:hover { transform: scale(1.015); }
   .hbar-item:last-child { margin-bottom: 0; }
+  .hbar-item.clickable { cursor: pointer; padding: 8px; border-radius: 12px; margin: -8px -8px 8px -8px; }
+  .hbar-item.clickable:hover { background: rgba(255,255,255,0.04); transform: scale(1.02); }
+  .hbar-item.clickable:active { transform: scale(0.98); }
   .hbar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; gap: 8px; }
   .hbar-name { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #e5e7f0; font-weight: 500; min-width: 0; }
   .hbar-name span.txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -255,12 +290,24 @@
     <div class="footer-note">幸运儿自动看板 · 每 60 秒刷新一次</div>
   </div>
 
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle">分类明细</h3>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-total" id="modalTotal"></div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=1198459175";
     const REFRESH_MS = 60 * 1000;
     let dailyChartInstance = null;
     let typeChartInstance = null;
     let activeTab = 'biz';
+    let categoryBizBreakdown = {}; // { categoryName: [{name, amount}] }
 
     const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635','#f97316','#38bdf8'];
 
@@ -415,6 +462,16 @@
       const methodEntries = Object.entries(methodTotals).sort((a,b) => b[1] - a[1]);
       const methodGrandTotal = methodEntries.reduce((s, [,v]) => s + v, 0);
 
+      // 分类型 × 商务 交叉统计（用于点击弹窗展示每个人在该分类下的完成金额+占比）
+      categoryBizBreakdown = {};
+      typeNames.forEach(tn => { categoryBizBreakdown[tn] = {}; });
+      deals.forEach(d => {
+        const cat = d.productType.trim();
+        const bizName = d.biz.trim() || '未标注';
+        if (!categoryBizBreakdown[cat]) categoryBizBreakdown[cat] = {};
+        categoryBizBreakdown[cat][bizName] = (categoryBizBreakdown[cat][bizName] || 0) + d.amount;
+      });
+
       // 新增 vs 续费占比
       const newRenewTotals = {};
       deals.forEach(d => {
@@ -487,13 +544,13 @@
         const widthPct = t.current > 0 ? (t.current / maxType) * 100 : 0;
         const color = PALETTE[idx % PALETTE.length];
         typeProgressHtml += `
-          <div class="hbar-item">
+          <div class="hbar-item clickable" data-category="${t.name}">
             <div class="hbar-top">
               <span class="hbar-name"><span class="legend-dot" style="background:${color}"></span><span class="txt">${t.name}</span></span>
               <span class="hbar-value">${fmt(t.current)}</span>
             </div>
             <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">目标 ${fmt(t.target)} · 完成 ${t.target ? pct.toFixed(1)+'%' : '-'}</div>
+            <div class="hbar-sub">目标 ${fmt(t.target)} · 完成 ${t.target ? pct.toFixed(1)+'%' : '-'} · 点击查看各商务贡献</div>
           </div>`;
       });
       tabContent.innerHTML += `
@@ -630,6 +687,44 @@
 
       // --- restore active tab visibility (panels rebuilt each refresh) ---
       applyActiveTab();
+
+      // --- bind category click-to-drilldown ---
+      document.querySelectorAll('.hbar-item.clickable[data-category]').forEach(el => {
+        el.addEventListener('click', () => openCategoryModal(el.dataset.category));
+      });
+    }
+
+    function openCategoryModal(category) {
+      const breakdown = categoryBizBreakdown[category] || {};
+      const entries = Object.entries(breakdown).sort((a,b) => b[1] - a[1]);
+      const total = entries.reduce((s, [,v]) => s + v, 0);
+
+      document.getElementById('modalTitle').textContent = `${category} · 各商务完成情况`;
+      document.getElementById('modalTotal').innerHTML = `该分类总收款 <b>${fmt(total)}</b>`;
+
+      const body = document.getElementById('modalBody');
+      if (!entries.length) {
+        body.innerHTML = '<div class="empty-hint">暂无该分类的商务数据</div>';
+      } else {
+        body.innerHTML = entries.map(([name, amount], idx) => {
+          const pct = total ? (amount / total * 100) : 0;
+          const color = PALETTE[idx % PALETTE.length];
+          return `
+            <div class="hbar-item">
+              <div class="hbar-top">
+                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${name}</span></span>
+                <span class="hbar-value">${fmt(amount)} <span style="color:var(--text-3);font-weight:500;">(${pct.toFixed(1)}%)</span></span>
+              </div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
+            </div>`;
+        }).join('');
+      }
+
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
     }
 
     function renderTypeChart(typeRows) {
@@ -707,6 +802,10 @@
     }
 
     initTabs();
+    document.getElementById('modalClose').addEventListener('click', closeCategoryModal);
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      if (e.target.id === 'modalOverlay') closeCategoryModal();
+    });
     loadData();
     setInterval(loadData, REFRESH_MS);
   </script>
