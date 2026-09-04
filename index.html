@@ -260,7 +260,6 @@
     const REFRESH_MS = 60 * 1000;
     let dailyChartInstance = null;
     let typeChartInstance = null;
-    let newRenewChartInstance = null;
     let activeTab = 'biz';
 
     const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635','#f97316','#38bdf8'];
@@ -552,11 +551,21 @@
 
       // ===== Panel: 新增 / 续费构成 =====
       let newRenewHtml = `<div class="panel" id="panel-newrenew"><div class="card"><h2>新增 / 续费构成 <span class="tag">NEW VS RENEWAL</span></h2>`;
-      if (deals.length) {
-        newRenewHtml += `<div style="max-width:420px;margin:0 auto;">
-          <div class="chart-canvas-holder"><canvas id="newRenewChart"></canvas></div>
-          <div class="doughnut-legend" id="newRenewLegend"></div>
-        </div>`;
+      if (newRenewEntries.length) {
+        const nrColors = { '新增': '#34d399', '续费': '#60a5fa' };
+        newRenewEntries.forEach(([label, amount], idx) => {
+          const pct = newRenewGrandTotal ? (amount / newRenewGrandTotal) * 100 : 0;
+          const color = nrColors[label] || PALETTE[idx % PALETTE.length];
+          newRenewHtml += `
+            <div class="hbar-item">
+              <div class="hbar-top">
+                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${label}</span></span>
+                <span class="hbar-value">${fmt(amount)}</span>
+              </div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
+              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}%</div>
+            </div>`;
+        });
       } else {
         newRenewHtml += `<div class="empty-hint">暂无新增/续费数据</div>`;
       }
@@ -617,7 +626,6 @@
 
       // --- render charts after DOM injected ---
       renderTypeChart(typeRows);
-      renderNewRenewChart(newRenewEntries, newRenewGrandTotal);
       renderDailyChart(dailyRows);
 
       // --- restore active tab visibility (panels rebuilt each refresh) ---
@@ -653,38 +661,6 @@
       legend.innerHTML = labels.map((l, i) =>
         `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
       ).join('');
-    }
-
-    function renderNewRenewChart(entries, grandTotal) {
-      const ctx = document.getElementById('newRenewChart');
-      const legend = document.getElementById('newRenewLegend');
-      if (!ctx) return;
-      if (!entries.length) { if (legend) legend.innerHTML = '<div class="empty-hint" style="padding:10px 0;">暂无数据</div>'; return; }
-      const labels = entries.map(([m]) => m);
-      const data = entries.map(([,v]) => v);
-      const nrColors = { '新增': '#34d399', '续费': '#60a5fa' };
-      const colors = labels.map((l, i) => nrColors[l] || PALETTE[i % PALETTE.length]);
-
-      if (newRenewChartInstance) newRenewChartInstance.destroy();
-      newRenewChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false, cutout: '62%',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
-              callbacks: { label: (c) => c.label + ': ¥' + c.parsed.toLocaleString() + ' (' + (grandTotal ? (c.parsed/grandTotal*100).toFixed(1) : 0) + '%)' }
-            }
-          }
-        }
-      });
-      legend.innerHTML = labels.map((l, i) => {
-        const pct = grandTotal ? (data[i]/grandTotal*100).toFixed(1) : '0';
-        return `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l} ${pct}%</div>`;
-      }).join('');
     }
 
     function renderDailyChart(dailyRows) {
