@@ -228,7 +228,6 @@
     const REFRESH_MS = 60 * 1000;
     let dailyChartInstance = null;
     let typeChartInstance = null;
-    let methodChartInstance = null;
     let newRenewChartInstance = null;
 
     const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635','#f97316','#38bdf8'];
@@ -479,28 +478,40 @@
       prodHtml += '</div>';
       grid.innerHTML += prodHtml;
 
-      // 卡片4: 合作方式占比 + 新增/续费占比（左右分栏）
-      let methodHtml = `<div class="card"><h2>合作方式占比 · 新增续费构成 <span class="tag">DEAL TYPE / RENEWAL</span></h2>`;
-      if (deals.length) {
-        methodHtml += `<div style="display:flex;gap:20px;flex-wrap:wrap;">`;
-        methodHtml += `<div style="flex:1;min-width:200px;">
-            <div style="font-size:11px;color:var(--text-3);margin-bottom:10px;text-align:center;">合作方式</div>
-            <div class="chart-canvas-holder short"><canvas id="methodChart"></canvas></div>
-            <div class="doughnut-legend" id="methodLegend"></div>
-          </div>`;
-        methodHtml += `<div style="flex:1;min-width:200px;">
-            <div style="font-size:11px;color:var(--text-3);margin-bottom:10px;text-align:center;">新增 / 续费</div>
-            <div class="chart-canvas-holder short"><canvas id="newRenewChart"></canvas></div>
-            <div class="doughnut-legend" id="newRenewLegend"></div>
-          </div>`;
-        methodHtml += `</div>`;
+      // 卡片4: 合作方式占比（CPA/CPC/CPS/CPT，横向条形排行榜风格）
+      let methodHtml = `<div class="card"><h2>合作方式占比 <span class="tag">BY DEAL TYPE</span></h2>`;
+      if (methodEntries.length) {
+        methodEntries.forEach(([method, amount], idx) => {
+          const pct = methodGrandTotal ? (amount / methodGrandTotal) * 100 : 0;
+          const color = PALETTE[idx % PALETTE.length];
+          methodHtml += `
+            <div class="hbar-item">
+              <div class="hbar-top">
+                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${method}</span></span>
+                <span class="hbar-value">${fmt(amount)}</span>
+              </div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
+              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}%</div>
+            </div>`;
+        });
       } else {
-        methodHtml += `<div class="empty-hint">暂无合作方式/新续费数据</div>`;
+        methodHtml += `<div class="empty-hint">暂无合作方式数据</div>`;
       }
       methodHtml += '</div>';
       grid.innerHTML += methodHtml;
 
-      // 卡片5: 合作群组/客户 Top榜
+      // 卡片5: 新增 / 续费构成（环形图，保留原样式）
+      let newRenewHtml = `<div class="card"><h2>新增 / 续费构成 <span class="tag">NEW VS RENEWAL</span></h2>`;
+      if (deals.length) {
+        newRenewHtml += `<div class="chart-canvas-holder short"><canvas id="newRenewChart"></canvas></div>
+          <div class="doughnut-legend" id="newRenewLegend"></div>`;
+      } else {
+        newRenewHtml += `<div class="empty-hint">暂无新增/续费数据</div>`;
+      }
+      newRenewHtml += '</div>';
+      grid.innerHTML += newRenewHtml;
+
+      // 卡片6: 合作群组/客户 Top榜
       let groupHtml = `<div class="card"><h2>合作群组 / 客户 Top榜 <span class="tag">TOP PARTNERS</span></h2>`;
       if (groupEntries.length) {
         const maxGroup = Math.max(...groupEntries.map(([,v]) => v), 1);
@@ -554,7 +565,6 @@
 
       // --- render charts after DOM injected ---
       renderTypeChart(typeRows);
-      renderMethodChart(methodEntries, methodGrandTotal);
       renderNewRenewChart(newRenewEntries, newRenewGrandTotal);
       renderDailyChart(dailyRows);
     }
@@ -588,37 +598,6 @@
       legend.innerHTML = labels.map((l, i) =>
         `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
       ).join('');
-    }
-
-    function renderMethodChart(methodEntries, grandTotal) {
-      const ctx = document.getElementById('methodChart');
-      const legend = document.getElementById('methodLegend');
-      if (!ctx) return;
-      if (!methodEntries.length) { if (legend) legend.innerHTML = '<div class="empty-hint" style="padding:10px 0;">暂无数据</div>'; return; }
-      const labels = methodEntries.map(([m]) => m);
-      const data = methodEntries.map(([,v]) => v);
-      const colors = labels.map((_, i) => PALETTE[i % PALETTE.length]);
-
-      if (methodChartInstance) methodChartInstance.destroy();
-      methodChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false, cutout: '62%',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
-              callbacks: { label: (c) => c.label + ': ¥' + c.parsed.toLocaleString() + ' (' + (grandTotal ? (c.parsed/grandTotal*100).toFixed(1) : 0) + '%)' }
-            }
-          }
-        }
-      });
-      legend.innerHTML = labels.map((l, i) => {
-        const pct = grandTotal ? (data[i]/grandTotal*100).toFixed(1) : '0';
-        return `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l} ${pct}%</div>`;
-      }).join('');
     }
 
     function renderNewRenewChart(entries, grandTotal) {
