@@ -35,12 +35,12 @@
       radial-gradient(ellipse 800px 600px at 100% 0%, rgba(34,211,238,0.18), transparent 55%),
       radial-gradient(ellipse 700px 500px at 50% 110%, rgba(251,113,133,0.12), transparent 55%);
   }
-  .container { max-width: 1520px; margin: 0 auto; padding: 40px 32px 80px; }
+  .container { max-width: 1520px; margin: 0 auto; padding: 32px 32px 60px; }
 
   /* ---------- Header ---------- */
   .header {
     display: flex; justify-content: space-between; align-items: flex-start;
-    flex-wrap: wrap; gap: 16px; margin-bottom: 36px;
+    flex-wrap: wrap; gap: 16px; margin-bottom: 28px;
   }
   .brand { display: flex; align-items: center; gap: 14px; }
   .brand-icon {
@@ -67,114 +67,135 @@
   .hero-main {
     background: linear-gradient(145deg, rgba(139,92,246,0.14), rgba(34,211,238,0.05));
     border: 1px solid var(--glass-border);
-    border-radius: 26px; padding: 34px 36px; position: relative; overflow: hidden;
+    border-radius: 26px; padding: 30px 34px; position: relative; overflow: hidden;
   }
   .hero-main::after {
     content: ''; position: absolute; width: 260px; height: 260px; border-radius: 50%;
     background: radial-gradient(circle, rgba(139,92,246,0.35), transparent 70%);
     top: -100px; right: -80px; filter: blur(10px);
   }
-  .hero-label { color: var(--text-2); font-size: 13px; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .hero-label { color: var(--text-2); font-size: 13px; letter-spacing: 0.5px; margin-bottom: 8px; }
   .hero-value {
-    font-size: 52px; font-weight: 800; letter-spacing: -1px; line-height: 1;
+    font-size: 46px; font-weight: 800; letter-spacing: -1px; line-height: 1;
     background: linear-gradient(90deg, #fff, #c4b5fd);
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   }
-  .hero-target { color: var(--text-2); font-size: 13.5px; margin-top: 10px; }
+  .hero-target { color: var(--text-2); font-size: 13.5px; margin-top: 8px; }
   .hero-target b { color: var(--text-1); font-weight: 600; }
-  .hero-bar-bg { height: 10px; border-radius: 8px; background: rgba(255,255,255,0.07); margin-top: 18px; overflow: hidden; }
+  .hero-bar-bg { height: 10px; border-radius: 8px; background: rgba(255,255,255,0.07); margin-top: 16px; overflow: hidden; }
   .hero-bar-fill { height: 100%; border-radius: 8px;
     background: linear-gradient(90deg, var(--violet), var(--cyan));
     box-shadow: 0 0 16px rgba(139,92,246,0.5); transition: width 0.8s ease; }
   .hero-pct { font-size: 13px; color: var(--cyan); margin-top: 8px; font-weight: 600; }
 
-  .kpi-stack { display: grid; grid-template-rows: repeat(3, 1fr); gap: 12px; }
+  .kpi-stack { display: grid; grid-template-rows: repeat(3, 1fr); gap: 10px; }
   .kpi-mini {
-    background: var(--glass); border: 1px solid var(--glass-border); border-radius: 18px;
-    padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+    background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px;
+    padding: 13px 18px; display: flex; align-items: center; justify-content: space-between;
     backdrop-filter: blur(16px);
   }
-  .kpi-mini .l { color: var(--text-2); font-size: 12px; margin-bottom: 4px; }
-  .kpi-mini .v { font-size: 19px; font-weight: 700; color: #fff; }
+  .kpi-mini .l { color: var(--text-2); font-size: 11.5px; margin-bottom: 3px; }
+  .kpi-mini .v { font-size: 18px; font-weight: 700; color: #fff; }
   .kpi-mini .v.c1 { color: #c4b5fd; }
   .kpi-mini .v.c2 { color: #67e8f9; }
   .kpi-mini .v.c3 { color: #6ee7b7; }
   .kpi-mini .icon {
-    width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-    font-size: 16px; background: rgba(255,255,255,0.06); flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; background: rgba(255,255,255,0.06); flex-shrink: 0;
   }
 
-  /* ---------- Grid ---------- */
-  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
-  @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+  /* ---------- Tab Navigation ---------- */
+  .tab-nav {
+    display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto;
+    padding-bottom: 4px; scrollbar-width: thin;
+  }
+  .tab-nav::-webkit-scrollbar { height: 4px; }
+  .tab-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+  .tab-btn {
+    flex-shrink: 0;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    color: var(--text-2); font-size: 13px; font-weight: 500;
+    padding: 10px 18px; border-radius: 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    transition: all 0.2s ease; backdrop-filter: blur(10px);
+    white-space: nowrap;
+  }
+  .tab-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-1); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(34,211,238,0.15));
+    border-color: rgba(139,92,246,0.4);
+    color: #fff;
+    box-shadow: 0 4px 16px -4px rgba(139,92,246,0.5);
+  }
+  .tab-btn .emoji { font-size: 14px; }
+
+  /* ---------- Panels ---------- */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
   .card {
     background: var(--glass); border: 1px solid var(--glass-border); border-radius: 22px;
-    padding: 24px 26px; backdrop-filter: blur(16px);
+    padding: 26px 28px; backdrop-filter: blur(16px);
     box-shadow: 0 24px 60px -30px rgba(0,0,0,0.6);
   }
-  .card.span2 { grid-column: 1 / -1; }
   .card h2 {
-    font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: 18px;
+    font-size: 15px; font-weight: 600; color: var(--text-1); margin-bottom: 20px;
     display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.2px;
   }
-  .card h2 .tag { font-size: 10px; color: var(--text-3); font-weight: 500; letter-spacing: 0.3px; }
+  .card h2 .tag { font-size: 10.5px; color: var(--text-3); font-weight: 500; letter-spacing: 0.3px; }
 
-  .hbar-item { margin-bottom: 15px; }
+  /* split layout for panels that combine chart + list */
+  .panel-split { display: grid; grid-template-columns: 320px 1fr; gap: 28px; align-items: start; }
+  @media (max-width: 800px) { .panel-split { grid-template-columns: 1fr; } }
+
+  .hbar-item { margin-bottom: 16px; }
   .hbar-item:last-child { margin-bottom: 0; }
-  .hbar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; gap: 8px; }
-  .hbar-name { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #e5e7f0; font-weight: 500; min-width: 0; }
+  .hbar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; gap: 8px; }
+  .hbar-name { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #e5e7f0; font-weight: 500; min-width: 0; }
   .hbar-name span.txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .rank-badge {
-    width: 20px; height: 20px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
-    font-size: 10.5px; font-weight: 700; background: rgba(255,255,255,0.06); color: var(--text-2); flex-shrink: 0;
+    width: 22px; height: 22px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.06); color: var(--text-2); flex-shrink: 0;
   }
   .rank-badge.r1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1c1300; }
   .rank-badge.r2 { background: linear-gradient(135deg, #e2e8f0, #94a3b8); color: #1c1300; }
   .rank-badge.r3 { background: linear-gradient(135deg, #fb923c, #ea580c); color: #1c1300; }
-  .hbar-value { font-size: 12.5px; font-weight: 700; color: #fff; white-space: nowrap; }
-  .hbar-track { height: 7px; border-radius: 6px; background: rgba(255,255,255,0.06); overflow: hidden; }
+  .hbar-value { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; }
+  .hbar-track { height: 8px; border-radius: 6px; background: rgba(255,255,255,0.06); overflow: hidden; }
   .hbar-fill { height: 100%; border-radius: 6px; transition: width 0.6s ease; }
-  .hbar-sub { font-size: 10.5px; color: var(--text-3); margin-top: 4px; }
+  .hbar-sub { font-size: 11px; color: var(--text-3); margin-top: 5px; }
 
-  .chart-canvas-holder { position: relative; height: 220px; }
-  .chart-canvas-holder.tall { height: 270px; }
-  .chart-canvas-holder.short { height: 170px; }
+  .chart-canvas-holder { position: relative; height: 280px; }
+  .chart-canvas-holder.tall { height: 340px; }
+  .chart-canvas-holder.short { height: 220px; }
 
   .doughnut-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 16px; justify-content: center; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-2); }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 
-  .split-row { display: flex; align-items: center; gap: 20px; }
-  .split-row .chart-col { flex-shrink: 0; }
-  .split-row .stat-col { flex: 1; }
-  .split-stat {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px;
-  }
-  .split-stat:last-child { border-bottom: none; }
-
-  table.mini-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.mini-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   table.mini-table th {
-    text-align: left; color: var(--text-3); font-weight: 500; padding: 6px 8px;
-    border-bottom: 1px solid var(--glass-border); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px;
+    text-align: left; color: var(--text-3); font-weight: 500; padding: 8px 10px;
+    border-bottom: 1px solid var(--glass-border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;
   }
-  table.mini-table td { padding: 8px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #d7dae4; }
+  table.mini-table td { padding: 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #d7dae4; }
   table.mini-table tr:last-child td { border-bottom: none; }
   .pill {
-    display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 600;
+    display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
   }
   .pill.warn { background: rgba(251,191,36,0.15); color: #fbbf24; }
   .pill.danger { background: rgba(244,63,94,0.15); color: #fb7185; }
   .pill.ok { background: rgba(52,211,153,0.15); color: #6ee7b7; }
 
-  .empty-hint { color: var(--text-3); font-size: 13px; padding: 30px 0; text-align: center; }
+  .empty-hint { color: var(--text-3); font-size: 14px; padding: 50px 0; text-align: center; }
 
-  .loading { color: var(--text-2); text-align: center; padding: 80px; font-size: 14px; grid-column: 1/-1; }
+  .loading { color: var(--text-2); text-align: center; padding: 80px; font-size: 14px; }
   .error {
     color: #fca5a5; background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.3);
     padding: 12px 18px; border-radius: 14px; margin-bottom: 18px; font-size: 13px;
   }
-  .footer-note { text-align: center; color: var(--text-3); font-size: 12px; margin-top: 40px; letter-spacing: 0.3px; }
+  .footer-note { text-align: center; color: var(--text-3); font-size: 12px; margin-top: 32px; letter-spacing: 0.3px; }
 </style>
 </head>
 <body>
@@ -216,7 +237,18 @@
       </div>
     </div>
 
-    <div class="grid" id="mainGrid">
+    <div class="tab-nav" id="tabNav">
+      <button class="tab-btn active" data-tab="biz"><span class="emoji">🏆</span>商务业绩</button>
+      <button class="tab-btn" data-tab="category"><span class="emoji">🗂️</span>分类型完成度</button>
+      <button class="tab-btn" data-tab="product"><span class="emoji">📦</span>产品业绩进度</button>
+      <button class="tab-btn" data-tab="method"><span class="emoji">🤝</span>合作方式占比</button>
+      <button class="tab-btn" data-tab="newrenew"><span class="emoji">🔁</span>新增/续费</button>
+      <button class="tab-btn" data-tab="partners"><span class="emoji">👥</span>合作方Top榜</button>
+      <button class="tab-btn" data-tab="expiry"><span class="emoji">⏰</span>即将到期</button>
+      <button class="tab-btn" data-tab="daily"><span class="emoji">📈</span>每日流水</button>
+    </div>
+
+    <div id="tabContent">
       <div class="loading">数据加载中，请稍候...</div>
     </div>
 
@@ -229,6 +261,7 @@
     let dailyChartInstance = null;
     let typeChartInstance = null;
     let newRenewChartInstance = null;
+    let activeTab = 'biz';
 
     const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635','#f97316','#38bdf8'];
 
@@ -264,6 +297,24 @@
       const m = String(s).trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
       if (!m) return null;
       return new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]));
+    }
+
+    // ---- Tab switching ----
+    function initTabs() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeTab = btn.dataset.tab;
+          applyActiveTab();
+        });
+      });
+    }
+    function applyActiveTab() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === activeTab);
+      });
+      document.querySelectorAll('.panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === 'panel-' + activeTab);
+      });
     }
 
     async function loadData() {
@@ -325,10 +376,9 @@
       }
 
       // --- 扫描所有产品区块的明细行，收集完整交易记录 ---
-      // 区块结构（每块10列）：付款日期,合作群组,产品类型,合作方式,收款金额,收款商务,到期日期,新增/续费,客户名称,(空)
       const blockStart = 8;
       const blockWidth = 10;
-      const numBlocks = 18;
+      const numBlocks = 19;
       const productNames = [];
       const headerRow = rows[0] || [];
       for (let b = 0; b < numBlocks; b++) {
@@ -381,9 +431,9 @@
         const key = d.group.trim() || d.client.trim() || '未命名';
         groupTotals[key] = (groupTotals[key] || 0) + d.amount;
       });
-      const groupEntries = Object.entries(groupTotals).sort((a,b) => b[1] - a[1]).slice(0, 8);
+      const groupEntries = Object.entries(groupTotals).sort((a,b) => b[1] - a[1]).slice(0, 10);
 
-      // 即将到期（未来7天内，仅解析标准日期格式，"自然消耗"等文字跳过）
+      // 即将到期（未来7天内）
       const today = new Date(); today.setHours(0,0,0,0);
       const in7days = new Date(today); in7days.setDate(in7days.getDate() + 7);
       const expiringDeals = deals
@@ -407,11 +457,11 @@
       document.getElementById('topProductName').textContent = topProduct ? `${topProduct.name.split('/')[0]} · ${fmt(topProduct.total)}` : '暂无数据';
       document.getElementById('dealStats').textContent = dealCount ? `${dealCount}单 / ${fmt(avgDeal)}` : '暂无数据';
 
-      const grid = document.getElementById('mainGrid');
-      grid.innerHTML = '';
+      const tabContent = document.getElementById('tabContent');
+      tabContent.innerHTML = '';
 
-      // 卡片1: 商务业绩排名
-      let bizHtml = `<div class="card"><h2>商务业绩排名 <span class="tag">TEAM PERFORMANCE</span></h2>`;
+      // ===== Panel: 商务业绩排名 =====
+      let bizHtml = `<div class="panel" id="panel-biz"><div class="card"><h2>商务业绩排名 <span class="tag">TEAM PERFORMANCE</span></h2>`;
       const maxBiz = Math.max(...bizRows.map(b => b.current), 1);
       bizRows.forEach((b, idx) => {
         const pct = pctOf(b.target, b.current);
@@ -427,10 +477,10 @@
             <div class="hbar-sub">目标 ${fmt(b.target)} · 完成 ${pct.toFixed(1)}%</div>
           </div>`;
       });
-      bizHtml += '</div>';
-      grid.innerHTML += bizHtml;
+      bizHtml += '</div></div>';
+      tabContent.innerHTML += bizHtml;
 
-      // 卡片2: 分类型目标完成度
+      // ===== Panel: 分类型目标完成度 =====
       let typeProgressHtml = '';
       const maxType = Math.max(...typeRows.map(t => t.current), 1);
       typeRows.forEach((t, idx) => {
@@ -447,21 +497,21 @@
             <div class="hbar-sub">目标 ${fmt(t.target)} · 完成 ${t.target ? pct.toFixed(1)+'%' : '-'}</div>
           </div>`;
       });
-      grid.innerHTML += `
-        <div class="card">
+      tabContent.innerHTML += `
+        <div class="panel" id="panel-category"><div class="card">
           <h2>分类型目标完成度 <span class="tag">BY CATEGORY</span></h2>
-          <div class="chart-canvas-holder short"><canvas id="typeChart"></canvas></div>
-          <div class="doughnut-legend" id="typeLegend"></div>
-          <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);">
-            <div style="font-size:11.5px;color:var(--text-3);letter-spacing:0.3px;margin-bottom:12px;">各类型收款进度</div>
-            ${typeProgressHtml}
+          <div class="panel-split">
+            <div>
+              <div class="chart-canvas-holder"><canvas id="typeChart"></canvas></div>
+              <div class="doughnut-legend" id="typeLegend"></div>
+            </div>
+            <div>${typeProgressHtml}</div>
           </div>
-        </div>`;
+        </div></div>`;
 
-      // 卡片3: 伊甸维度产品业绩进度
-      let prodHtml = `<div class="card"><h2>伊甸维度产品业绩进度 <span class="tag">PRODUCT TARGET</span></h2>`;
-      const topN = productRows.slice(0, 10);
-      topN.forEach((p, idx) => {
+      // ===== Panel: 伊甸维度产品业绩进度 =====
+      let prodHtml = `<div class="panel" id="panel-product"><div class="card"><h2>伊甸维度产品业绩进度 <span class="tag">PRODUCT TARGET</span></h2>`;
+      productRows.forEach((p, idx) => {
         const pct = pctOf(p.target, p.total);
         const widthPct = p.target ? pct : 0;
         const color = PALETTE[idx % PALETTE.length];
@@ -475,11 +525,11 @@
             <div class="hbar-sub">目标 ${p.target ? fmt(p.target) : '未设定'} · 完成 ${p.target ? pct.toFixed(1)+'%' : '-'}</div>
           </div>`;
       });
-      prodHtml += '</div>';
-      grid.innerHTML += prodHtml;
+      prodHtml += '</div></div>';
+      tabContent.innerHTML += prodHtml;
 
-      // 卡片4: 合作方式占比（CPA/CPC/CPS/CPT，横向条形排行榜风格）
-      let methodHtml = `<div class="card"><h2>合作方式占比 <span class="tag">BY DEAL TYPE</span></h2>`;
+      // ===== Panel: 合作方式占比 =====
+      let methodHtml = `<div class="panel" id="panel-method"><div class="card"><h2>合作方式占比 <span class="tag">BY DEAL TYPE</span></h2>`;
       if (methodEntries.length) {
         methodEntries.forEach(([method, amount], idx) => {
           const pct = methodGrandTotal ? (amount / methodGrandTotal) * 100 : 0;
@@ -497,22 +547,24 @@
       } else {
         methodHtml += `<div class="empty-hint">暂无合作方式数据</div>`;
       }
-      methodHtml += '</div>';
-      grid.innerHTML += methodHtml;
+      methodHtml += '</div></div>';
+      tabContent.innerHTML += methodHtml;
 
-      // 卡片5: 新增 / 续费构成（环形图，保留原样式）
-      let newRenewHtml = `<div class="card"><h2>新增 / 续费构成 <span class="tag">NEW VS RENEWAL</span></h2>`;
+      // ===== Panel: 新增 / 续费构成 =====
+      let newRenewHtml = `<div class="panel" id="panel-newrenew"><div class="card"><h2>新增 / 续费构成 <span class="tag">NEW VS RENEWAL</span></h2>`;
       if (deals.length) {
-        newRenewHtml += `<div class="chart-canvas-holder short"><canvas id="newRenewChart"></canvas></div>
-          <div class="doughnut-legend" id="newRenewLegend"></div>`;
+        newRenewHtml += `<div style="max-width:420px;margin:0 auto;">
+          <div class="chart-canvas-holder"><canvas id="newRenewChart"></canvas></div>
+          <div class="doughnut-legend" id="newRenewLegend"></div>
+        </div>`;
       } else {
         newRenewHtml += `<div class="empty-hint">暂无新增/续费数据</div>`;
       }
-      newRenewHtml += '</div>';
-      grid.innerHTML += newRenewHtml;
+      newRenewHtml += '</div></div>';
+      tabContent.innerHTML += newRenewHtml;
 
-      // 卡片6: 合作群组/客户 Top榜
-      let groupHtml = `<div class="card"><h2>合作群组 / 客户 Top榜 <span class="tag">TOP PARTNERS</span></h2>`;
+      // ===== Panel: 合作群组/客户 Top榜 =====
+      let groupHtml = `<div class="panel" id="panel-partners"><div class="card"><h2>合作群组 / 客户 Top榜 <span class="tag">TOP PARTNERS</span></h2>`;
       if (groupEntries.length) {
         const maxGroup = Math.max(...groupEntries.map(([,v]) => v), 1);
         groupEntries.forEach(([name, amount], idx) => {
@@ -530,11 +582,11 @@
       } else {
         groupHtml += `<div class="empty-hint">暂无合作群组数据</div>`;
       }
-      groupHtml += '</div>';
-      grid.innerHTML += groupHtml;
+      groupHtml += '</div></div>';
+      tabContent.innerHTML += groupHtml;
 
-      // 卡片6: 即将到期提醒（未来7天）
-      let expiryHtml = `<div class="card"><h2>即将到期提醒 <span class="tag">EXPIRING IN 7 DAYS</span></h2>`;
+      // ===== Panel: 即将到期提醒 =====
+      let expiryHtml = `<div class="panel" id="panel-expiry"><div class="card"><h2>即将到期提醒 <span class="tag">EXPIRING IN 7 DAYS</span></h2>`;
       if (expiringDeals.length) {
         expiryHtml += `<table class="mini-table"><tr><th>产品</th><th>客户/群组</th><th>金额</th><th>到期</th><th>状态</th></tr>`;
         expiringDeals.forEach(d => {
@@ -543,7 +595,7 @@
           const pillText = daysLeft === 0 ? '今天到期' : `${daysLeft}天后`;
           expiryHtml += `<tr>
             <td>${d.product.split('/')[0]}</td>
-            <td>${(d.client || d.group).slice(0, 14)}</td>
+            <td>${(d.client || d.group).slice(0, 18)}</td>
             <td>${fmt(d.amount)}</td>
             <td>${d.expiry}</td>
             <td><span class="pill ${pillClass}">${pillText}</span></td>
@@ -553,20 +605,23 @@
       } else {
         expiryHtml += `<div class="empty-hint">未来7天内暂无到期合作 ✅</div>`;
       }
-      expiryHtml += '</div>';
-      grid.innerHTML += expiryHtml;
+      expiryHtml += '</div></div>';
+      tabContent.innerHTML += expiryHtml;
 
-      // 卡片7: 每日流水趋势（折线图，span2）
-      grid.innerHTML += `
-        <div class="card span2">
+      // ===== Panel: 每日流水趋势 =====
+      tabContent.innerHTML += `
+        <div class="panel" id="panel-daily"><div class="card">
           <h2>每日流水趋势 <span class="tag">SEPTEMBER DAILY</span></h2>
           <div class="chart-canvas-holder tall"><canvas id="dailyChart"></canvas></div>
-        </div>`;
+        </div></div>`;
 
       // --- render charts after DOM injected ---
       renderTypeChart(typeRows);
       renderNewRenewChart(newRenewEntries, newRenewGrandTotal);
       renderDailyChart(dailyRows);
+
+      // --- restore active tab visibility (panels rebuilt each refresh) ---
+      applyActiveTab();
     }
 
     function renderTypeChart(typeRows) {
@@ -636,7 +691,7 @@
       const ctx = document.getElementById('dailyChart');
       if (!ctx || !dailyRows.length) return;
       const c2d = ctx.getContext('2d');
-      const gradient = c2d.createLinearGradient(0, 0, 0, 280);
+      const gradient = c2d.createLinearGradient(0, 0, 0, 340);
       gradient.addColorStop(0, 'rgba(139,92,246,0.45)');
       gradient.addColorStop(1, 'rgba(34,211,238,0.02)');
 
@@ -675,6 +730,7 @@
       });
     }
 
+    initTabs();
     loadData();
     setInterval(loadData, REFRESH_MS);
   </script>
