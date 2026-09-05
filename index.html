@@ -285,7 +285,6 @@
       <button class="nav-btn" data-target="sec-perfcards"><span class="emoji">🃏</span>商务表现速览</button>
       <button class="nav-btn" data-target="sec-bizcatdetail"><span class="emoji">📊</span>商务分类完成明细</button>
       <div class="nav-group-title">目标与端口</div>
-      <button class="nav-btn" data-target="sec-category"><span class="emoji">🗂️</span>分类型完成度</button>
       <button class="nav-btn" data-target="sec-porttable"><span class="emoji">📋</span>端口月度目标统计</button>
       <button class="nav-btn" data-target="sec-product"><span class="emoji">📦</span>产品业绩进度</button>
       <div class="nav-group-title">收款结构分析</div>
@@ -580,7 +579,7 @@
       const typeRows = rows.filter(r => typeNames.includes(r[0]))
         .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]) }));
 
-      const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','全斗焕','程晨'];
+      const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','程晨'];
       const bizRows = rows.filter(r => bizNames.includes(r[0]))
         .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]) }))
         .sort((a,b) => b.current - a.current);
@@ -907,35 +906,6 @@
       bizCatDetailHtml += `</div></div>`;
       container.innerHTML += bizCatDetailHtml;
 
-
-      // ===== Section: 分类型目标完成度 =====
-      let typeProgressHtml = '';
-      typeRows.forEach((t, idx) => {
-        const pct = pctOf(t.target, t.current);
-        const widthPct = t.target ? pct : 0;
-        const color = PALETTE[idx % PALETTE.length];
-        typeProgressHtml += `
-          <div class="hbar-item clickable" data-category="${t.name}">
-            <div class="hbar-top">
-              <span class="hbar-name"><span class="legend-dot" style="background:${color}"></span><span class="txt">${t.name}</span></span>
-              <span class="hbar-value">${fmt(t.current)}</span>
-            </div>
-            <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">目标 ${fmt(t.target)} · 完成 ${t.target ? pct.toFixed(1)+'%' : '-'} · 悬停查看各商务贡献</div>
-          </div>`;
-      });
-      container.innerHTML += `
-        <div class="section" id="sec-category"><div class="card">
-          <h2>分类型目标完成度 <span class="tag">BY CATEGORY</span></h2>
-          <div class="panel-split">
-            <div>
-              <div class="chart-canvas-holder"><canvas id="typeChart"></canvas></div>
-              <div class="doughnut-legend" id="typeLegend"></div>
-            </div>
-            <div>${typeProgressHtml}</div>
-          </div>
-        </div></div>`;
-
       // ===== Section: 销售端口月度目标统计（转盘+进度条风格）=====
       let portProgressHtml = '';
       const sortedTypeRows = [...typeRows].sort((a,b) => pctOf(b.target,b.current) - pctOf(a.target,a.current));
@@ -1082,9 +1052,8 @@
           <div class="chart-canvas-holder tall"><canvas id="dailyChart"></canvas></div>
         </div></div>`;
 
-      renderTypeChart(typeRows);
-      renderBizChart(bizRows);
       renderPortChart(typeRows);
+      renderBizChart(bizRows);
       bizCatChartConfigs.forEach(cfg => renderBizCatChart(cfg));
       renderDailyChart(dailyRows);
       initScrollSpy();
