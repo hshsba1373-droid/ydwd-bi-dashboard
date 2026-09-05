@@ -258,8 +258,8 @@
       <div class="hero" id="heroSection">
         <div class="hero-main">
           <div class="hero-label">本月累计业绩</div>
-          <div class="hero-value" id="heroValue">¥0</div>
-          <div class="hero-target">目标 <b id="heroTarget">¥0</b></div>
+          <div class="hero-value" id="heroValue">0万</div>
+          <div class="hero-target">目标 <b id="heroTarget">0万</b></div>
           <div class="hero-bar-bg"><div class="hero-bar-fill" id="heroBarFill" style="width:0%"></div></div>
           <div class="hero-pct" id="heroPct">0.00% 已完成</div>
         </div>
@@ -329,7 +329,19 @@
       return isNaN(n) ? 0 : n;
     }
     function pctOf(target, current) { if (!target) return 0; return Math.min(100, (current / target) * 100); }
-    function fmt(n) { return '¥' + Math.round(n).toLocaleString(); }
+    function fmt(n) {
+      const wan = n / 10000;
+      let s = wan.toFixed(2);
+      if (s.endsWith('.00')) s = s.slice(0, -3);
+      else if (s.endsWith('0')) s = s.slice(0, -1);
+      if (s === '-0') s = '0';
+      return s + '万';
+    }
+    function tickWan(v) {
+      const wan = v / 10000;
+      const rounded = Math.round(wan * 10) / 10;
+      return rounded + '万';
+    }
 
     function parseFlexDate(s) {
       if (!s) return null;
@@ -939,7 +951,7 @@
             tooltip: {
               backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
               titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
-              callbacks: { label: (c) => c.label + ': ¥' + c.parsed.toLocaleString() }
+              callbacks: { label: (c) => c.label + ': ' + fmt(c.parsed) }
             }
           }
         }
@@ -970,7 +982,7 @@
             tooltip: {
               backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
               titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
-              callbacks: { label: (c) => c.label + ': ¥' + c.parsed.toLocaleString() }
+              callbacks: { label: (c) => c.label + ': ' + fmt(c.parsed) }
             }
           }
         }
@@ -1010,14 +1022,14 @@
             tooltip: {
               backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
               titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
-              callbacks: { label: (c) => '¥' + c.parsed.y.toLocaleString() }
+              callbacks: { label: (c) => fmt(c.parsed.y) }
             }
           },
           scales: {
             x: { grid: { display: false }, ticks: { color: '#8b93ab', font: { size: 10 }, maxRotation: 0 } },
             y: {
               grid: { color: 'rgba(255,255,255,0.05)' },
-              ticks: { color: '#8b93ab', font: { size: 10 }, callback: (v) => v >= 1000 ? (v/1000) + 'k' : v }
+              ticks: { color: '#8b93ab', font: { size: 10 }, callback: (v) => tickWan(v) }
             }
           }
         }
