@@ -283,6 +283,7 @@
       <button class="nav-btn active" data-target="sec-biz"><span class="emoji">🏆</span>商务业绩</button>
       <button class="nav-btn" data-target="sec-bizgoal"><span class="emoji">🎯</span>商务目标达成表</button>
       <button class="nav-btn" data-target="sec-perfcards"><span class="emoji">🃏</span>商务表现速览</button>
+      <button class="nav-btn" data-target="sec-bizcatdetail"><span class="emoji">📊</span>商务分类完成明细</button>
       <div class="nav-group-title">目标与端口</div>
       <button class="nav-btn" data-target="sec-category"><span class="emoji">🗂️</span>分类型完成度</button>
       <button class="nav-btn" data-target="sec-porttable"><span class="emoji">📋</span>端口月度目标统计</button>
@@ -595,6 +596,10 @@
       }
       productRows.sort((a,b) => b.total - a.total);
 
+      // 商务 × 分类 新增/续费明细（对应"每人每分类完成情况"截图需求）
+      const bizCategoryNewRenew = {};
+      bizNames.forEach(bn => { bizCategoryNewRenew[bn] = {}; });
+
       const dailyStartIdx = rows.findIndex(r => /^\d{4}-\d{1,2}-\d{1,2}$/.test(r[0] || ''));
       const dailyRows = [];
       if (dailyStartIdx >= 0) {
@@ -643,6 +648,16 @@
       deals.forEach(d => { if (d.method) methodTotals[d.method] = (methodTotals[d.method] || 0) + d.amount; });
       const methodEntries = Object.entries(methodTotals).sort((a,b) => b[1] - a[1]);
       const methodGrandTotal = methodEntries.reduce((s, [,v]) => s + v, 0);
+
+      deals.forEach(d => {
+        const bizName = d.biz.trim() || '未标注';
+        const cat = d.productType.trim() || '未标注';
+        if (!bizCategoryNewRenew[bizName]) bizCategoryNewRenew[bizName] = {};
+        if (!bizCategoryNewRenew[bizName][cat]) bizCategoryNewRenew[bizName][cat] = { newAmount: 0, renewAmount: 0 };
+        const nr = d.newRenew.trim();
+        if (nr === '新增') bizCategoryNewRenew[bizName][cat].newAmount += d.amount;
+        else if (nr === '续费') bizCategoryNewRenew[bizName][cat].renewAmount += d.amount;
+      });
 
       categoryBizBreakdown = {};
       typeNames.forEach(tn => { categoryBizBreakdown[tn] = {}; });
@@ -821,6 +836,43 @@
       });
       perfHtml += `</div></div></div>`;
       container.innerHTML += perfHtml;
+
+      // ===== Section: 商务分类完成明细（每人每分类 新增/续费） =====
+      let bizCatDetailHtml = `<div class="section" id="sec-bizcatdetail"><div class="card"><h2>商务分类完成明细 <span class="tag">BY BIZ &amp; CATEGORY</span></h2>`;
+      if (bizRows.length) {
+        bizRows.forEach(b => {
+          const catMap = bizCategoryNewRenew[b.name] || {};
+          const catEntries = Object.entries(catMap)
+            .filter(([, v]) => v.newAmount > 0 || v.renewAmount > 0)
+            .sort((a, b2) => (b2[1].newAmount + b2[1].renewAmount) - (a[1].newAmount + a[1].renewAmount));
+          bizCatDetailHtml += `
+            <div style="margin-bottom:22px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                <span style="font-size:13.5px;font-weight:700;color:#fff;">${b.name}</span>
+                <span style="font-size:11px;color:var(--text-3);">目标 ${fmt(b.target)} · 已完成 ${fmt(b.current)}</span>
+              </div>`;
+          if (catEntries.length) {
+            bizCatDetailHtml += `<table class="mini-table"><tr><th>分类</th><th>新增完成</th><th>续费完成</th><th>合计</th></tr>`;
+            catEntries.forEach(([cat, v]) => {
+              const sum = v.newAmount + v.renewAmount;
+              bizCatDetailHtml += `<tr>
+                <td>${cat}</td>
+                <td>${v.newAmount ? fmt(v.newAmount) : '-'}</td>
+                <td>${v.renewAmount ? fmt(v.renewAmount) : '-'}</td>
+                <td><b style="color:#fff;">${fmt(sum)}</b></td>
+              </tr>`;
+            });
+            bizCatDetailHtml += `</table>`;
+          } else {
+            bizCatDetailHtml += `<div class="empty-hint" style="padding:14px 0;">暂无分类数据</div>`;
+          }
+          bizCatDetailHtml += `</div>`;
+        });
+      } else {
+        bizCatDetailHtml += `<div class="empty-hint">暂无商务数据</div>`;
+      }
+      bizCatDetailHtml += `</div></div>`;
+      container.innerHTML += bizCatDetailHtml;
 
       // ===== Section: 分类型目标完成度 =====
       let typeProgressHtml = '';
