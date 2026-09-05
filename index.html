@@ -1262,7 +1262,7 @@
 
         // Merge: 9月 overrides 8月 for same group
         const merged = { ...augMap, ...sepMap };
-        const items = Object.values(merged).sort((a,b) => a.expDate - b.expDate);
+        const items = Object.values(merged).sort((a,b) => a.expDate - b.expDate).slice(0, 10);
 
         const el = document.getElementById('expiryContent');
         if (!el) return;
