@@ -870,16 +870,18 @@
                 <span style="font-size:11px;color:var(--text-3);">目标 ${fmt(b.target)} · 已完成 ${fmt(b.current)}</span>
               </div>`;
           if (catEntries.length) {
-            const maxCatSum = Math.max(...catEntries.map(([,sum]) => sum), 1);
+            // 进度条按分类金额占该商务月业绩目标的百分比
+            const bizTarget = b.target > 0 ? b.target : 1;
             let barsHtml = '';
             catEntries.forEach(([cat, sum, v], idx) => {
-              const widthPct = (sum / maxCatSum) * 100;
+              const widthPct = Math.min(100, (sum / bizTarget) * 100);
+              const pctLabel = b.target > 0 ? (sum / b.target * 100).toFixed(1) + '%' : '-';
               const color = PALETTE[idx % PALETTE.length];
               barsHtml += `
                 <div class="hbar-item">
                   <div class="hbar-top">
                     <span class="hbar-name"><span class="legend-dot" style="background:${color}"></span><span class="txt">${cat}</span></span>
-                    <span class="hbar-value">${fmt(sum)}</span>
+                    <span class="hbar-value">${fmt(sum)} <span style="color:var(--text-3);font-weight:500;">(${pctLabel})</span></span>
                   </div>
                   <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
                   <div class="hbar-sub">新增 ${v.newAmount ? fmt(v.newAmount) : '0万'} · 续费 ${v.renewAmount ? fmt(v.renewAmount) : '0万'}</div>
