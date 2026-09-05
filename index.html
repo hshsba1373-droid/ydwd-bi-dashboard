@@ -310,6 +310,10 @@
     let activeTab = 'biz';
     let categoryBizBreakdown = {}; // { categoryName: { bizName: amount } }
     let bizCategoryBreakdown = {}; // { bizName: { categoryName: amount } }
+    let productCategoryBreakdown = {}; // { productName: { categoryName: amount } }
+    let methodCategoryBreakdown = {}; // { method: { categoryName: amount } }
+    let newRenewCategoryBreakdown = {}; // { newRenewLabel: { categoryName: amount } }
+    let groupDealsMap = {}; // { groupOrClientName: [deal, ...] }
 
     const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635','#f97316','#38bdf8'];
 
@@ -484,6 +488,41 @@
         bizCategoryBreakdown[bizName][cat] = (bizCategoryBreakdown[bizName][cat] || 0) + d.amount;
       });
 
+      // 产品 × 分类型 交叉统计（点击某产品查看其分类构成）
+      productCategoryBreakdown = {};
+      deals.forEach(d => {
+        const prod = d.product;
+        const cat = d.productType.trim() || '未标注';
+        if (!productCategoryBreakdown[prod]) productCategoryBreakdown[prod] = {};
+        productCategoryBreakdown[prod][cat] = (productCategoryBreakdown[prod][cat] || 0) + d.amount;
+      });
+
+      // 合作方式 × 分类型 交叉统计
+      methodCategoryBreakdown = {};
+      deals.forEach(d => {
+        if (!d.method) return;
+        const cat = d.productType.trim() || '未标注';
+        if (!methodCategoryBreakdown[d.method]) methodCategoryBreakdown[d.method] = {};
+        methodCategoryBreakdown[d.method][cat] = (methodCategoryBreakdown[d.method][cat] || 0) + d.amount;
+      });
+
+      // 新增/续费 × 分类型 交叉统计
+      newRenewCategoryBreakdown = {};
+      deals.forEach(d => {
+        const key = d.newRenew.trim() || '未标注';
+        const cat = d.productType.trim() || '未标注';
+        if (!newRenewCategoryBreakdown[key]) newRenewCategoryBreakdown[key] = {};
+        newRenewCategoryBreakdown[key][cat] = (newRenewCategoryBreakdown[key][cat] || 0) + d.amount;
+      });
+
+      // 合作群组/客户 -> 明细列表（点击群组查看每笔单：价格/分类/模式/到期时间）
+      groupDealsMap = {};
+      deals.forEach(d => {
+        const key = d.group.trim() || d.client.trim() || '未命名';
+        if (!groupDealsMap[key]) groupDealsMap[key] = [];
+        groupDealsMap[key].push(d);
+      });
+
       // 新增 vs 续费占比
       const newRenewTotals = {};
       deals.forEach(d => {
@@ -593,13 +632,13 @@
         const widthPct = p.target ? pct : 0;
         const color = PALETTE[idx % PALETTE.length];
         prodHtml += `
-          <div class="hbar-item">
+          <div class="hbar-item clickable" data-product="${p.name}">
             <div class="hbar-top">
               <span class="hbar-name">${rankBadge(idx)} <span class="txt">${p.name}</span></span>
               <span class="hbar-value">${fmt(p.total)}</span>
             </div>
             <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">目标 ${p.target ? fmt(p.target) : '未设定'} · 完成 ${p.target ? pct.toFixed(1)+'%' : '-'}</div>
+            <div class="hbar-sub">目标 ${p.target ? fmt(p.target) : '未设定'} · 完成 ${p.target ? pct.toFixed(1)+'%' : '-'} · 点击查看分类占比</div>
           </div>`;
       });
       prodHtml += '</div></div>';
@@ -612,13 +651,13 @@
           const pct = methodGrandTotal ? (amount / methodGrandTotal) * 100 : 0;
           const color = PALETTE[idx % PALETTE.length];
           methodHtml += `
-            <div class="hbar-item">
+            <div class="hbar-item clickable" data-method="${method}">
               <div class="hbar-top">
                 <span class="hbar-name">${rankBadge(idx)} <span class="txt">${method}</span></span>
                 <span class="hbar-value">${fmt(amount)}</span>
               </div>
               <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
-              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}%</div>
+              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}% · 点击查看分类占比</div>
             </div>`;
         });
       } else {
@@ -635,13 +674,13 @@
           const pct = newRenewGrandTotal ? (amount / newRenewGrandTotal) * 100 : 0;
           const color = nrColors[label] || PALETTE[idx % PALETTE.length];
           newRenewHtml += `
-            <div class="hbar-item">
+            <div class="hbar-item clickable" data-newrenew="${label}">
               <div class="hbar-top">
                 <span class="hbar-name">${rankBadge(idx)} <span class="txt">${label}</span></span>
                 <span class="hbar-value">${fmt(amount)}</span>
               </div>
               <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
-              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}%</div>
+              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}% · 点击查看分类占比</div>
             </div>`;
         });
       } else {
@@ -658,12 +697,13 @@
           const widthPct = (amount / maxGroup) * 100;
           const color = PALETTE[idx % PALETTE.length];
           groupHtml += `
-            <div class="hbar-item">
+            <div class="hbar-item clickable" data-group="${name}">
               <div class="hbar-top">
                 <span class="hbar-name">${rankBadge(idx)} <span class="txt">${name}</span></span>
                 <span class="hbar-value">${fmt(amount)}</span>
               </div>
               <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
+              <div class="hbar-sub">点击查看合作明细</div>
             </div>`;
         });
       } else {
@@ -716,6 +756,18 @@
       });
       document.querySelectorAll('.hbar-item.clickable[data-biz]').forEach(el => {
         el.addEventListener('click', () => openBizModal(el.dataset.biz));
+      });
+      document.querySelectorAll('.hbar-item.clickable[data-product]').forEach(el => {
+        el.addEventListener('click', () => openGenericCategoryModal(el.dataset.product, productCategoryBreakdown, '产品', '总收款'));
+      });
+      document.querySelectorAll('.hbar-item.clickable[data-method]').forEach(el => {
+        el.addEventListener('click', () => openGenericCategoryModal(el.dataset.method, methodCategoryBreakdown, '合作方式', '总收款'));
+      });
+      document.querySelectorAll('.hbar-item.clickable[data-newrenew]').forEach(el => {
+        el.addEventListener('click', () => openGenericCategoryModal(el.dataset.newrenew, newRenewCategoryBreakdown, '', '总收款'));
+      });
+      document.querySelectorAll('.hbar-item.clickable[data-group]').forEach(el => {
+        el.addEventListener('click', () => openGroupDetailModal(el.dataset.group));
       });
     }
 
@@ -772,6 +824,64 @@
               <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
             </div>`;
         }).join('');
+      }
+
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function openGenericCategoryModal(name, breakdownMap, prefix, totalLabel) {
+      const breakdown = breakdownMap[name] || {};
+      const entries = Object.entries(breakdown).filter(([,v]) => v > 0).sort((a,b) => b[1] - a[1]);
+      const total = entries.reduce((s, [,v]) => s + v, 0);
+
+      const displayName = prefix ? `${prefix}「${name.split('/')[0]}」` : name;
+      document.getElementById('modalTitle').textContent = `${displayName} · 分类占比`;
+      document.getElementById('modalTotal').innerHTML = `${totalLabel} <b>${fmt(total)}</b>`;
+
+      const body = document.getElementById('modalBody');
+      if (!entries.length) {
+        body.innerHTML = '<div class="empty-hint">暂无分类数据</div>';
+      } else {
+        body.innerHTML = entries.map(([catName, amount], idx) => {
+          const pct = total ? (amount / total * 100) : 0;
+          const color = PALETTE[idx % PALETTE.length];
+          return `
+            <div class="hbar-item">
+              <div class="hbar-top">
+                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${catName}</span></span>
+                <span class="hbar-value">${fmt(amount)} <span style="color:var(--text-3);font-weight:500;">(${pct.toFixed(1)}%)</span></span>
+              </div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
+            </div>`;
+        }).join('');
+      }
+
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function openGroupDetailModal(groupName) {
+      const dealsForGroup = groupDealsMap[groupName] || [];
+      const total = dealsForGroup.reduce((s, d) => s + d.amount, 0);
+
+      document.getElementById('modalTitle').textContent = `${groupName} · 合作明细`;
+      document.getElementById('modalTotal').innerHTML = `合计收款 <b>${fmt(total)}</b> · 共 ${dealsForGroup.length} 笔`;
+
+      const body = document.getElementById('modalBody');
+      if (!dealsForGroup.length) {
+        body.innerHTML = '<div class="empty-hint">暂无合作明细</div>';
+      } else {
+        const sorted = [...dealsForGroup].sort((a,b) => b.amount - a.amount);
+        body.innerHTML = `<table class="mini-table">
+          <tr><th>产品</th><th>价格</th><th>分类</th><th>模式</th><th>到期</th></tr>
+          ${sorted.map(d => `
+            <tr>
+              <td>${d.product.split('/')[0]}</td>
+              <td>${fmt(d.amount)}</td>
+              <td>${d.productType || '-'}</td>
+              <td>${d.method || '-'}</td>
+              <td>${d.expiry || '-'}</td>
+            </tr>`).join('')}
+        </table>`;
       }
 
       document.getElementById('modalOverlay').classList.add('active');
