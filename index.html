@@ -306,8 +306,10 @@
     const REFRESH_MS = 60 * 1000;
     let dailyChartInstance = null;
     let typeChartInstance = null;
+    let bizChartInstance = null;
     let activeTab = 'biz';
-    let categoryBizBreakdown = {}; // { categoryName: [{name, amount}] }
+    let categoryBizBreakdown = {}; // { categoryName: { bizName: amount } }
+    let bizCategoryBreakdown = {}; // { bizName: { categoryName: amount } }
 
     const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635','#f97316','#38bdf8'];
 
@@ -462,7 +464,7 @@
       const methodEntries = Object.entries(methodTotals).sort((a,b) => b[1] - a[1]);
       const methodGrandTotal = methodEntries.reduce((s, [,v]) => s + v, 0);
 
-      // 分类型 × 商务 交叉统计（用于点击弹窗展示每个人在该分类下的完成金额+占比）
+      // 分类型 × 商务 交叉统计（点击某分类查看各商务贡献）
       categoryBizBreakdown = {};
       typeNames.forEach(tn => { categoryBizBreakdown[tn] = {}; });
       deals.forEach(d => {
@@ -470,6 +472,16 @@
         const bizName = d.biz.trim() || '未标注';
         if (!categoryBizBreakdown[cat]) categoryBizBreakdown[cat] = {};
         categoryBizBreakdown[cat][bizName] = (categoryBizBreakdown[cat][bizName] || 0) + d.amount;
+      });
+
+      // 商务 × 分类型 交叉统计（点击某商务查看其各分类占比）
+      bizCategoryBreakdown = {};
+      bizNames.forEach(bn => { bizCategoryBreakdown[bn] = {}; });
+      deals.forEach(d => {
+        const bizName = d.biz.trim() || '未标注';
+        const cat = d.productType.trim() || '未标注';
+        if (!bizCategoryBreakdown[bizName]) bizCategoryBreakdown[bizName] = {};
+        bizCategoryBreakdown[bizName][cat] = (bizCategoryBreakdown[bizName][cat] || 0) + d.amount;
       });
 
       // 新增 vs 续费占比
@@ -517,24 +529,33 @@
       tabContent.innerHTML = '';
 
       // ===== Panel: 商务业绩排名 =====
-      let bizHtml = `<div class="panel" id="panel-biz"><div class="card"><h2>商务业绩排名 <span class="tag">TEAM PERFORMANCE</span></h2>`;
+      let bizListHtml = '';
       const maxBiz = Math.max(...bizRows.map(b => b.current), 1);
       bizRows.forEach((b, idx) => {
         const pct = pctOf(b.target, b.current);
         const widthPct = (b.current / maxBiz) * 100;
         const color = PALETTE[idx % PALETTE.length];
-        bizHtml += `
-          <div class="hbar-item">
+        bizListHtml += `
+          <div class="hbar-item clickable" data-biz="${b.name}">
             <div class="hbar-top">
               <span class="hbar-name">${rankBadge(idx)} <span class="txt">${b.name}</span></span>
               <span class="hbar-value">${fmt(b.current)}</span>
             </div>
             <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">目标 ${fmt(b.target)} · 完成 ${pct.toFixed(1)}%</div>
+            <div class="hbar-sub">目标 ${fmt(b.target)} · 完成 ${pct.toFixed(1)}% · 点击查看分类占比</div>
           </div>`;
       });
-      bizHtml += '</div></div>';
-      tabContent.innerHTML += bizHtml;
+      tabContent.innerHTML += `
+        <div class="panel" id="panel-biz"><div class="card">
+          <h2>商务业绩排名 <span class="tag">TEAM PERFORMANCE</span></h2>
+          <div class="panel-split">
+            <div>
+              <div class="chart-canvas-holder"><canvas id="bizChart"></canvas></div>
+              <div class="doughnut-legend" id="bizLegend"></div>
+            </div>
+            <div>${bizListHtml}</div>
+          </div>
+        </div></div>`;
 
       // ===== Panel: 分类型目标完成度 =====
       let typeProgressHtml = '';
@@ -683,14 +704,18 @@
 
       // --- render charts after DOM injected ---
       renderTypeChart(typeRows);
+      renderBizChart(bizRows);
       renderDailyChart(dailyRows);
 
       // --- restore active tab visibility (panels rebuilt each refresh) ---
       applyActiveTab();
 
-      // --- bind category click-to-drilldown ---
+      // --- bind category/biz click-to-drilldown ---
       document.querySelectorAll('.hbar-item.clickable[data-category]').forEach(el => {
         el.addEventListener('click', () => openCategoryModal(el.dataset.category));
+      });
+      document.querySelectorAll('.hbar-item.clickable[data-biz]').forEach(el => {
+        el.addEventListener('click', () => openBizModal(el.dataset.biz));
       });
     }
 
@@ -705,6 +730,35 @@
       const body = document.getElementById('modalBody');
       if (!entries.length) {
         body.innerHTML = '<div class="empty-hint">暂无该分类的商务数据</div>';
+      } else {
+        body.innerHTML = entries.map(([name, amount], idx) => {
+          const pct = total ? (amount / total * 100) : 0;
+          const color = PALETTE[idx % PALETTE.length];
+          return `
+            <div class="hbar-item">
+              <div class="hbar-top">
+                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${name}</span></span>
+                <span class="hbar-value">${fmt(amount)} <span style="color:var(--text-3);font-weight:500;">(${pct.toFixed(1)}%)</span></span>
+              </div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
+            </div>`;
+        }).join('');
+      }
+
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function openBizModal(bizName) {
+      const breakdown = bizCategoryBreakdown[bizName] || {};
+      const entries = Object.entries(breakdown).filter(([,v]) => v > 0).sort((a,b) => b[1] - a[1]);
+      const total = entries.reduce((s, [,v]) => s + v, 0);
+
+      document.getElementById('modalTitle').textContent = `${bizName} · 各分类业绩占比`;
+      document.getElementById('modalTotal').innerHTML = `${bizName} 本月总业绩 <b>${fmt(total)}</b>`;
+
+      const body = document.getElementById('modalBody');
+      if (!entries.length) {
+        body.innerHTML = '<div class="empty-hint">暂无该商务的分类数据</div>';
       } else {
         body.innerHTML = entries.map(([name, amount], idx) => {
           const pct = total ? (amount / total * 100) : 0;
@@ -753,6 +807,37 @@
         }
       });
       const legend = document.getElementById('typeLegend');
+      legend.innerHTML = labels.map((l, i) =>
+        `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
+      ).join('');
+    }
+
+    function renderBizChart(bizRows) {
+      const ctx = document.getElementById('bizChart');
+      if (!ctx) return;
+      const labels = bizRows.map(b => b.name);
+      const data = bizRows.map(b => b.current);
+      const hasData = data.some(v => v > 0);
+      const displayData = hasData ? data : bizRows.map(b => b.target || 1);
+      const colors = labels.map((_, i) => PALETTE[i % PALETTE.length]);
+
+      if (bizChartInstance) bizChartInstance.destroy();
+      bizChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels, datasets: [{ data: displayData, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '68%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
+              callbacks: { label: (c) => c.label + ': ¥' + c.parsed.toLocaleString() }
+            }
+          }
+        }
+      });
+      const legend = document.getElementById('bizLegend');
       legend.innerHTML = labels.map((l, i) =>
         `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
       ).join('');
