@@ -649,10 +649,9 @@
 
       // ===== Section: 商务业绩排名 =====
       let bizListHtml = '';
-      const maxBiz = Math.max(...bizRows.map(b => b.current), 1);
       bizRows.forEach((b, idx) => {
         const pct = pctOf(b.target, b.current);
-        const widthPct = (b.current / maxBiz) * 100;
+        const widthPct = pct;
         const color = PALETTE[idx % PALETTE.length];
         bizListHtml += `
           <div class="hbar-item clickable" data-biz="${b.name}">
@@ -678,10 +677,9 @@
 
       // ===== Section: 分类型目标完成度 =====
       let typeProgressHtml = '';
-      const maxType = Math.max(...typeRows.map(t => t.current), 1);
       typeRows.forEach((t, idx) => {
         const pct = pctOf(t.target, t.current);
-        const widthPct = t.current > 0 ? (t.current / maxType) * 100 : 0;
+        const widthPct = t.target ? pct : 0;
         const color = PALETTE[idx % PALETTE.length];
         typeProgressHtml += `
           <div class="hbar-item clickable" data-category="${t.name}">
