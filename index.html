@@ -86,6 +86,11 @@
     box-shadow: 0 4px 16px -4px rgba(139,92,246,0.5);
   }
   .nav-btn .emoji { font-size: 15px; flex-shrink: 0; }
+  .nav-group-title {
+    font-size: 10.5px; color: var(--text-3); font-weight: 600; letter-spacing: 0.6px;
+    text-transform: uppercase; padding: 12px 10px 4px; margin-top: 4px;
+  }
+  .nav-group-title:first-child { margin-top: 0; }
 
   @media (max-width: 900px) {
     .layout { flex-direction: column; }
@@ -96,9 +101,26 @@
       padding: 10px 0; margin: 0 -32px; padding-left: 32px; padding-right: 32px;
     }
     .nav-btn { flex-shrink: 0; width: auto; white-space: nowrap; }
+    .nav-group-title { display: none; }
   }
 
   .content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
+
+  /* ---------- KPI Overview (4-card row, inspired by reference dashboard) ---------- */
+  .kpi-overview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .kpi-overview { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-card {
+    background: var(--glass); border: 1px solid var(--glass-border); border-radius: 18px;
+    padding: 18px 20px; backdrop-filter: blur(16px); position: relative; overflow: hidden;
+  }
+  .kpi-card .kpi-icon { font-size: 18px; margin-bottom: 8px; opacity: 0.9; }
+  .kpi-card .kpi-label { color: var(--text-2); font-size: 12px; margin-bottom: 6px; }
+  .kpi-card .kpi-num { font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .kpi-card .kpi-foot { color: var(--text-3); font-size: 10.5px; margin-top: 4px; }
+  .kpi-card.accent-a .kpi-num { color: #c4b5fd; }
+  .kpi-card.accent-b .kpi-num { color: #67e8f9; }
+  .kpi-card.accent-c .kpi-num { color: #6ee7b7; }
+  .kpi-card.accent-d .kpi-num { color: #fbbf24; }
 
   /* ---------- Hero ---------- */
   .hero { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; }
@@ -127,7 +149,7 @@
     box-shadow: 0 0 16px rgba(139,92,246,0.5); transition: width 0.8s ease; }
   .hero-pct { font-size: 13px; color: var(--cyan); margin-top: 8px; font-weight: 600; }
 
-  .kpi-stack { display: grid; grid-template-rows: repeat(3, 1fr); gap: 10px; }
+  .kpi-stack { display: grid; grid-template-rows: repeat(4, 1fr); gap: 10px; }
   .kpi-mini {
     background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px;
     padding: 13px 18px; display: flex; align-items: center; justify-content: space-between;
@@ -175,6 +197,23 @@
   /* split layout for panels that combine chart + list */
   .panel-split { display: grid; grid-template-columns: 300px 1fr; gap: 26px; align-items: start; }
   @media (max-width: 760px) { .panel-split { grid-template-columns: 1fr; } }
+
+  /* ---------- 商务表现卡 (performance card grid) ---------- */
+  .perf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .perf-card {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 16px;
+    padding: 16px 18px; position: relative; overflow: hidden; cursor: pointer; transition: background 0.15s ease;
+  }
+  .perf-card:hover { background: rgba(255,255,255,0.06); }
+  .perf-card .perf-rank {
+    position: absolute; top: 14px; right: 16px; font-size: 11px; font-weight: 700; color: var(--text-3);
+  }
+  .perf-card .perf-name { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .perf-card .perf-amount { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .perf-card .perf-target { font-size: 11px; color: var(--text-3); margin-bottom: 10px; }
+  .perf-card .perf-ring-bg { height: 6px; border-radius: 6px; background: rgba(255,255,255,0.07); overflow: hidden; }
+  .perf-card .perf-ring-fill { height: 100%; border-radius: 6px; }
+  .perf-card .perf-pct { font-size: 11px; margin-top: 6px; font-weight: 600; }
 
   .hbar-item { margin-bottom: 15px; transition: transform 0.15s ease; }
   .hbar-item:last-child { margin-bottom: 0; }
@@ -240,20 +279,52 @@
 
   <div class="layout">
     <nav class="sidebar" id="sideNav">
+      <div class="nav-group-title">业绩总览</div>
       <button class="nav-btn active" data-target="sec-biz"><span class="emoji">🏆</span>商务业绩</button>
       <button class="nav-btn" data-target="sec-bizgoal"><span class="emoji">🎯</span>商务目标达成表</button>
+      <button class="nav-btn" data-target="sec-perfcards"><span class="emoji">🃏</span>商务表现速览</button>
+      <div class="nav-group-title">目标与端口</div>
       <button class="nav-btn" data-target="sec-category"><span class="emoji">🗂️</span>分类型完成度</button>
       <button class="nav-btn" data-target="sec-porttable"><span class="emoji">📋</span>端口月度目标统计</button>
       <button class="nav-btn" data-target="sec-product"><span class="emoji">📦</span>产品业绩进度</button>
+      <div class="nav-group-title">收款结构分析</div>
       <button class="nav-btn" data-target="sec-method"><span class="emoji">🤝</span>合作方式占比</button>
       <button class="nav-btn" data-target="sec-newrenew"><span class="emoji">🔁</span>新增/续费</button>
       <button class="nav-btn" data-target="sec-partners"><span class="emoji">👥</span>合作方Top榜</button>
+      <div class="nav-group-title">趋势与提醒</div>
       <button class="nav-btn" data-target="sec-expiry"><span class="emoji">⏰</span>即将到期</button>
       <button class="nav-btn" data-target="sec-daily"><span class="emoji">📈</span>每日流水</button>
     </nav>
 
     <div class="content">
       <div id="errorBox"></div>
+
+      <div class="kpi-overview" id="kpiOverview">
+        <div class="kpi-card accent-a">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-label">总已收款</div>
+          <div class="kpi-num" id="kpiTotalCurrent">0万</div>
+          <div class="kpi-foot">当月团队累计回款总额</div>
+        </div>
+        <div class="kpi-card accent-b">
+          <div class="kpi-icon">🎯</div>
+          <div class="kpi-label">商务总目标</div>
+          <div class="kpi-num" id="kpiTotalTarget">0万</div>
+          <div class="kpi-foot">来自销售端口目标汇总</div>
+        </div>
+        <div class="kpi-card accent-c">
+          <div class="kpi-icon">📈</div>
+          <div class="kpi-label">团队达成率</div>
+          <div class="kpi-num" id="kpiAchieveRate">0%</div>
+          <div class="kpi-foot">总已收款 / 基础目标</div>
+        </div>
+        <div class="kpi-card accent-d">
+          <div class="kpi-icon">✨</div>
+          <div class="kpi-label">新增合作数</div>
+          <div class="kpi-num" id="kpiNewDealCount">0</div>
+          <div class="kpi-foot">新增类型记录自动累计</div>
+        </div>
+      </div>
 
       <div class="hero" id="heroSection">
         <div class="hero-main">
@@ -657,11 +728,17 @@
 
       const dealCount = deals.length;
       const avgDeal = dealCount ? (deals.reduce((s,d) => s + d.amount, 0) / dealCount) : 0;
+      const newDealCount = deals.filter(d => d.newRenew.trim() === '新增').length;
 
       document.getElementById('heroValue').textContent = fmt(totalCurrent);
       document.getElementById('heroTarget').textContent = fmt(totalTarget);
       document.getElementById('heroBarFill').style.width = totalPct + '%';
       document.getElementById('heroPct').textContent = totalPct.toFixed(2) + '% 已完成';
+
+      document.getElementById('kpiTotalCurrent').textContent = fmt(totalCurrent);
+      document.getElementById('kpiTotalTarget').textContent = fmt(totalTarget);
+      document.getElementById('kpiAchieveRate').textContent = totalPct.toFixed(1) + '%';
+      document.getElementById('kpiNewDealCount').textContent = newDealCount;
 
       const topBiz = bizRows[0];
       const topProduct = productRows[0];
@@ -726,6 +803,24 @@
       }
       bizTableHtml += '</div></div>';
       container.innerHTML += bizTableHtml;
+
+      // ===== Section: 商务表现速览 (perf cards) =====
+      let perfHtml = `<div class="section" id="sec-perfcards"><div class="card"><h2>商务表现速览 <span class="tag">PERFORMANCE CARDS</span></h2><div class="perf-grid">`;
+      bizRows.forEach((b, idx) => {
+        const pct = pctOf(b.target, b.current);
+        const color = pct >= 100 ? '#34d399' : pct >= 50 ? '#fbbf24' : '#fb7185';
+        perfHtml += `
+          <div class="perf-card" data-biz="${b.name}">
+            <div class="perf-rank">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '#'+(idx+1)}</div>
+            <div class="perf-name">${b.name}</div>
+            <div class="perf-amount" style="color:${color}">${fmt(b.current)}</div>
+            <div class="perf-target">目标 ${fmt(b.target)}</div>
+            <div class="perf-ring-bg"><div class="perf-ring-fill" style="width:${Math.min(100,pct)}%;background:${color}"></div></div>
+            <div class="perf-pct" style="color:${color}">${pct.toFixed(1)}% 已完成</div>
+          </div>`;
+      });
+      perfHtml += `</div></div></div>`;
+      container.innerHTML += perfHtml;
 
       // ===== Section: 分类型目标完成度 =====
       let typeProgressHtml = '';
@@ -907,6 +1002,11 @@
         return breakdownPopoverHtml(`${cat} · 各商务完成情况`, '该分类总收款', entries);
       });
       bindPopoverTriggers('.hbar-item.clickable[data-biz]', (el) => {
+        const bizName = el.dataset.biz;
+        const entries = Object.entries(bizCategoryBreakdown[bizName] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+        return breakdownPopoverHtml(`${bizName} · 各分类业绩占比`, `${bizName} 本月总业绩`, entries);
+      });
+      bindPopoverTriggers('.perf-card[data-biz]', (el) => {
         const bizName = el.dataset.biz;
         const entries = Object.entries(bizCategoryBreakdown[bizName] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
         return breakdownPopoverHtml(`${bizName} · 各分类业绩占比`, `${bizName} 本月总业绩`, entries);
