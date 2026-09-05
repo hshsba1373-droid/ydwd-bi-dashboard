@@ -679,17 +679,20 @@
 
       // 商务 新增/续费/合作数 明细（按合作群组去重，同一广告主只算一个）
       const bizDealStats = {};
-      bizNames.forEach(bn => { bizDealStats[bn] = { newAmount: 0, renewAmount: 0, newPartners: new Set() }; });
+      bizNames.forEach(bn => { bizDealStats[bn] = { newAmount: 0, renewAmount: 0, newPartners: new Set(), renewPartners: new Set() }; });
       deals.forEach(d => {
         const bizName = d.biz.trim() || '未标注';
-        if (!bizDealStats[bizName]) bizDealStats[bizName] = { newAmount: 0, renewAmount: 0, newPartners: new Set() };
+        if (!bizDealStats[bizName]) bizDealStats[bizName] = { newAmount: 0, renewAmount: 0, newPartners: new Set(), renewPartners: new Set() };
         const nr = d.newRenew.trim();
         const partnerKey = d.group.trim() || d.client.trim() || '未命名';
         if (nr === '新增') {
           bizDealStats[bizName].newAmount += d.amount;
           bizDealStats[bizName].newPartners.add(partnerKey);
         }
-        else if (nr === '续费') { bizDealStats[bizName].renewAmount += d.amount; }
+        else if (nr === '续费') {
+          bizDealStats[bizName].renewAmount += d.amount;
+          bizDealStats[bizName].renewPartners.add(partnerKey);
+        }
       });
 
       productCategoryBreakdown = {};
@@ -806,7 +809,7 @@
       let bizTableHtml = `<div class="section" id="sec-bizgoal"><div class="card"><h2>商务目标达成表 <span class="tag">TARGET ACHIEVEMENT</span></h2>`;
       if (bizRows.length) {
         bizTableHtml += `<table class="mini-table"><tr>
-          <th>商务</th><th>基础目标</th><th>已收款</th><th>新增金额</th><th>续费金额</th><th>新增笔数</th><th>完成进度</th>
+          <th>商务</th><th>基础目标</th><th>已收款</th><th>新增金额</th><th>续费金额</th><th>新增笔数</th><th>续费笔数</th><th>完成进度</th>
         </tr>`;
         bizRows.forEach(b => {
           const pct = pctOf(b.target, b.current);
@@ -819,6 +822,7 @@
             <td>${fmt(stats.newAmount)}</td>
             <td>${fmt(stats.renewAmount)}</td>
             <td>${stats.newPartners ? stats.newPartners.size : 0}</td>
+            <td>${stats.renewPartners ? stats.renewPartners.size : 0}</td>
             <td><span class="pill ${pillClass}">${pct.toFixed(1)}%</span></td>
           </tr>`;
         });
