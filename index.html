@@ -35,12 +35,11 @@
       radial-gradient(ellipse 800px 600px at 100% 0%, rgba(34,211,238,0.18), transparent 55%),
       radial-gradient(ellipse 700px 500px at 50% 110%, rgba(251,113,133,0.12), transparent 55%);
   }
-  .container { max-width: 1520px; margin: 0 auto; padding: 32px 32px 60px; }
 
   /* ---------- Header ---------- */
   .header {
     display: flex; justify-content: space-between; align-items: flex-start;
-    flex-wrap: wrap; gap: 16px; margin-bottom: 28px;
+    flex-wrap: wrap; gap: 16px; padding: 24px 32px 18px;
   }
   .brand { display: flex; align-items: center; gap: 14px; }
   .brand-icon {
@@ -61,9 +60,46 @@
     box-shadow: 0 0 10px 3px rgba(34,211,238,0.7); animation: pulse 1.6s infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
+  /* ---------- Layout: Sidebar + Content ---------- */
+  .layout { display: flex; align-items: flex-start; max-width: 1600px; margin: 0 auto; padding: 0 32px 60px; gap: 24px; }
+  .sidebar {
+    position: sticky; top: 24px; flex-shrink: 0; width: 208px;
+    display: flex; flex-direction: column; gap: 6px;
+    max-height: calc(100vh - 48px); overflow-y: auto;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+  .nav-btn {
+    display: flex; align-items: center; gap: 10px; text-align: left;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    color: var(--text-2); font-size: 13px; font-weight: 500;
+    padding: 11px 16px; border-radius: 12px; cursor: pointer;
+    transition: all 0.2s ease; backdrop-filter: blur(10px); width: 100%;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-1); transform: translateX(3px); }
+  .nav-btn.active {
+    background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(34,211,238,0.15));
+    border-color: rgba(139,92,246,0.4); color: #fff;
+    box-shadow: 0 4px 16px -4px rgba(139,92,246,0.5);
+  }
+  .nav-btn .emoji { font-size: 15px; flex-shrink: 0; }
+
+  @media (max-width: 900px) {
+    .layout { flex-direction: column; }
+    .sidebar {
+      position: sticky; top: 0; z-index: 20; width: 100%; max-height: none;
+      flex-direction: row; overflow-x: auto; overflow-y: visible;
+      background: rgba(3,3,8,0.85); backdrop-filter: blur(12px);
+      padding: 10px 0; margin: 0 -32px; padding-left: 32px; padding-right: 32px;
+    }
+    .nav-btn { flex-shrink: 0; width: auto; white-space: nowrap; }
+  }
+
+  .content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
+
   /* ---------- Hero ---------- */
-  .hero { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; margin-bottom: 22px; }
-  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+  .hero { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; }
+  @media (max-width: 700px) { .hero { grid-template-columns: 1fr; } }
   .hero-main {
     background: linear-gradient(145deg, rgba(139,92,246,0.14), rgba(34,211,238,0.05));
     border: 1px solid var(--glass-border);
@@ -104,43 +140,12 @@
     font-size: 15px; background: rgba(255,255,255,0.06); flex-shrink: 0;
   }
 
-  /* ---------- Tab Navigation ---------- */
-  .tab-nav {
-    display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto;
-    padding-bottom: 4px; scrollbar-width: thin;
-  }
-  .tab-nav::-webkit-scrollbar { height: 4px; }
-  .tab-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-  .tab-btn {
-    flex-shrink: 0;
-    background: var(--glass); border: 1px solid var(--glass-border);
-    color: var(--text-2); font-size: 13px; font-weight: 500;
-    padding: 10px 18px; border-radius: 12px; cursor: pointer;
-    display: flex; align-items: center; gap: 7px;
-    transition: all 0.2s ease; backdrop-filter: blur(10px);
-    white-space: nowrap;
-  }
-  .tab-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-1); transform: scale(1.04); }
-  .tab-btn:active { transform: scale(0.96); }
-  .tab-btn.active {
-    background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(34,211,238,0.15));
-    border-color: rgba(139,92,246,0.4);
-    color: #fff;
-    box-shadow: 0 4px 16px -4px rgba(139,92,246,0.5);
-    transform: scale(1.05);
-  }
-  .tab-btn .emoji { font-size: 14px; }
-
-  /* ---------- Panels ---------- */
-  .panel { display: none; }
-  .panel.active { display: block; animation: fadeIn 0.25s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
+  /* ---------- Sections (always rendered, stacked, scrollable) ---------- */
+  .section { scroll-margin-top: 16px; }
   .card {
     background: var(--glass); border: 1px solid var(--glass-border); border-radius: 22px;
     padding: 26px 28px; backdrop-filter: blur(16px);
     box-shadow: 0 24px 60px -30px rgba(0,0,0,0.6);
-    transition: box-shadow 0.2s ease;
   }
   .card h2 {
     font-size: 15px; font-weight: 600; color: var(--text-1); margin-bottom: 20px;
@@ -148,73 +153,58 @@
   }
   .card h2 .tag { font-size: 10.5px; color: var(--text-3); font-weight: 500; letter-spacing: 0.3px; }
 
-  /* ---------- Modal (category drill-down) ---------- */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(3,3,8,0.72); backdrop-filter: blur(6px);
-    display: none; align-items: center; justify-content: center; z-index: 100; padding: 24px;
+  /* ---------- Popover (hover / click drill-down) ---------- */
+  .popover {
+    position: fixed; z-index: 200; display: none;
+    background: linear-gradient(160deg, rgba(22,22,34,0.98), rgba(13,13,21,0.98));
+    border: 1px solid var(--glass-border); border-radius: 18px;
+    padding: 20px 22px; max-width: 380px; width: 340px; max-height: 60vh; overflow-y: auto;
+    box-shadow: 0 30px 80px -16px rgba(0,0,0,0.75);
   }
-  .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
-  .modal-box {
-    background: linear-gradient(160deg, rgba(20,20,32,0.98), rgba(12,12,20,0.98));
-    border: 1px solid var(--glass-border); border-radius: 22px;
-    padding: 28px 30px; max-width: 480px; width: 100%; max-height: 80vh; overflow-y: auto;
-    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8);
-    transform: scale(0.94); animation: modalPop 0.22s ease forwards;
-  }
-  @keyframes modalPop { to { transform: scale(1); } }
-  .modal-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--glass-border);
-  }
-  .modal-header h3 { font-size: 16px; font-weight: 700; color: #fff; }
-  .modal-close {
-    width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06);
-    border: none; color: var(--text-2); font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .modal-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
-  .modal-total { color: var(--text-2); font-size: 13px; margin-bottom: 18px; }
-  .modal-total b { color: #fff; font-weight: 700; }
+  .popover::-webkit-scrollbar { width: 4px; }
+  .popover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+  .popover.active { display: block; animation: popIn 0.16s ease; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .popover-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .popover-total { color: var(--text-2); font-size: 12px; margin-bottom: 14px; }
+  .popover-total b { color: #fff; font-weight: 700; }
 
   /* split layout for panels that combine chart + list */
-  .panel-split { display: grid; grid-template-columns: 320px 1fr; gap: 28px; align-items: start; }
-  @media (max-width: 800px) { .panel-split { grid-template-columns: 1fr; } }
+  .panel-split { display: grid; grid-template-columns: 300px 1fr; gap: 26px; align-items: start; }
+  @media (max-width: 760px) { .panel-split { grid-template-columns: 1fr; } }
 
-  .hbar-item { margin-bottom: 16px; transition: transform 0.15s ease; }
-  .hbar-item:hover { transform: scale(1.015); }
+  .hbar-item { margin-bottom: 15px; transition: transform 0.15s ease; }
   .hbar-item:last-child { margin-bottom: 0; }
-  .hbar-item.clickable { cursor: pointer; padding: 8px; border-radius: 12px; margin: -8px -8px 8px -8px; }
-  .hbar-item.clickable:hover { background: rgba(255,255,255,0.04); transform: scale(1.02); }
-  .hbar-item.clickable:active { transform: scale(0.98); }
-  .hbar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; gap: 8px; }
-  .hbar-name { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #e5e7f0; font-weight: 500; min-width: 0; }
+  .hbar-item.clickable { cursor: pointer; padding: 7px; border-radius: 12px; margin: -7px -7px 8px -7px; }
+  .hbar-item.clickable:hover { background: rgba(255,255,255,0.045); }
+  .hbar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; gap: 8px; }
+  .hbar-name { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #e5e7f0; font-weight: 500; min-width: 0; }
   .hbar-name span.txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .rank-badge {
-    width: 22px; height: 22px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.06); color: var(--text-2); flex-shrink: 0;
+    width: 20px; height: 20px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700; background: rgba(255,255,255,0.06); color: var(--text-2); flex-shrink: 0;
   }
   .rank-badge.r1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1c1300; }
   .rank-badge.r2 { background: linear-gradient(135deg, #e2e8f0, #94a3b8); color: #1c1300; }
   .rank-badge.r3 { background: linear-gradient(135deg, #fb923c, #ea580c); color: #1c1300; }
-  .hbar-value { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; }
-  .hbar-track { height: 8px; border-radius: 6px; background: rgba(255,255,255,0.06); overflow: hidden; }
+  .hbar-value { font-size: 12.5px; font-weight: 700; color: #fff; white-space: nowrap; }
+  .hbar-track { height: 7px; border-radius: 6px; background: rgba(255,255,255,0.06); overflow: hidden; }
   .hbar-fill { height: 100%; border-radius: 6px; transition: width 0.6s ease; }
-  .hbar-sub { font-size: 11px; color: var(--text-3); margin-top: 5px; }
+  .hbar-sub { font-size: 10.5px; color: var(--text-3); margin-top: 4px; }
 
-  .chart-canvas-holder { position: relative; height: 280px; }
-  .chart-canvas-holder.tall { height: 340px; }
-  .chart-canvas-holder.short { height: 220px; }
+  .chart-canvas-holder { position: relative; height: 260px; }
+  .chart-canvas-holder.tall { height: 320px; }
 
   .doughnut-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 16px; justify-content: center; }
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); }
   .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 
-  table.mini-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.mini-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
   table.mini-table th {
-    text-align: left; color: var(--text-3); font-weight: 500; padding: 8px 10px;
-    border-bottom: 1px solid var(--glass-border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;
+    text-align: left; color: var(--text-3); font-weight: 500; padding: 7px 9px;
+    border-bottom: 1px solid var(--glass-border); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px;
   }
-  table.mini-table td { padding: 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #d7dae4; }
+  table.mini-table td { padding: 9px 9px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #d7dae4; }
   table.mini-table tr:last-child td { border-bottom: none; }
   .pill {
     display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
@@ -223,83 +213,76 @@
   .pill.danger { background: rgba(244,63,94,0.15); color: #fb7185; }
   .pill.ok { background: rgba(52,211,153,0.15); color: #6ee7b7; }
 
-  .empty-hint { color: var(--text-3); font-size: 14px; padding: 50px 0; text-align: center; }
+  .empty-hint { color: var(--text-3); font-size: 14px; padding: 40px 0; text-align: center; }
 
   .loading { color: var(--text-2); text-align: center; padding: 80px; font-size: 14px; }
   .error {
     color: #fca5a5; background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.3);
-    padding: 12px 18px; border-radius: 14px; margin-bottom: 18px; font-size: 13px;
+    padding: 12px 18px; border-radius: 14px; margin-bottom: -4px; font-size: 13px;
   }
-  .footer-note { text-align: center; color: var(--text-3); font-size: 12px; margin-top: 32px; letter-spacing: 0.3px; }
+  .footer-note { text-align: center; color: var(--text-3); font-size: 12px; margin-top: 8px; letter-spacing: 0.3px; }
 </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="brand">
-        <div class="brand-icon">🧧</div>
-        <div>
-          <h1>伊甸各产品收款 BI 看板</h1>
-          <div class="sub">Google Sheets 实时数据同步 · 9月收款明细登记表</div>
-        </div>
-      </div>
-      <div class="status-pill"><span class="dot"></span><span id="lastUpdated">同步中...</span></div>
-    </div>
-
-    <div id="errorBox"></div>
-
-    <div class="hero" id="heroSection">
-      <div class="hero-main">
-        <div class="hero-label">本月累计业绩</div>
-        <div class="hero-value" id="heroValue">¥0</div>
-        <div class="hero-target">目标 <b id="heroTarget">¥0</b></div>
-        <div class="hero-bar-bg"><div class="hero-bar-fill" id="heroBarFill" style="width:0%"></div></div>
-        <div class="hero-pct" id="heroPct">0.00% 已完成</div>
-      </div>
-      <div class="kpi-stack">
-        <div class="kpi-mini">
-          <div><div class="l">领先商务</div><div class="v c1" id="topBizName">-</div></div>
-          <div class="icon">🏆</div>
-        </div>
-        <div class="kpi-mini">
-          <div><div class="l">爆款产品</div><div class="v c2" id="topProductName">-</div></div>
-          <div class="icon">🚀</div>
-        </div>
-        <div class="kpi-mini">
-          <div><div class="l">总单数 / 客单均价</div><div class="v c3" id="dealStats">-</div></div>
-          <div class="icon">📊</div>
-        </div>
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">🧧</div>
+      <div>
+        <h1>伊甸各产品收款 BI 看板</h1>
+        <div class="sub">Google Sheets 实时数据同步 · 9月收款明细登记表</div>
       </div>
     </div>
-
-    <div class="tab-nav" id="tabNav">
-      <button class="tab-btn active" data-tab="biz"><span class="emoji">🏆</span>商务业绩</button>
-      <button class="tab-btn" data-tab="category"><span class="emoji">🗂️</span>分类型完成度</button>
-      <button class="tab-btn" data-tab="product"><span class="emoji">📦</span>产品业绩进度</button>
-      <button class="tab-btn" data-tab="method"><span class="emoji">🤝</span>合作方式占比</button>
-      <button class="tab-btn" data-tab="newrenew"><span class="emoji">🔁</span>新增/续费</button>
-      <button class="tab-btn" data-tab="partners"><span class="emoji">👥</span>合作方Top榜</button>
-      <button class="tab-btn" data-tab="expiry"><span class="emoji">⏰</span>即将到期</button>
-      <button class="tab-btn" data-tab="daily"><span class="emoji">📈</span>每日流水</button>
-    </div>
-
-    <div id="tabContent">
-      <div class="loading">数据加载中，请稍候...</div>
-    </div>
-
-    <div class="footer-note">幸运儿自动看板 · 每 60 秒刷新一次</div>
+    <div class="status-pill"><span class="dot"></span><span id="lastUpdated">同步中...</span></div>
   </div>
 
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3 id="modalTitle">分类明细</h3>
-        <button class="modal-close" id="modalClose">✕</button>
+  <div class="layout">
+    <nav class="sidebar" id="sideNav">
+      <button class="nav-btn active" data-target="sec-biz"><span class="emoji">🏆</span>商务业绩</button>
+      <button class="nav-btn" data-target="sec-category"><span class="emoji">🗂️</span>分类型完成度</button>
+      <button class="nav-btn" data-target="sec-product"><span class="emoji">📦</span>产品业绩进度</button>
+      <button class="nav-btn" data-target="sec-method"><span class="emoji">🤝</span>合作方式占比</button>
+      <button class="nav-btn" data-target="sec-newrenew"><span class="emoji">🔁</span>新增/续费</button>
+      <button class="nav-btn" data-target="sec-partners"><span class="emoji">👥</span>合作方Top榜</button>
+      <button class="nav-btn" data-target="sec-expiry"><span class="emoji">⏰</span>即将到期</button>
+      <button class="nav-btn" data-target="sec-daily"><span class="emoji">📈</span>每日流水</button>
+    </nav>
+
+    <div class="content">
+      <div id="errorBox"></div>
+
+      <div class="hero" id="heroSection">
+        <div class="hero-main">
+          <div class="hero-label">本月累计业绩</div>
+          <div class="hero-value" id="heroValue">¥0</div>
+          <div class="hero-target">目标 <b id="heroTarget">¥0</b></div>
+          <div class="hero-bar-bg"><div class="hero-bar-fill" id="heroBarFill" style="width:0%"></div></div>
+          <div class="hero-pct" id="heroPct">0.00% 已完成</div>
+        </div>
+        <div class="kpi-stack">
+          <div class="kpi-mini">
+            <div><div class="l">领先商务</div><div class="v c1" id="topBizName">-</div></div>
+            <div class="icon">🏆</div>
+          </div>
+          <div class="kpi-mini">
+            <div><div class="l">爆款产品</div><div class="v c2" id="topProductName">-</div></div>
+            <div class="icon">🚀</div>
+          </div>
+          <div class="kpi-mini">
+            <div><div class="l">总单数 / 客单均价</div><div class="v c3" id="dealStats">-</div></div>
+            <div class="icon">📊</div>
+          </div>
+        </div>
       </div>
-      <div class="modal-total" id="modalTotal"></div>
-      <div id="modalBody"></div>
+
+      <div id="sectionsContainer">
+        <div class="loading">数据加载中，请稍候...</div>
+      </div>
+
+      <div class="footer-note">幸运儿自动看板 · 每 60 秒刷新一次 · 鼠标悬停或点击条目查看更多明细</div>
     </div>
   </div>
+
+  <div class="popover" id="popover"></div>
 
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=1198459175";
@@ -307,13 +290,12 @@
     let dailyChartInstance = null;
     let typeChartInstance = null;
     let bizChartInstance = null;
-    let activeTab = 'biz';
-    let categoryBizBreakdown = {}; // { categoryName: { bizName: amount } }
-    let bizCategoryBreakdown = {}; // { bizName: { categoryName: amount } }
-    let productCategoryBreakdown = {}; // { productName: { categoryName: amount } }
-    let methodCategoryBreakdown = {}; // { method: { categoryName: amount } }
-    let newRenewCategoryBreakdown = {}; // { newRenewLabel: { categoryName: amount } }
-    let groupDealsMap = {}; // { groupOrClientName: [deal, ...] }
+    let categoryBizBreakdown = {};
+    let bizCategoryBreakdown = {};
+    let productCategoryBreakdown = {};
+    let methodCategoryBreakdown = {};
+    let newRenewCategoryBreakdown = {};
+    let groupDealsMap = {};
 
     const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635','#f97316','#38bdf8'];
 
@@ -351,22 +333,118 @@
       return new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]));
     }
 
-    // ---- Tab switching ----
-    function initTabs() {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
+    function rankBadge(idx) {
+      const cls = idx === 0 ? 'r1' : idx === 1 ? 'r2' : idx === 2 ? 'r3' : '';
+      const label = idx < 3 ? ['①','②','③'][idx] : (idx + 1);
+      return `<span class="rank-badge ${cls}">${label}</span>`;
+    }
+
+    // ---- Side nav: scroll-to + scroll-spy ----
+    function initSideNav() {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          activeTab = btn.dataset.tab;
-          applyActiveTab();
+          const target = document.getElementById(btn.dataset.target);
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
       });
     }
-    function applyActiveTab() {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === activeTab);
+    let scrollSpyObserver = null;
+    function initScrollSpy() {
+      if (scrollSpyObserver) scrollSpyObserver.disconnect();
+      const sections = document.querySelectorAll('.section');
+      if (!sections.length) return;
+      scrollSpyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.target === id);
+            });
+          }
+        });
+      }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+      sections.forEach(sec => scrollSpyObserver.observe(sec));
+    }
+
+    // ---- Popover (hover + click) ----
+    let popoverHideTimer = null;
+    function showPopoverAt(el, innerHtml) {
+      clearTimeout(popoverHideTimer);
+      const pop = document.getElementById('popover');
+      pop.innerHTML = innerHtml;
+      pop.classList.add('active');
+      // temporarily show off-screen to measure size
+      pop.style.left = '-9999px';
+      pop.style.top = '-9999px';
+      const rect = el.getBoundingClientRect();
+      const popRect = pop.getBoundingClientRect();
+      let left = rect.left;
+      let top = rect.bottom + 10;
+      if (left + popRect.width > window.innerWidth - 16) left = window.innerWidth - popRect.width - 16;
+      if (left < 16) left = 16;
+      if (top + popRect.height > window.innerHeight - 16) top = rect.top - popRect.height - 10;
+      if (top < 16) top = 16;
+      pop.style.left = left + 'px';
+      pop.style.top = top + 'px';
+    }
+    function hidePopoverSoon() {
+      clearTimeout(popoverHideTimer);
+      popoverHideTimer = setTimeout(() => {
+        document.getElementById('popover').classList.remove('active');
+      }, 160);
+    }
+    function bindPopoverTriggers(selector, buildHtmlFn) {
+      document.querySelectorAll(selector).forEach(el => {
+        const handler = () => showPopoverAt(el, buildHtmlFn(el));
+        el.addEventListener('mouseenter', handler);
+        el.addEventListener('mouseleave', hidePopoverSoon);
+        el.addEventListener('click', (e) => { e.stopPropagation(); handler(); });
       });
-      document.querySelectorAll('.panel').forEach(panel => {
-        panel.classList.toggle('active', panel.id === 'panel-' + activeTab);
-      });
+    }
+
+    function breakdownPopoverHtml(title, totalLabel, entries) {
+      const total = entries.reduce((s, [,v]) => s + v, 0);
+      let body = '';
+      if (!entries.length) {
+        body = '<div class="empty-hint" style="padding:20px 0;">暂无数据</div>';
+      } else {
+        body = entries.map(([name, amount], idx) => {
+          const pct = total ? (amount / total * 100) : 0;
+          const color = PALETTE[idx % PALETTE.length];
+          return `
+            <div class="hbar-item">
+              <div class="hbar-top">
+                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${name}</span></span>
+                <span class="hbar-value">${fmt(amount)} <span style="color:var(--text-3);font-weight:500;">(${pct.toFixed(1)}%)</span></span>
+              </div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
+            </div>`;
+        }).join('');
+      }
+      return `<div class="popover-title">${title}</div><div class="popover-total">${totalLabel} <b>${fmt(total)}</b></div>${body}`;
+    }
+
+    function groupDetailPopoverHtml(groupName) {
+      const dealsForGroup = groupDealsMap[groupName] || [];
+      const total = dealsForGroup.reduce((s, d) => s + d.amount, 0);
+      let body = '';
+      if (!dealsForGroup.length) {
+        body = '<div class="empty-hint" style="padding:20px 0;">暂无合作明细</div>';
+      } else {
+        const sorted = [...dealsForGroup].sort((a,b) => b.amount - a.amount);
+        body = `<table class="mini-table">
+          <tr><th>产品</th><th>价格</th><th>分类</th><th>模式</th><th>到期</th></tr>
+          ${sorted.map(d => `
+            <tr>
+              <td>${d.product.split('/')[0]}</td>
+              <td>${fmt(d.amount)}</td>
+              <td>${d.productType || '-'}</td>
+              <td>${d.method || '-'}</td>
+              <td>${d.expiry || '-'}</td>
+            </tr>`).join('')}
+        </table>`;
+      }
+      return `<div class="popover-title">${groupName} · 合作明细</div><div class="popover-total">合计收款 <b>${fmt(total)}</b> · 共 ${dealsForGroup.length} 笔</div>${body}`;
     }
 
     async function loadData() {
@@ -383,12 +461,6 @@
         document.getElementById('errorBox').innerHTML =
           '<div class="error">⚠️ 数据加载失败：' + e.message + '（60秒后自动重试）</div>';
       }
-    }
-
-    function rankBadge(idx) {
-      const cls = idx === 0 ? 'r1' : idx === 1 ? 'r2' : idx === 2 ? 'r3' : '';
-      const label = idx < 3 ? ['①','②','③'][idx] : (idx + 1);
-      return `<span class="rank-badge ${cls}">${label}</span>`;
     }
 
     function render(rows) {
@@ -427,7 +499,6 @@
         }
       }
 
-      // --- 扫描所有产品区块的明细行，收集完整交易记录 ---
       const blockStart = 8;
       const blockWidth = 10;
       const numBlocks = 19;
@@ -462,13 +533,11 @@
         }
       }
 
-      // 合作方式占比
       const methodTotals = {};
       deals.forEach(d => { if (d.method) methodTotals[d.method] = (methodTotals[d.method] || 0) + d.amount; });
       const methodEntries = Object.entries(methodTotals).sort((a,b) => b[1] - a[1]);
       const methodGrandTotal = methodEntries.reduce((s, [,v]) => s + v, 0);
 
-      // 分类型 × 商务 交叉统计（点击某分类查看各商务贡献）
       categoryBizBreakdown = {};
       typeNames.forEach(tn => { categoryBizBreakdown[tn] = {}; });
       deals.forEach(d => {
@@ -478,7 +547,6 @@
         categoryBizBreakdown[cat][bizName] = (categoryBizBreakdown[cat][bizName] || 0) + d.amount;
       });
 
-      // 商务 × 分类型 交叉统计（点击某商务查看其各分类占比）
       bizCategoryBreakdown = {};
       bizNames.forEach(bn => { bizCategoryBreakdown[bn] = {}; });
       deals.forEach(d => {
@@ -488,7 +556,6 @@
         bizCategoryBreakdown[bizName][cat] = (bizCategoryBreakdown[bizName][cat] || 0) + d.amount;
       });
 
-      // 产品 × 分类型 交叉统计（点击某产品查看其分类构成）
       productCategoryBreakdown = {};
       deals.forEach(d => {
         const prod = d.product;
@@ -497,7 +564,6 @@
         productCategoryBreakdown[prod][cat] = (productCategoryBreakdown[prod][cat] || 0) + d.amount;
       });
 
-      // 合作方式 × 分类型 交叉统计
       methodCategoryBreakdown = {};
       deals.forEach(d => {
         if (!d.method) return;
@@ -506,7 +572,6 @@
         methodCategoryBreakdown[d.method][cat] = (methodCategoryBreakdown[d.method][cat] || 0) + d.amount;
       });
 
-      // 新增/续费 × 分类型 交叉统计
       newRenewCategoryBreakdown = {};
       deals.forEach(d => {
         const key = d.newRenew.trim() || '未标注';
@@ -515,7 +580,6 @@
         newRenewCategoryBreakdown[key][cat] = (newRenewCategoryBreakdown[key][cat] || 0) + d.amount;
       });
 
-      // 合作群组/客户 -> 明细列表（点击群组查看每笔单：价格/分类/模式/到期时间）
       groupDealsMap = {};
       deals.forEach(d => {
         const key = d.group.trim() || d.client.trim() || '未命名';
@@ -523,7 +587,6 @@
         groupDealsMap[key].push(d);
       });
 
-      // 新增 vs 续费占比
       const newRenewTotals = {};
       deals.forEach(d => {
         const key = d.newRenew.trim() || '未标注';
@@ -532,7 +595,6 @@
       const newRenewEntries = Object.entries(newRenewTotals).sort((a,b) => b[1] - a[1]);
       const newRenewGrandTotal = newRenewEntries.reduce((s, [,v]) => s + v, 0);
 
-      // 合作群组/客户 Top榜
       const groupTotals = {};
       deals.forEach(d => {
         const key = d.group.trim() || d.client.trim() || '未命名';
@@ -540,7 +602,6 @@
       });
       const groupEntries = Object.entries(groupTotals).sort((a,b) => b[1] - a[1]).slice(0, 10);
 
-      // 即将到期（未来7天内）
       const today = new Date(); today.setHours(0,0,0,0);
       const in7days = new Date(today); in7days.setDate(in7days.getDate() + 7);
       const expiringDeals = deals
@@ -548,11 +609,9 @@
         .filter(d => d.expiryDate && d.expiryDate >= today && d.expiryDate <= in7days)
         .sort((a,b) => a.expiryDate - b.expiryDate);
 
-      // 总单数与客单均价
       const dealCount = deals.length;
       const avgDeal = dealCount ? (deals.reduce((s,d) => s + d.amount, 0) / dealCount) : 0;
 
-      // --- Hero ---
       document.getElementById('heroValue').textContent = fmt(totalCurrent);
       document.getElementById('heroTarget').textContent = fmt(totalTarget);
       document.getElementById('heroBarFill').style.width = totalPct + '%';
@@ -564,10 +623,10 @@
       document.getElementById('topProductName').textContent = topProduct ? `${topProduct.name.split('/')[0]} · ${fmt(topProduct.total)}` : '暂无数据';
       document.getElementById('dealStats').textContent = dealCount ? `${dealCount}单 / ${fmt(avgDeal)}` : '暂无数据';
 
-      const tabContent = document.getElementById('tabContent');
-      tabContent.innerHTML = '';
+      const container = document.getElementById('sectionsContainer');
+      container.innerHTML = '';
 
-      // ===== Panel: 商务业绩排名 =====
+      // ===== Section: 商务业绩排名 =====
       let bizListHtml = '';
       const maxBiz = Math.max(...bizRows.map(b => b.current), 1);
       bizRows.forEach((b, idx) => {
@@ -581,11 +640,11 @@
               <span class="hbar-value">${fmt(b.current)}</span>
             </div>
             <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">目标 ${fmt(b.target)} · 完成 ${pct.toFixed(1)}% · 点击查看分类占比</div>
+            <div class="hbar-sub">目标 ${fmt(b.target)} · 完成 ${pct.toFixed(1)}% · 悬停查看分类占比</div>
           </div>`;
       });
-      tabContent.innerHTML += `
-        <div class="panel" id="panel-biz"><div class="card">
+      container.innerHTML += `
+        <div class="section" id="sec-biz"><div class="card">
           <h2>商务业绩排名 <span class="tag">TEAM PERFORMANCE</span></h2>
           <div class="panel-split">
             <div>
@@ -596,7 +655,7 @@
           </div>
         </div></div>`;
 
-      // ===== Panel: 分类型目标完成度 =====
+      // ===== Section: 分类型目标完成度 =====
       let typeProgressHtml = '';
       const maxType = Math.max(...typeRows.map(t => t.current), 1);
       typeRows.forEach((t, idx) => {
@@ -610,11 +669,11 @@
               <span class="hbar-value">${fmt(t.current)}</span>
             </div>
             <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">目标 ${fmt(t.target)} · 完成 ${t.target ? pct.toFixed(1)+'%' : '-'} · 点击查看各商务贡献</div>
+            <div class="hbar-sub">目标 ${fmt(t.target)} · 完成 ${t.target ? pct.toFixed(1)+'%' : '-'} · 悬停查看各商务贡献</div>
           </div>`;
       });
-      tabContent.innerHTML += `
-        <div class="panel" id="panel-category"><div class="card">
+      container.innerHTML += `
+        <div class="section" id="sec-category"><div class="card">
           <h2>分类型目标完成度 <span class="tag">BY CATEGORY</span></h2>
           <div class="panel-split">
             <div>
@@ -625,8 +684,8 @@
           </div>
         </div></div>`;
 
-      // ===== Panel: 伊甸维度产品业绩进度 =====
-      let prodHtml = `<div class="panel" id="panel-product"><div class="card"><h2>伊甸维度产品业绩进度 <span class="tag">PRODUCT TARGET</span></h2>`;
+      // ===== Section: 伊甸维度产品业绩进度 =====
+      let prodHtml = `<div class="section" id="sec-product"><div class="card"><h2>伊甸维度产品业绩进度 <span class="tag">PRODUCT TARGET</span></h2>`;
       productRows.forEach((p, idx) => {
         const pct = pctOf(p.target, p.total);
         const widthPct = p.target ? pct : 0;
@@ -638,14 +697,14 @@
               <span class="hbar-value">${fmt(p.total)}</span>
             </div>
             <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">目标 ${p.target ? fmt(p.target) : '未设定'} · 完成 ${p.target ? pct.toFixed(1)+'%' : '-'} · 点击查看分类占比</div>
+            <div class="hbar-sub">目标 ${p.target ? fmt(p.target) : '未设定'} · 完成 ${p.target ? pct.toFixed(1)+'%' : '-'} · 悬停查看分类占比</div>
           </div>`;
       });
       prodHtml += '</div></div>';
-      tabContent.innerHTML += prodHtml;
+      container.innerHTML += prodHtml;
 
-      // ===== Panel: 合作方式占比 =====
-      let methodHtml = `<div class="panel" id="panel-method"><div class="card"><h2>合作方式占比 <span class="tag">BY DEAL TYPE</span></h2>`;
+      // ===== Section: 合作方式占比 =====
+      let methodHtml = `<div class="section" id="sec-method"><div class="card"><h2>合作方式占比 <span class="tag">BY DEAL TYPE</span></h2>`;
       if (methodEntries.length) {
         methodEntries.forEach(([method, amount], idx) => {
           const pct = methodGrandTotal ? (amount / methodGrandTotal) * 100 : 0;
@@ -657,17 +716,17 @@
                 <span class="hbar-value">${fmt(amount)}</span>
               </div>
               <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
-              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}% · 点击查看分类占比</div>
+              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}% · 悬停查看分类占比</div>
             </div>`;
         });
       } else {
         methodHtml += `<div class="empty-hint">暂无合作方式数据</div>`;
       }
       methodHtml += '</div></div>';
-      tabContent.innerHTML += methodHtml;
+      container.innerHTML += methodHtml;
 
-      // ===== Panel: 新增 / 续费构成 =====
-      let newRenewHtml = `<div class="panel" id="panel-newrenew"><div class="card"><h2>新增 / 续费构成 <span class="tag">NEW VS RENEWAL</span></h2>`;
+      // ===== Section: 新增 / 续费构成 =====
+      let newRenewHtml = `<div class="section" id="sec-newrenew"><div class="card"><h2>新增 / 续费构成 <span class="tag">NEW VS RENEWAL</span></h2>`;
       if (newRenewEntries.length) {
         const nrColors = { '新增': '#34d399', '续费': '#60a5fa' };
         newRenewEntries.forEach(([label, amount], idx) => {
@@ -680,17 +739,17 @@
                 <span class="hbar-value">${fmt(amount)}</span>
               </div>
               <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
-              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}% · 点击查看分类占比</div>
+              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}% · 悬停查看分类占比</div>
             </div>`;
         });
       } else {
         newRenewHtml += `<div class="empty-hint">暂无新增/续费数据</div>`;
       }
       newRenewHtml += '</div></div>';
-      tabContent.innerHTML += newRenewHtml;
+      container.innerHTML += newRenewHtml;
 
-      // ===== Panel: 合作群组/客户 Top榜 =====
-      let groupHtml = `<div class="panel" id="panel-partners"><div class="card"><h2>合作群组 / 客户 Top榜 <span class="tag">TOP PARTNERS</span></h2>`;
+      // ===== Section: 合作群组/客户 Top榜 =====
+      let groupHtml = `<div class="section" id="sec-partners"><div class="card"><h2>合作群组 / 客户 Top榜 <span class="tag">TOP PARTNERS</span></h2>`;
       if (groupEntries.length) {
         const maxGroup = Math.max(...groupEntries.map(([,v]) => v), 1);
         groupEntries.forEach(([name, amount], idx) => {
@@ -703,17 +762,17 @@
                 <span class="hbar-value">${fmt(amount)}</span>
               </div>
               <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-              <div class="hbar-sub">点击查看合作明细</div>
+              <div class="hbar-sub">悬停查看合作明细</div>
             </div>`;
         });
       } else {
         groupHtml += `<div class="empty-hint">暂无合作群组数据</div>`;
       }
       groupHtml += '</div></div>';
-      tabContent.innerHTML += groupHtml;
+      container.innerHTML += groupHtml;
 
-      // ===== Panel: 即将到期提醒 =====
-      let expiryHtml = `<div class="panel" id="panel-expiry"><div class="card"><h2>即将到期提醒 <span class="tag">EXPIRING IN 7 DAYS</span></h2>`;
+      // ===== Section: 即将到期提醒 =====
+      let expiryHtml = `<div class="section" id="sec-expiry"><div class="card"><h2>即将到期提醒 <span class="tag">EXPIRING IN 7 DAYS</span></h2>`;
       if (expiringDeals.length) {
         expiryHtml += `<table class="mini-table"><tr><th>产品</th><th>客户/群组</th><th>金额</th><th>到期</th><th>状态</th></tr>`;
         expiringDeals.forEach(d => {
@@ -733,162 +792,49 @@
         expiryHtml += `<div class="empty-hint">未来7天内暂无到期合作 ✅</div>`;
       }
       expiryHtml += '</div></div>';
-      tabContent.innerHTML += expiryHtml;
+      container.innerHTML += expiryHtml;
 
-      // ===== Panel: 每日流水趋势 =====
-      tabContent.innerHTML += `
-        <div class="panel" id="panel-daily"><div class="card">
+      // ===== Section: 每日流水趋势 =====
+      container.innerHTML += `
+        <div class="section" id="sec-daily"><div class="card">
           <h2>每日流水趋势 <span class="tag">SEPTEMBER DAILY</span></h2>
           <div class="chart-canvas-holder tall"><canvas id="dailyChart"></canvas></div>
         </div></div>`;
 
-      // --- render charts after DOM injected ---
       renderTypeChart(typeRows);
       renderBizChart(bizRows);
       renderDailyChart(dailyRows);
+      initScrollSpy();
 
-      // --- restore active tab visibility (panels rebuilt each refresh) ---
-      applyActiveTab();
-
-      // --- bind category/biz click-to-drilldown ---
-      document.querySelectorAll('.hbar-item.clickable[data-category]').forEach(el => {
-        el.addEventListener('click', () => openCategoryModal(el.dataset.category));
+      // --- bind popover triggers (hover + click) ---
+      bindPopoverTriggers('.hbar-item.clickable[data-category]', (el) => {
+        const cat = el.dataset.category;
+        const entries = Object.entries(categoryBizBreakdown[cat] || {}).sort((a,b) => b[1]-a[1]);
+        return breakdownPopoverHtml(`${cat} · 各商务完成情况`, '该分类总收款', entries);
       });
-      document.querySelectorAll('.hbar-item.clickable[data-biz]').forEach(el => {
-        el.addEventListener('click', () => openBizModal(el.dataset.biz));
+      bindPopoverTriggers('.hbar-item.clickable[data-biz]', (el) => {
+        const bizName = el.dataset.biz;
+        const entries = Object.entries(bizCategoryBreakdown[bizName] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+        return breakdownPopoverHtml(`${bizName} · 各分类业绩占比`, `${bizName} 本月总业绩`, entries);
       });
-      document.querySelectorAll('.hbar-item.clickable[data-product]').forEach(el => {
-        el.addEventListener('click', () => openGenericCategoryModal(el.dataset.product, productCategoryBreakdown, '产品', '总收款'));
+      bindPopoverTriggers('.hbar-item.clickable[data-product]', (el) => {
+        const name = el.dataset.product;
+        const entries = Object.entries(productCategoryBreakdown[name] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+        return breakdownPopoverHtml(`产品「${name.split('/')[0]}」· 分类占比`, '总收款', entries);
       });
-      document.querySelectorAll('.hbar-item.clickable[data-method]').forEach(el => {
-        el.addEventListener('click', () => openGenericCategoryModal(el.dataset.method, methodCategoryBreakdown, '合作方式', '总收款'));
+      bindPopoverTriggers('.hbar-item.clickable[data-method]', (el) => {
+        const name = el.dataset.method;
+        const entries = Object.entries(methodCategoryBreakdown[name] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+        return breakdownPopoverHtml(`合作方式「${name}」· 分类占比`, '总收款', entries);
       });
-      document.querySelectorAll('.hbar-item.clickable[data-newrenew]').forEach(el => {
-        el.addEventListener('click', () => openGenericCategoryModal(el.dataset.newrenew, newRenewCategoryBreakdown, '', '总收款'));
+      bindPopoverTriggers('.hbar-item.clickable[data-newrenew]', (el) => {
+        const name = el.dataset.newrenew;
+        const entries = Object.entries(newRenewCategoryBreakdown[name] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+        return breakdownPopoverHtml(`${name} · 分类占比`, '总收款', entries);
       });
-      document.querySelectorAll('.hbar-item.clickable[data-group]').forEach(el => {
-        el.addEventListener('click', () => openGroupDetailModal(el.dataset.group));
+      bindPopoverTriggers('.hbar-item.clickable[data-group]', (el) => {
+        return groupDetailPopoverHtml(el.dataset.group);
       });
-    }
-
-    function openCategoryModal(category) {
-      const breakdown = categoryBizBreakdown[category] || {};
-      const entries = Object.entries(breakdown).sort((a,b) => b[1] - a[1]);
-      const total = entries.reduce((s, [,v]) => s + v, 0);
-
-      document.getElementById('modalTitle').textContent = `${category} · 各商务完成情况`;
-      document.getElementById('modalTotal').innerHTML = `该分类总收款 <b>${fmt(total)}</b>`;
-
-      const body = document.getElementById('modalBody');
-      if (!entries.length) {
-        body.innerHTML = '<div class="empty-hint">暂无该分类的商务数据</div>';
-      } else {
-        body.innerHTML = entries.map(([name, amount], idx) => {
-          const pct = total ? (amount / total * 100) : 0;
-          const color = PALETTE[idx % PALETTE.length];
-          return `
-            <div class="hbar-item">
-              <div class="hbar-top">
-                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${name}</span></span>
-                <span class="hbar-value">${fmt(amount)} <span style="color:var(--text-3);font-weight:500;">(${pct.toFixed(1)}%)</span></span>
-              </div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
-            </div>`;
-        }).join('');
-      }
-
-      document.getElementById('modalOverlay').classList.add('active');
-    }
-
-    function openBizModal(bizName) {
-      const breakdown = bizCategoryBreakdown[bizName] || {};
-      const entries = Object.entries(breakdown).filter(([,v]) => v > 0).sort((a,b) => b[1] - a[1]);
-      const total = entries.reduce((s, [,v]) => s + v, 0);
-
-      document.getElementById('modalTitle').textContent = `${bizName} · 各分类业绩占比`;
-      document.getElementById('modalTotal').innerHTML = `${bizName} 本月总业绩 <b>${fmt(total)}</b>`;
-
-      const body = document.getElementById('modalBody');
-      if (!entries.length) {
-        body.innerHTML = '<div class="empty-hint">暂无该商务的分类数据</div>';
-      } else {
-        body.innerHTML = entries.map(([name, amount], idx) => {
-          const pct = total ? (amount / total * 100) : 0;
-          const color = PALETTE[idx % PALETTE.length];
-          return `
-            <div class="hbar-item">
-              <div class="hbar-top">
-                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${name}</span></span>
-                <span class="hbar-value">${fmt(amount)} <span style="color:var(--text-3);font-weight:500;">(${pct.toFixed(1)}%)</span></span>
-              </div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
-            </div>`;
-        }).join('');
-      }
-
-      document.getElementById('modalOverlay').classList.add('active');
-    }
-
-    function openGenericCategoryModal(name, breakdownMap, prefix, totalLabel) {
-      const breakdown = breakdownMap[name] || {};
-      const entries = Object.entries(breakdown).filter(([,v]) => v > 0).sort((a,b) => b[1] - a[1]);
-      const total = entries.reduce((s, [,v]) => s + v, 0);
-
-      const displayName = prefix ? `${prefix}「${name.split('/')[0]}」` : name;
-      document.getElementById('modalTitle').textContent = `${displayName} · 分类占比`;
-      document.getElementById('modalTotal').innerHTML = `${totalLabel} <b>${fmt(total)}</b>`;
-
-      const body = document.getElementById('modalBody');
-      if (!entries.length) {
-        body.innerHTML = '<div class="empty-hint">暂无分类数据</div>';
-      } else {
-        body.innerHTML = entries.map(([catName, amount], idx) => {
-          const pct = total ? (amount / total * 100) : 0;
-          const color = PALETTE[idx % PALETTE.length];
-          return `
-            <div class="hbar-item">
-              <div class="hbar-top">
-                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${catName}</span></span>
-                <span class="hbar-value">${fmt(amount)} <span style="color:var(--text-3);font-weight:500;">(${pct.toFixed(1)}%)</span></span>
-              </div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
-            </div>`;
-        }).join('');
-      }
-
-      document.getElementById('modalOverlay').classList.add('active');
-    }
-
-    function openGroupDetailModal(groupName) {
-      const dealsForGroup = groupDealsMap[groupName] || [];
-      const total = dealsForGroup.reduce((s, d) => s + d.amount, 0);
-
-      document.getElementById('modalTitle').textContent = `${groupName} · 合作明细`;
-      document.getElementById('modalTotal').innerHTML = `合计收款 <b>${fmt(total)}</b> · 共 ${dealsForGroup.length} 笔`;
-
-      const body = document.getElementById('modalBody');
-      if (!dealsForGroup.length) {
-        body.innerHTML = '<div class="empty-hint">暂无合作明细</div>';
-      } else {
-        const sorted = [...dealsForGroup].sort((a,b) => b.amount - a.amount);
-        body.innerHTML = `<table class="mini-table">
-          <tr><th>产品</th><th>价格</th><th>分类</th><th>模式</th><th>到期</th></tr>
-          ${sorted.map(d => `
-            <tr>
-              <td>${d.product.split('/')[0]}</td>
-              <td>${fmt(d.amount)}</td>
-              <td>${d.productType || '-'}</td>
-              <td>${d.method || '-'}</td>
-              <td>${d.expiry || '-'}</td>
-            </tr>`).join('')}
-        </table>`;
-      }
-
-      document.getElementById('modalOverlay').classList.add('active');
-    }
-
-    function closeCategoryModal() {
-      document.getElementById('modalOverlay').classList.remove('active');
     }
 
     function renderTypeChart(typeRows) {
@@ -957,7 +903,7 @@
       const ctx = document.getElementById('dailyChart');
       if (!ctx || !dailyRows.length) return;
       const c2d = ctx.getContext('2d');
-      const gradient = c2d.createLinearGradient(0, 0, 0, 340);
+      const gradient = c2d.createLinearGradient(0, 0, 0, 320);
       gradient.addColorStop(0, 'rgba(139,92,246,0.45)');
       gradient.addColorStop(1, 'rgba(34,211,238,0.02)');
 
@@ -996,11 +942,17 @@
       });
     }
 
-    initTabs();
-    document.getElementById('modalClose').addEventListener('click', closeCategoryModal);
-    document.getElementById('modalOverlay').addEventListener('click', (e) => {
-      if (e.target.id === 'modalOverlay') closeCategoryModal();
+    // popover: stay open while hovered, close when clicking elsewhere on page
+    document.getElementById('popover').addEventListener('mouseenter', () => clearTimeout(popoverHideTimer));
+    document.getElementById('popover').addEventListener('mouseleave', hidePopoverSoon);
+    document.addEventListener('click', (e) => {
+      const pop = document.getElementById('popover');
+      if (!pop.contains(e.target) && !e.target.closest('.hbar-item.clickable')) {
+        pop.classList.remove('active');
+      }
     });
+
+    initSideNav();
     loadData();
     setInterval(loadData, REFRESH_MS);
   </script>
