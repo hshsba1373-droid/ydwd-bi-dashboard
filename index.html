@@ -25,7 +25,7 @@
     color: var(--text-1);
     font-family: -apple-system, "SF Pro Display", "PingFang SC", "Microsoft YaHei", sans-serif;
     min-height: 100vh;
-    overflow-x: hidden;
+    max-width: 100%;
   }
   body::before {
     content: '';
@@ -378,12 +378,22 @@
       pop.style.top = '-9999px';
       const rect = el.getBoundingClientRect();
       const popRect = pop.getBoundingClientRect();
-      let left = rect.left;
-      let top = rect.bottom + 10;
-      if (left + popRect.width > window.innerWidth - 16) left = window.innerWidth - popRect.width - 16;
-      if (left < 16) left = 16;
-      if (top + popRect.height > window.innerHeight - 16) top = rect.top - popRect.height - 10;
-      if (top < 16) top = 16;
+      const gap = 16;
+      // Prefer placing to the right of the item so it doesn't cover names below/above
+      let left = rect.right + gap;
+      let top = rect.top;
+      if (left + popRect.width > window.innerWidth - gap) {
+        // not enough room on the right, try left side of the item
+        left = rect.left - popRect.width - gap;
+        if (left < gap) {
+          // still no room, fall back to below with horizontal clamp
+          left = Math.min(rect.left, window.innerWidth - popRect.width - gap);
+          top = rect.bottom + 10;
+        }
+      }
+      if (left < gap) left = gap;
+      if (top + popRect.height > window.innerHeight - gap) top = window.innerHeight - popRect.height - gap;
+      if (top < gap) top = gap;
       pop.style.left = left + 'px';
       pop.style.top = top + 'px';
     }
