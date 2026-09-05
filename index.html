@@ -677,14 +677,18 @@
         bizCategoryBreakdown[bizName][cat] = (bizCategoryBreakdown[bizName][cat] || 0) + d.amount;
       });
 
-      // 商务 新增/续费/合作数 明细（用于商务目标达成表）
+      // 商务 新增/续费/合作数 明细（按合作群组去重，同一广告主只算一个）
       const bizDealStats = {};
-      bizNames.forEach(bn => { bizDealStats[bn] = { newAmount: 0, renewAmount: 0, newCount: 0 }; });
+      bizNames.forEach(bn => { bizDealStats[bn] = { newAmount: 0, renewAmount: 0, newPartners: new Set() }; });
       deals.forEach(d => {
         const bizName = d.biz.trim() || '未标注';
-        if (!bizDealStats[bizName]) bizDealStats[bizName] = { newAmount: 0, renewAmount: 0, newCount: 0 };
+        if (!bizDealStats[bizName]) bizDealStats[bizName] = { newAmount: 0, renewAmount: 0, newPartners: new Set() };
         const nr = d.newRenew.trim();
-        if (nr === '新增') { bizDealStats[bizName].newAmount += d.amount; bizDealStats[bizName].newCount += 1; }
+        const partnerKey = d.group.trim() || d.client.trim() || '未命名';
+        if (nr === '新增') {
+          bizDealStats[bizName].newAmount += d.amount;
+          bizDealStats[bizName].newPartners.add(partnerKey);
+        }
         else if (nr === '续费') { bizDealStats[bizName].renewAmount += d.amount; }
       });
 
@@ -743,7 +747,13 @@
 
       const dealCount = deals.length;
       const avgDeal = dealCount ? (deals.reduce((s,d) => s + d.amount, 0) / dealCount) : 0;
-      const newDealCount = deals.filter(d => d.newRenew.trim() === '新增').length;
+      const newDealCount = (() => {
+        const seen = new Set();
+        deals.forEach(d => {
+          if (d.newRenew.trim() === '新增') seen.add(d.group.trim() || d.client.trim() || '未命名');
+        });
+        return seen.size;
+      })();
 
       document.getElementById('heroValue').textContent = fmt(totalCurrent);
       document.getElementById('heroTarget').textContent = fmt(totalTarget);
@@ -808,7 +818,7 @@
             <td>${fmt(b.current)}</td>
             <td>${fmt(stats.newAmount)}</td>
             <td>${fmt(stats.renewAmount)}</td>
-            <td>${stats.newCount}</td>
+            <td>${stats.newPartners ? stats.newPartners.size : 0}</td>
             <td><span class="pill ${pillClass}">${pct.toFixed(1)}%</span></td>
           </tr>`;
         });
