@@ -351,22 +351,38 @@
         });
       });
     }
-    let scrollSpyObserver = null;
+    let scrollSpyTicking = false;
     function initScrollSpy() {
-      if (scrollSpyObserver) scrollSpyObserver.disconnect();
-      const sections = document.querySelectorAll('.section');
-      if (!sections.length) return;
-      scrollSpyObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-              btn.classList.toggle('active', btn.dataset.target === id);
-            });
-          }
+      window.removeEventListener('scroll', onScrollSpy);
+      window.addEventListener('scroll', onScrollSpy, { passive: true });
+      onScrollSpy();
+    }
+    function onScrollSpy() {
+      if (scrollSpyTicking) return;
+      scrollSpyTicking = true;
+      requestAnimationFrame(() => {
+        const sections = document.querySelectorAll('.section');
+        const headerEl = document.querySelector('.header');
+        const headerH = headerEl ? headerEl.getBoundingClientRect().height : 0;
+        const triggerLine = headerH + 40;
+        let activeId = null;
+        sections.forEach(sec => {
+          const rect = sec.getBoundingClientRect();
+          if (rect.top <= triggerLine) activeId = sec.id;
         });
-      }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
-      sections.forEach(sec => scrollSpyObserver.observe(sec));
+        if (!activeId && sections.length) activeId = sections[0].id;
+        // If scrolled to (or near) the bottom of the page, force-activate the last section
+        const scrollBottom = window.innerHeight + window.scrollY;
+        if (scrollBottom >= document.documentElement.scrollHeight - 4 && sections.length) {
+          activeId = sections[sections.length - 1].id;
+        }
+        if (activeId) {
+          document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.target === activeId);
+          });
+        }
+        scrollSpyTicking = false;
+      });
     }
 
     // ---- Popover (hover + click) ----
