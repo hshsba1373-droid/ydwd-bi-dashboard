@@ -837,32 +837,49 @@
       perfHtml += `</div></div></div>`;
       container.innerHTML += perfHtml;
 
-      // ===== Section: 商务分类完成明细（每人每分类 新增/续费） =====
+      // ===== Section: 商务分类完成明细（每人每分类 新增/续费，转盘+进度条风格） =====
       let bizCatDetailHtml = `<div class="section" id="sec-bizcatdetail"><div class="card"><h2>商务分类完成明细 <span class="tag">BY BIZ &amp; CATEGORY</span></h2>`;
+      const bizCatChartConfigs = [];
       if (bizRows.length) {
-        bizRows.forEach(b => {
+        bizRows.forEach((b, bIdx) => {
           const catMap = bizCategoryNewRenew[b.name] || {};
           const catEntries = Object.entries(catMap)
-            .filter(([, v]) => v.newAmount > 0 || v.renewAmount > 0)
-            .sort((a, b2) => (b2[1].newAmount + b2[1].renewAmount) - (a[1].newAmount + a[1].renewAmount));
+            .map(([cat, v]) => [cat, v.newAmount + v.renewAmount, v])
+            .filter(([, sum]) => sum > 0)
+            .sort((a, b2) => b2[1] - a[1]);
+          const chartId = `bizCatChart-${bIdx}`;
+          const legendId = `bizCatLegend-${bIdx}`;
           bizCatDetailHtml += `
-            <div style="margin-bottom:22px;">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-                <span style="font-size:13.5px;font-weight:700;color:#fff;">${b.name}</span>
+            <div style="margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.06);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+                <span style="font-size:14px;font-weight:700;color:#fff;">${b.name}</span>
                 <span style="font-size:11px;color:var(--text-3);">目标 ${fmt(b.target)} · 已完成 ${fmt(b.current)}</span>
               </div>`;
           if (catEntries.length) {
-            bizCatDetailHtml += `<table class="mini-table"><tr><th>分类</th><th>新增完成</th><th>续费完成</th><th>合计</th></tr>`;
-            catEntries.forEach(([cat, v]) => {
-              const sum = v.newAmount + v.renewAmount;
-              bizCatDetailHtml += `<tr>
-                <td>${cat}</td>
-                <td>${v.newAmount ? fmt(v.newAmount) : '-'}</td>
-                <td>${v.renewAmount ? fmt(v.renewAmount) : '-'}</td>
-                <td><b style="color:#fff;">${fmt(sum)}</b></td>
-              </tr>`;
+            const maxCatSum = Math.max(...catEntries.map(([,sum]) => sum), 1);
+            let barsHtml = '';
+            catEntries.forEach(([cat, sum, v], idx) => {
+              const widthPct = (sum / maxCatSum) * 100;
+              const color = PALETTE[idx % PALETTE.length];
+              barsHtml += `
+                <div class="hbar-item">
+                  <div class="hbar-top">
+                    <span class="hbar-name"><span class="legend-dot" style="background:${color}"></span><span class="txt">${cat}</span></span>
+                    <span class="hbar-value">${fmt(sum)}</span>
+                  </div>
+                  <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
+                  <div class="hbar-sub">新增 ${v.newAmount ? fmt(v.newAmount) : '0万'} · 续费 ${v.renewAmount ? fmt(v.renewAmount) : '0万'}</div>
+                </div>`;
             });
-            bizCatDetailHtml += `</table>`;
+            bizCatDetailHtml += `
+              <div class="panel-split">
+                <div>
+                  <div class="chart-canvas-holder" style="height:200px;"><canvas id="${chartId}"></canvas></div>
+                  <div class="doughnut-legend" id="${legendId}"></div>
+                </div>
+                <div>${barsHtml}</div>
+              </div>`;
+            bizCatChartConfigs.push({ chartId, legendId, labels: catEntries.map(e => e[0]), data: catEntries.map(e => e[1]) });
           } else {
             bizCatDetailHtml += `<div class="empty-hint" style="padding:14px 0;">暂无分类数据</div>`;
           }
@@ -873,6 +890,7 @@
       }
       bizCatDetailHtml += `</div></div>`;
       container.innerHTML += bizCatDetailHtml;
+
 
       // ===== Section: 分类型目标完成度 =====
       let typeProgressHtml = '';
@@ -902,31 +920,37 @@
           </div>
         </div></div>`;
 
-      // ===== Section: 销售端口月度目标统计 =====
-      let portTableHtml = `<div class="section" id="sec-porttable"><div class="card"><h2>销售端口月度目标统计 <span class="tag">MONTHLY PORT TARGET</span></h2>`;
-      if (typeRows.length) {
-        portTableHtml += `<table class="mini-table"><tr>
-          <th>销售端口</th><th>月度目标</th><th>实际回款</th><th>完成率</th>
-        </tr>`;
-        [...typeRows].sort((a,b) => pctOf(b.target,b.current) - pctOf(a.target,a.current)).forEach(t => {
-          const pct = pctOf(t.target, t.current);
-          const pillClass = pct >= 100 ? 'ok' : pct >= 50 ? 'warn' : 'danger';
-          portTableHtml += `<tr>
-            <td>${t.name}</td>
-            <td>${fmt(t.target)}</td>
-            <td>${fmt(t.current)}</td>
-            <td><span class="pill ${pillClass}">${t.target ? pct.toFixed(1)+'%' : '-'}</span></td>
-          </tr>`;
-        });
-        portTableHtml += `</table>`;
-      } else {
-        portTableHtml += `<div class="empty-hint">暂无端口目标数据</div>`;
-      }
-      portTableHtml += '</div></div>';
-      container.innerHTML += portTableHtml;
+      // ===== Section: 销售端口月度目标统计（转盘+进度条风格）=====
+      let portProgressHtml = '';
+      const sortedTypeRows = [...typeRows].sort((a,b) => pctOf(b.target,b.current) - pctOf(a.target,a.current));
+      sortedTypeRows.forEach((t, idx) => {
+        const pct = pctOf(t.target, t.current);
+        const widthPct = t.target ? pct : 0;
+        const color = PALETTE[idx % PALETTE.length];
+        portProgressHtml += `
+          <div class="hbar-item">
+            <div class="hbar-top">
+              <span class="hbar-name"><span class="legend-dot" style="background:${color}"></span><span class="txt">${t.name}</span></span>
+              <span class="hbar-value">${fmt(t.current)}</span>
+            </div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
+            <div class="hbar-sub">月度目标 ${fmt(t.target)} · 完成率 ${t.target ? pct.toFixed(1)+'%' : '-'}</div>
+          </div>`;
+      });
+      container.innerHTML += `
+        <div class="section" id="sec-porttable"><div class="card">
+          <h2>销售端口月度目标统计 <span class="tag">MONTHLY PORT TARGET</span></h2>
+          <div class="panel-split">
+            <div>
+              <div class="chart-canvas-holder"><canvas id="portChart"></canvas></div>
+              <div class="doughnut-legend" id="portLegend"></div>
+            </div>
+            <div>${portProgressHtml}</div>
+          </div>
+        </div></div>`;
 
       // ===== Section: 伊甸维度产品业绩进度 =====
-      let prodHtml = `<div class="section" id="sec-product"><div class="card"><h2>伊甸维度产品业绩进度 <span class="tag">PRODUCT TARGET</span></h2>`;
+      let prodHtml = `<div class="section" id="sec-product"><div class="card"><h2>伊甸维度产品业绩进度 <span class="tag">% OF MONTHLY PRODUCT TARGET</span></h2>`;
       productRows.forEach((p, idx) => {
         const pct = pctOf(p.target, p.total);
         const widthPct = p.target ? pct : 0;
@@ -938,7 +962,7 @@
               <span class="hbar-value">${fmt(p.total)}</span>
             </div>
             <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">目标 ${p.target ? fmt(p.target) : '未设定'} · 完成 ${p.target ? pct.toFixed(1)+'%' : '-'} · 悬停查看分类占比</div>
+            <div class="hbar-sub">本产品月目标 ${p.target ? fmt(p.target) : '未设定'} · 占本产品月目标进度 ${p.target ? pct.toFixed(1)+'%' : '-'} · 悬停查看分类占比</div>
           </div>`;
       });
       prodHtml += '</div></div>';
@@ -1044,6 +1068,8 @@
 
       renderTypeChart(typeRows);
       renderBizChart(bizRows);
+      renderPortChart(typeRows);
+      bizCatChartConfigs.forEach(cfg => renderBizCatChart(cfg));
       renderDailyChart(dailyRows);
       initScrollSpy();
 
@@ -1141,6 +1167,64 @@
       });
       const legend = document.getElementById('bizLegend');
       legend.innerHTML = labels.map((l, i) =>
+        `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
+      ).join('');
+    }
+
+    let portChartInstance = null;
+    function renderPortChart(typeRows) {
+      const ctx = document.getElementById('portChart');
+      if (!ctx) return;
+      const labels = typeRows.map(t => t.name);
+      const data = typeRows.map(t => t.current);
+      const hasData = data.some(v => v > 0);
+      const displayData = hasData ? data : typeRows.map(t => t.target || 1);
+      const colors = labels.map((_, i) => PALETTE[i % PALETTE.length]);
+      if (portChartInstance) portChartInstance.destroy();
+      portChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels, datasets: [{ data: displayData, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '68%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
+              callbacks: { label: (c) => c.label + ': ' + fmt(c.parsed) }
+            }
+          }
+        }
+      });
+      const legend = document.getElementById('portLegend');
+      if (legend) legend.innerHTML = labels.map((l, i) =>
+        `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
+      ).join('');
+    }
+
+    const bizCatChartInstances = {};
+    function renderBizCatChart({ chartId, legendId, labels, data }) {
+      const ctx = document.getElementById(chartId);
+      if (!ctx) return;
+      const colors = labels.map((_, i) => PALETTE[i % PALETTE.length]);
+      if (bizCatChartInstances[chartId]) bizCatChartInstances[chartId].destroy();
+      bizCatChartInstances[chartId] = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '68%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
+              callbacks: { label: (c) => c.label + ': ' + fmt(c.parsed) }
+            }
+          }
+        }
+      });
+      const legend = document.getElementById(legendId);
+      if (legend) legend.innerHTML = labels.map((l, i) =>
         `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
       ).join('');
     }
