@@ -362,6 +362,7 @@
 
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=1198459175";
+    const AUG_CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=876833840";
     const REFRESH_MS = 60 * 1000;
     let dailyChartInstance = null;
     let typeChartInstance = null;
@@ -741,11 +742,8 @@
       const groupEntries = Object.entries(groupTotals).sort((a,b) => b[1] - a[1]).slice(0, 10);
 
       const today = new Date(); today.setHours(0,0,0,0);
-      const in7days = new Date(today); in7days.setDate(in7days.getDate() + 7);
-      const expiringDeals = deals
-        .map(d => ({ ...d, expiryDate: parseFlexDate(d.expiry) }))
-        .filter(d => d.expiryDate && d.expiryDate >= today && d.expiryDate <= in7days)
-        .sort((a,b) => a.expiryDate - b.expiryDate);
+      // expiringDeals kept for backward-compat but will be replaced by multi-sheet version
+      const expiringDeals = [];
 
       const dealCount = deals.length;
       const avgDeal = dealCount ? (deals.reduce((s,d) => s + d.amount, 0) / dealCount) : 0;
@@ -1022,28 +1020,8 @@
       groupHtml += '</div></div>';
       container.innerHTML += groupHtml;
 
-      // ===== Section: 即将到期提醒 =====
-      let expiryHtml = `<div class="section" id="sec-expiry"><div class="card"><h2>即将到期提醒 <span class="tag">EXPIRING IN 7 DAYS</span></h2>`;
-      if (expiringDeals.length) {
-        expiryHtml += `<table class="mini-table"><tr><th>产品</th><th>客户/群组</th><th>金额</th><th>到期</th><th>状态</th></tr>`;
-        expiringDeals.forEach(d => {
-          const daysLeft = Math.round((d.expiryDate - today) / 86400000);
-          const pillClass = daysLeft <= 2 ? 'danger' : daysLeft <= 4 ? 'warn' : 'ok';
-          const pillText = daysLeft === 0 ? '今天到期' : `${daysLeft}天后`;
-          expiryHtml += `<tr>
-            <td>${d.product.split('/')[0]}</td>
-            <td>${(d.client || d.group).slice(0, 18)}</td>
-            <td>${fmt(d.amount)}</td>
-            <td>${d.expiry}</td>
-            <td><span class="pill ${pillClass}">${pillText}</span></td>
-          </tr>`;
-        });
-        expiryHtml += `</table>`;
-      } else {
-        expiryHtml += `<div class="empty-hint">未来7天内暂无到期合作 ✅</div>`;
-      }
-      expiryHtml += '</div></div>';
-      container.innerHTML += expiryHtml;
+      // ===== Section: 即将到期提醒（8月+9月双表，按群组去重，只显示未到期）=====
+      container.innerHTML += `<div class="section" id="sec-expiry"><div class="card"><h2>即将到期提醒 <span class="tag">8月+9月 合并 · 群组去重</span></h2><div id="expiryContent"><div class="empty-hint">加载中...</div></div></div></div>`;
 
       // ===== Section: 每日流水趋势 =====
       container.innerHTML += `
@@ -1267,9 +1245,85 @@
       }
     });
 
+    async function loadExpiryData() {
+      try {
+        const [resAug, resSep] = await Promise.all([
+          fetch(AUG_CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
+          fetch(CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
+        ]);
+        const [textAug, textSep] = await Promise.all([resAug.text(), resSep.text()]);
+        const rowsAug = parseCSV(textAug);
+        const rowsSep = parseCSV(textSep);
+
+        const today = new Date(); today.setHours(0,0,0,0);
+        const numBlocks = 18;
+
+        function extractExpiries(rows, sheetLabel) {
+          const map = {};
+          for (let r = 2; r < rows.length; r++) {
+            const row = rows[r];
+            if (!row) continue;
+            for (let b = 0; b < numBlocks; b++) {
+              const base = 8 + b * 10;
+              const expiryStr = row[base + 6] || '';
+              if (!expiryStr.trim()) continue;
+              const amt = numOf(row[base + 4]);
+              if (!amt) continue;
+              const expDate = parseFlexDate(expiryStr);
+              if (!expDate || expDate < today) continue;
+              const group = (row[base + 1] || '').trim() || (row[base + 8] || '').trim() || '未命名';
+              const biz = (row[base + 5] || '').trim();
+              const method = (row[base + 3] || '').trim().toUpperCase();
+              const cat = (row[base + 2] || '').trim();
+              if (!map[group] || expDate < map[group].expDate) {
+                map[group] = { group, biz, method, cat, expDate, expiryStr, sheet: sheetLabel };
+              }
+            }
+          }
+          return map;
+        }
+
+        const augMap = extractExpiries(rowsAug, '8月');
+        const sepMap = extractExpiries(rowsSep, '9月');
+
+        // Merge: 9月 overrides 8月 for same group
+        const merged = { ...augMap, ...sepMap };
+        const items = Object.values(merged).sort((a,b) => a.expDate - b.expDate);
+
+        const el = document.getElementById('expiryContent');
+        if (!el) return;
+        if (!items.length) {
+          el.innerHTML = '<div class="empty-hint">暂无未到期合作 ✅</div>';
+          return;
+        }
+        let html = `<table class="mini-table"><tr><th>群组/合作方</th><th>商务</th><th>模式</th><th>分类</th><th>来源</th><th>到期日</th><th>状态</th></tr>`;
+        items.forEach(d => {
+          const daysLeft = Math.round((d.expDate - today) / 86400000);
+          const pillClass = daysLeft <= 3 ? 'danger' : daysLeft <= 10 ? 'warn' : 'ok';
+          const pillText = daysLeft === 0 ? '今天到期' : `${daysLeft}天后`;
+          html += `<tr>
+            <td>${d.group.slice(0, 25)}</td>
+            <td>${d.biz}</td>
+            <td>${d.method || '-'}</td>
+            <td>${d.cat || '-'}</td>
+            <td><span style="color:var(--text-3);font-size:10.5px;">${d.sheet}</span></td>
+            <td>${d.expiryStr}</td>
+            <td><span class="pill ${pillClass}">${pillText}</span></td>
+          </tr>`;
+        });
+        html += `</table>`;
+        el.innerHTML = html;
+      } catch (e) {
+        const el = document.getElementById('expiryContent');
+        if (el) el.innerHTML = `<div class="empty-hint">加载失败: ${e.message}</div>`;
+      }
+    }
+
     initSideNav();
     loadData();
+    loadExpiryData();
     setInterval(loadData, REFRESH_MS);
+    setInterval(loadExpiryData, REFRESH_MS);
   </script>
 </body>
 </html>
