@@ -59,6 +59,8 @@
   .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: #1fd4e8;
     box-shadow: 0 0 8px 2px rgba(31,212,232,0.75); animation: pulse 1.6s infinite; }
   @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.3;} }
+
+  /* Layout */
   .layout { display: flex; align-items: flex-start; max-width: 1640px; margin: 0 auto; padding: 18px 26px 60px; gap: 18px; }
   .sidebar {
     position: sticky; top: 74px; flex-shrink: 0; width: 188px;
@@ -96,8 +98,11 @@
     .nav-group-title { display: none; }
   }
   .content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
-  .kpi-overview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 11px; }
-  @media (max-width: 900px) { .kpi-overview { grid-template-columns: repeat(2, 1fr); } }
+
+  /* KPI Grid */
+  .kpi-overview { display: grid; grid-template-columns: repeat(6, 1fr); gap: 11px; }
+  @media (max-width: 1100px) { .kpi-overview { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 700px) { .kpi-overview { grid-template-columns: repeat(2, 1fr); } }
   .kpi-card {
     background: var(--glass); border: 1px solid var(--glass-border); border-radius: 14px;
     padding: 14px 16px; position: relative; overflow: hidden;
@@ -112,45 +117,16 @@
   .kpi-card.accent-b .kpi-num { background: linear-gradient(90deg,#67e8f9,#22d3ee); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
   .kpi-card.accent-c .kpi-num { background: linear-gradient(90deg,#6ee7b7,#34d399); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
   .kpi-card.accent-d .kpi-num { background: linear-gradient(90deg,#fde68a,#fbbf24); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
-  .hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; }
-  @media (max-width: 700px) { .hero { grid-template-columns: 1fr; } }
-  .hero-main {
-    background: linear-gradient(145deg, rgba(100,70,240,0.14), rgba(31,212,232,0.04));
-    border: 1px solid rgba(124,92,252,0.2); border-radius: 16px;
-    padding: 22px 26px; position: relative; overflow: hidden;
+  .kpi-card.accent-e .kpi-num { background: linear-gradient(90deg,#fca5a5,#fb7185); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .kpi-card.accent-f .kpi-num { background: linear-gradient(90deg,#86efac,#4ade80); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .kpi-foot-badge {
+    display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 9.5px; font-weight: 600; margin-top: 4px;
   }
-  .hero-main::after {
-    content:''; position:absolute; width:180px; height:180px; border-radius:50%;
-    background: radial-gradient(circle, rgba(100,70,240,0.28), transparent 70%);
-    top:-70px; right:-50px; filter:blur(10px); pointer-events:none;
-  }
-  .hero-label { color: var(--text-2); font-size: 11.5px; letter-spacing: 0.4px; margin-bottom: 5px; }
-  .hero-value {
-    font-size: 38px; font-weight: 800; letter-spacing: -1px; line-height: 1;
-    background: linear-gradient(90deg, #fff 30%, #c4b5fd);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .hero-target { color: var(--text-2); font-size: 12px; margin-top: 6px; }
-  .hero-target b { color: var(--text-1); font-weight: 600; }
-  .hero-bar-bg { height: 7px; border-radius: 999px; background: rgba(255,255,255,0.07); margin-top: 13px; overflow: hidden; }
-  .hero-bar-fill { height: 100%; border-radius: 999px;
-    background: linear-gradient(90deg, var(--violet), var(--cyan));
-    box-shadow: 0 0 10px rgba(124,92,252,0.5); transition: width 0.8s ease; }
-  .hero-pct { font-size: 11.5px; color: var(--cyan); margin-top: 5px; font-weight: 600; }
-  .kpi-stack { display: grid; grid-template-rows: repeat(3, 1fr); gap: 7px; }
-  .kpi-mini {
-    background: var(--glass); border: 1px solid var(--glass-border); border-radius: 11px;
-    padding: 10px 13px; display: flex; align-items: center; justify-content: space-between;
-  }
-  .kpi-mini .l { color: var(--text-3); font-size: 10px; margin-bottom: 2px; }
-  .kpi-mini .v { font-size: 14px; font-weight: 700; color: #fff; }
-  .kpi-mini .v.c1 { color: #c4b5fd; }
-  .kpi-mini .v.c2 { color: #67e8f9; }
-  .kpi-mini .v.c3 { color: #6ee7b7; }
-  .kpi-mini .icon {
-    width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
-    font-size: 12px; background: rgba(255,255,255,0.05); flex-shrink: 0;
-  }
+  .kpi-foot-badge.ahead { background: rgba(46,204,142,0.15); color: #2ecc8e; }
+  .kpi-foot-badge.behind { background: rgba(240,80,110,0.15); color: #f0506e; }
+  .kpi-foot-badge.neutral { background: rgba(255,255,255,0.06); color: var(--text-3); }
+
+  /* Section */
   .section { scroll-margin-top: 18px; }
   .card {
     background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px;
@@ -164,39 +140,17 @@
     display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.1px;
   }
   .card h2 .tag { font-size: 9.5px; color: var(--text-3); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
-  .popover {
-    position: fixed; z-index: 200; display: none;
-    background: rgba(12,12,24,0.97); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 14px; padding: 16px 18px;
-    max-width: 340px; width: 300px; max-height: 55vh; overflow-y: auto;
-    box-shadow: 0 20px 56px -10px rgba(0,0,0,0.8); backdrop-filter: blur(20px);
-  }
-  .popover::-webkit-scrollbar { width: 3px; }
-  .popover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
-  .popover.active { display: block; animation: popIn 0.13s ease; }
-  @keyframes popIn { from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);} }
-  .popover-title { font-size: 12.5px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-  .popover-total { color: var(--text-2); font-size: 11px; margin-bottom: 11px; }
-  .popover-total b { color: #fff; font-weight: 700; }
-  .panel-split { display: grid; grid-template-columns: 265px 1fr; gap: 22px; align-items: start; }
-  @media (max-width: 760px) { .panel-split { grid-template-columns: 1fr; } }
-  .perf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 11px; }
-  .perf-card {
-    background: var(--glass); border: 1px solid var(--glass-border); border-radius: 13px;
-    padding: 13px 15px; position: relative; overflow: hidden; cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .perf-card:hover { background: var(--glass-hover); border-color: rgba(255,255,255,0.13); }
-  .perf-card .perf-rank { position:absolute; top:11px; right:13px; font-size:14px; }
-  .perf-card .perf-name { font-size: 12.5px; font-weight: 700; color: #fff; margin-bottom: 7px; }
-  .perf-card .perf-amount { font-size: 17px; font-weight: 800; margin-bottom: 2px; }
-  .perf-card .perf-target { font-size: 10px; color: var(--text-3); margin-bottom: 7px; }
-  .perf-card .perf-ring-bg { height: 5px; border-radius: 999px; background: rgba(255,255,255,0.07); overflow: hidden; }
-  .perf-card .perf-ring-fill { height: 100%; border-radius: 999px; }
-  .perf-card .perf-pct { font-size: 10px; margin-top: 4px; font-weight: 600; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 900px) { .three-col { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .three-col { grid-template-columns: 1fr; } }
+
+  /* hbar */
   .hbar-item { margin-bottom: 12px; }
   .hbar-item:last-child { margin-bottom: 0; }
-  .hbar-item.clickable { cursor: pointer; padding: 5px 7px; border-radius: 9px; margin: -5px -7px 7px -7px; }
+  .hbar-item.clickable { cursor: pointer; padding: 5px 7px; border-radius: 9px; margin-left: -7px; margin-right: -7px; margin-top: 0; }
+  .hbar-item.clickable:last-child { margin-bottom: 0; }
   .hbar-item.clickable:hover { background: rgba(255,255,255,0.04); }
   .hbar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; gap: 8px; }
   .hbar-name { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #dde3f5; font-weight: 500; min-width: 0; }
@@ -212,11 +166,28 @@
   .hbar-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.07); overflow: hidden; }
   .hbar-fill { height: 100%; border-radius: 999px; transition: width 0.6s ease; }
   .hbar-sub { font-size: 9.5px; color: var(--text-3); margin-top: 3px; }
+
+  /* Progress bar (goal) */
+  .goal-bar-item { margin-bottom: 14px; }
+  .goal-bar-item:last-child { margin-bottom: 0; }
+  .goal-bar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .goal-bar-name { font-size: 12px; font-weight: 600; color: var(--text-1); }
+  .goal-bar-meta { font-size: 10.5px; color: var(--text-2); }
+  .goal-bar-track { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.07); overflow: hidden; position: relative; }
+  .goal-bar-fill { height: 100%; border-radius: 999px; transition: width 0.7s ease; position: relative; }
+  .goal-bar-fill::after {
+    content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 3px;
+    background: rgba(255,255,255,0.6); border-radius: 999px;
+    box-shadow: 0 0 6px rgba(255,255,255,0.7);
+  }
+  .goal-bar-footer { display: flex; justify-content: space-between; margin-top: 4px; font-size: 9.5px; }
+
+  /* Chart holders */
   .chart-canvas-holder { position: relative; height: 240px; }
   .chart-canvas-holder.tall { height: 300px; }
-  .doughnut-legend { display: flex; flex-wrap: wrap; gap: 5px 13px; margin-top: 12px; justify-content: center; }
-  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-2); }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .chart-canvas-holder.medium { height: 200px; }
+
+  /* Quality analysis tables */
   table.mini-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
   table.mini-table th {
     text-align: left; color: var(--text-3); font-weight: 600; padding: 5px 8px;
@@ -225,10 +196,53 @@
   table.mini-table td { padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #d0d7f0; vertical-align: middle; }
   table.mini-table tr:last-child td { border-bottom: none; }
   table.mini-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Pill */
   .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 600; }
   .pill.warn { background: rgba(251,191,36,0.12); color: #f5c842; }
   .pill.danger { background: rgba(240,80,110,0.12); color: #f0506e; }
   .pill.ok { background: rgba(46,204,142,0.12); color: #2ecc8e; }
+
+  /* Expiry groups */
+  .expiry-groups { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 900px) { .expiry-groups { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .expiry-groups { grid-template-columns: 1fr; } }
+  .expiry-group { border-radius: 12px; padding: 14px; }
+  .expiry-group.danger { background: rgba(240,80,110,0.06); border: 1px solid rgba(240,80,110,0.18); }
+  .expiry-group.warn { background: rgba(245,190,62,0.06); border: 1px solid rgba(245,190,62,0.18); }
+  .expiry-group.ok { background: rgba(46,204,142,0.06); border: 1px solid rgba(46,204,142,0.18); }
+  .expiry-group-title { font-size: 12px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
+  .expiry-group.danger .expiry-group-title { color: #f0506e; }
+  .expiry-group.warn .expiry-group-title { color: #f5be3e; }
+  .expiry-group.ok .expiry-group-title { color: #2ecc8e; }
+  .expiry-item { padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 11px; }
+  .expiry-item:last-child { border-bottom: none; }
+  .expiry-item-name { font-weight: 600; color: var(--text-1); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .expiry-item-meta { color: var(--text-3); font-size: 10px; }
+  .expiry-empty { color: var(--text-3); font-size: 11px; padding: 20px 0; text-align: center; }
+
+  /* Popover */
+  .popover {
+    position: fixed; z-index: 200; display: none;
+    background: rgba(12,12,24,0.97); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 16px 18px;
+    max-width: 340px; width: 300px; max-height: 55vh; overflow-y: auto;
+    box-shadow: 0 20px 56px -10px rgba(0,0,0,0.8); backdrop-filter: blur(20px);
+  }
+  .popover::-webkit-scrollbar { width: 3px; }
+  .popover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+  .popover.active { display: block; animation: popIn 0.13s ease; }
+  @keyframes popIn { from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);} }
+  .popover-title { font-size: 12.5px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .popover-total { color: var(--text-2); font-size: 11px; margin-bottom: 11px; }
+  .popover-total b { color: #fff; font-weight: 700; }
+
+  /* Legend */
+  .doughnut-legend { display: flex; flex-wrap: wrap; gap: 5px 13px; margin-top: 12px; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-2); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Misc */
   .empty-hint { color: var(--text-3); font-size: 12.5px; padding: 34px 0; text-align: center; }
   .loading { color: var(--text-2); text-align: center; padding: 60px; font-size: 12.5px; }
   .error {
@@ -236,1068 +250,1016 @@
     padding: 10px 15px; border-radius: 11px; margin-bottom: -4px; font-size: 12px;
   }
   .footer-note { text-align: center; color: var(--text-3); font-size: 11px; margin-top: 5px; }
-</style>
 
+  /* Quality card */
+  .quality-stat-card {
+    background: rgba(255,255,255,0.025); border: 1px solid var(--glass-border);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .quality-stat-card h3 { font-size: 11px; color: var(--text-3); font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 10px; }
+  .conc-bar { margin-top: 10px; }
+  .conc-bar-track { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.07); overflow: hidden; margin-top: 4px; }
+  .conc-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--violet), var(--cyan)); }
+</style>
 </head>
 <body>
-  <div class="header">
-    <div class="brand">
-      <div class="brand-icon">🧧</div>
-      <div>
-        <h1>伊甸各产品收款 BI 看板</h1>
-        <div class="sub">Google Sheets 实时数据同步 · 9月收款明细登记表</div>
-      </div>
+<div class="header">
+  <div class="brand">
+    <div class="brand-icon">🧧</div>
+    <div>
+      <h1>伊甸各产品收款 BI 看板</h1>
+      <div class="sub">Google Sheets 实时数据同步 · 9月收款明细登记表</div>
     </div>
-    <div class="status-pill"><span class="dot"></span><span id="lastUpdated">同步中...</span></div>
   </div>
+  <div class="status-pill"><span class="dot"></span><span id="lastUpdated">同步中...</span></div>
+</div>
 
-  <div class="layout">
-    <nav class="sidebar" id="sideNav">
-      <div class="nav-group-title">业绩总览</div>
-      <button class="nav-btn active" data-target="sec-biz"><span class="emoji">🏆</span>商务业绩</button>
-      <button class="nav-btn" data-target="sec-bizgoal"><span class="emoji">🎯</span>商务目标达成表</button>
-      <button class="nav-btn" data-target="sec-perfcards"><span class="emoji">🃏</span>商务表现速览</button>
-      <button class="nav-btn" data-target="sec-bizcatdetail"><span class="emoji">📊</span>商务分类完成明细</button>
-      <div class="nav-group-title">目标与端口</div>
-      <button class="nav-btn" data-target="sec-porttable"><span class="emoji">📋</span>端口月度目标统计</button>
-      <button class="nav-btn" data-target="sec-product"><span class="emoji">📦</span>产品业绩进度</button>
-      <div class="nav-group-title">收款结构分析</div>
-      <button class="nav-btn" data-target="sec-method"><span class="emoji">🤝</span>合作方式占比</button>
-      <button class="nav-btn" data-target="sec-newrenew"><span class="emoji">🔁</span>新增/续费</button>
-      <button class="nav-btn" data-target="sec-partners"><span class="emoji">👥</span>合作方Top榜</button>
-      <div class="nav-group-title">趋势与提醒</div>
-      <button class="nav-btn" data-target="sec-expiry"><span class="emoji">⏰</span>即将到期</button>
-      <button class="nav-btn" data-target="sec-daily"><span class="emoji">📈</span>每日流水</button>
-    </nav>
+<div class="layout">
+  <nav class="sidebar" id="sideNav">
+    <button class="nav-btn active" data-target="sec-overview"><span class="emoji">📊</span>经营总览</button>
+    <button class="nav-btn" data-target="sec-biz"><span class="emoji">🏆</span>商务表现</button>
+    <button class="nav-btn" data-target="sec-product"><span class="emoji">📦</span>产品表现</button>
+    <button class="nav-btn" data-target="sec-quality"><span class="emoji">🔍</span>收款质量</button>
+    <button class="nav-btn" data-target="sec-daily"><span class="emoji">📈</span>趋势分析</button>
+    <button class="nav-btn" data-target="sec-expiry"><span class="emoji">⏰</span>续费风险</button>
+  </nav>
 
-    <div class="content">
-      <div id="errorBox"></div>
+  <div class="content">
+    <div id="errorBox"></div>
 
+    <!-- ===== 1. 经营总览 KPI ===== -->
+    <div class="section" id="sec-overview">
       <div class="kpi-overview" id="kpiOverview">
         <div class="kpi-card accent-a">
           <div class="kpi-icon">💰</div>
-          <div class="kpi-label">总已收款</div>
+          <div class="kpi-label">本月总收款</div>
           <div class="kpi-num" id="kpiTotalCurrent">0万</div>
           <div class="kpi-foot">当月团队累计回款总额</div>
         </div>
         <div class="kpi-card accent-b">
           <div class="kpi-icon">🎯</div>
-          <div class="kpi-label">商务总目标</div>
-          <div class="kpi-num" id="kpiTotalTarget">0万</div>
-          <div class="kpi-foot">来自销售端口目标汇总</div>
+          <div class="kpi-label">团队目标达成率</div>
+          <div class="kpi-num" id="kpiAchieveRate">0%</div>
+          <div id="kpiAchieveBadge" class="kpi-foot"></div>
         </div>
         <div class="kpi-card accent-c">
-          <div class="kpi-icon">📈</div>
-          <div class="kpi-label">团队达成率</div>
-          <div class="kpi-num" id="kpiAchieveRate">0%</div>
-          <div class="kpi-foot">总已收款 / 基础目标</div>
+          <div class="kpi-icon">📅</div>
+          <div class="kpi-label">月份时间进度</div>
+          <div class="kpi-num" id="kpiTimePct">0%</div>
+          <div class="kpi-foot" id="kpiTimeDay">第0天/0天</div>
         </div>
         <div class="kpi-card accent-d">
+          <div class="kpi-icon">🤝</div>
+          <div class="kpi-label">合作单数</div>
+          <div class="kpi-num" id="kpiPartnerCount">0</div>
+          <div class="kpi-foot">按群组去重合作方数量</div>
+        </div>
+        <div class="kpi-card accent-e">
+          <div class="kpi-icon">💎</div>
+          <div class="kpi-label">客单均价</div>
+          <div class="kpi-num" id="kpiAvgDeal">0万</div>
+          <div class="kpi-foot">总收款 / 总笔数</div>
+        </div>
+        <div class="kpi-card accent-f">
           <div class="kpi-icon">✨</div>
-          <div class="kpi-label">新增合作数</div>
-          <div class="kpi-num" id="kpiNewDealCount">0</div>
-          <div class="kpi-foot">新增类型记录自动累计</div>
+          <div class="kpi-label">新增合作占比</div>
+          <div class="kpi-num" id="kpiNewPct">0%</div>
+          <div class="kpi-foot">新增金额 / 总收款</div>
         </div>
       </div>
-
-      <div class="hero" id="heroSection">
-        <div class="hero-main">
-          <div class="hero-label">本月累计业绩</div>
-          <div class="hero-value" id="heroValue">0万</div>
-          <div class="hero-target">目标 <b id="heroTarget">0万</b></div>
-          <div class="hero-bar-bg"><div class="hero-bar-fill" id="heroBarFill" style="width:0%"></div></div>
-          <div class="hero-pct" id="heroPct">0.00% 已完成</div>
-        </div>
-        <div class="kpi-stack">
-          <div class="kpi-mini">
-            <div><div class="l">领先商务</div><div class="v c1" id="topBizName">-</div></div>
-            <div class="icon">🏆</div>
-          </div>
-          <div class="kpi-mini">
-            <div><div class="l">爆款产品</div><div class="v c2" id="topProductName">-</div></div>
-            <div class="icon">🚀</div>
-          </div>
-          <div class="kpi-mini">
-            <div><div class="l">总单数 / 客单均价</div><div class="v c3" id="dealStats">-</div></div>
-            <div class="icon">📊</div>
-          </div>
-        </div>
-      </div>
-
-      <div id="sectionsContainer">
-        <div class="loading">数据加载中，请稍候...</div>
-      </div>
-
-      <div class="footer-note">幸运儿自动看板 · 每 60 秒刷新一次 · 鼠标悬停或点击条目查看更多明细</div>
     </div>
+
+    <div id="sectionsContainer">
+      <div class="loading">数据加载中，请稍候...</div>
+    </div>
+
+    <div class="footer-note">幸运儿自动看板 · 每 60 秒刷新一次 · 鼠标悬停或点击条目查看更多明细</div>
   </div>
+</div>
 
-  <div class="popover" id="popover"></div>
+<div class="popover" id="popover"></div>
 
-  <script>
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=1198459175";
-    const AUG_CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=876833840";
-    const REFRESH_MS = 60 * 1000;
-    let dailyChartInstance = null;
-    let typeChartInstance = null;
-    let bizChartInstance = null;
-    let categoryBizBreakdown = {};
-    let bizCategoryBreakdown = {};
-    let productCategoryBreakdown = {};
-    let methodCategoryBreakdown = {};
-    let newRenewCategoryBreakdown = {};
-    let groupDealsMap = {};
+<script>
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=1198459175";
+  const AUG_CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=876833840";
+  const REFRESH_MS = 60 * 1000;
 
-    const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635','#f97316','#38bdf8'];
+  // Chart instances
+  let dailyChartInstance = null;
+  let bizBarChartInstance = null;
+  let bizStackedChartInstance = null;
+  let productContribChartInstance = null;
 
-    function parseCSV(text) {
-      const rows = [];
-      let row = [], field = '', inQuotes = false;
-      for (let i = 0; i < text.length; i++) {
-        const c = text[i];
-        if (inQuotes) {
-          if (c === '"') { if (text[i+1] === '"') { field += '"'; i++; } else inQuotes = false; }
-          else field += c;
-        } else {
-          if (c === '"') inQuotes = true;
-          else if (c === ',') { row.push(field); field = ''; }
-          else if (c === '\r') { /* skip */ }
-          else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
-          else field += c;
-        }
-      }
-      if (field.length || row.length) { row.push(field); rows.push(row); }
-      return rows;
-    }
-    function numOf(s) {
-      if (!s) return 0;
-      const n = parseFloat(String(s).replace(/,/g, ''));
-      return isNaN(n) ? 0 : n;
-    }
-    function pctOf(target, current) { if (!target) return 0; return Math.min(100, (current / target) * 100); }
-    function fmt(n) {
-      const wan = n / 10000;
-      let s = wan.toFixed(2);
-      if (s.endsWith('.00')) s = s.slice(0, -3);
-      else if (s.endsWith('0')) s = s.slice(0, -1);
-      if (s === '-0') s = '0';
-      return s + '万';
-    }
-    function tickWan(v) {
-      const wan = v / 10000;
-      const rounded = Math.round(wan * 10) / 10;
-      return rounded + '万';
-    }
+  // Breakdown state
+  let categoryBizBreakdown = {};
+  let bizCategoryBreakdown = {};
+  let productCategoryBreakdown = {};
+  let methodCategoryBreakdown = {};
+  let newRenewCategoryBreakdown = {};
+  let groupDealsMap = {};
 
-    function parseFlexDate(s) {
-      if (!s) return null;
-      const m = String(s).trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-      if (!m) return null;
-      return new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]));
-    }
+  const PALETTE = ['#8b5cf6','#22d3ee','#fb7185','#fbbf24','#34d399','#60a5fa','#f472b6','#a3e635','#f97316','#38bdf8'];
 
-    function rankBadge(idx) {
-      const cls = idx === 0 ? 'r1' : idx === 1 ? 'r2' : idx === 2 ? 'r3' : '';
-      const label = idx < 3 ? ['①','②','③'][idx] : (idx + 1);
-      return `<span class="rank-badge ${cls}">${label}</span>`;
-    }
-
-    // ---- Side nav: scroll-to + scroll-spy ----
-    function initSideNav() {
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const target = document.getElementById(btn.dataset.target);
-          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-      });
-    }
-    let scrollSpyTicking = false;
-    function initScrollSpy() {
-      window.removeEventListener('scroll', onScrollSpy);
-      window.addEventListener('scroll', onScrollSpy, { passive: true });
-      onScrollSpy();
-    }
-    function onScrollSpy() {
-      if (scrollSpyTicking) return;
-      scrollSpyTicking = true;
-      requestAnimationFrame(() => {
-        const sections = document.querySelectorAll('.section');
-        const headerEl = document.querySelector('.header');
-        const headerH = headerEl ? headerEl.getBoundingClientRect().height : 0;
-        const triggerLine = headerH + 40;
-        let activeId = null;
-        sections.forEach(sec => {
-          const rect = sec.getBoundingClientRect();
-          if (rect.top <= triggerLine) activeId = sec.id;
-        });
-        if (!activeId && sections.length) activeId = sections[0].id;
-        // If scrolled to (or near) the bottom of the page, force-activate the last section
-        const scrollBottom = window.innerHeight + window.scrollY;
-        if (scrollBottom >= document.documentElement.scrollHeight - 4 && sections.length) {
-          activeId = sections[sections.length - 1].id;
-        }
-        if (activeId) {
-          document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.target === activeId);
-          });
-        }
-        scrollSpyTicking = false;
-      });
-    }
-
-    // ---- Popover (hover + click) ----
-    let popoverHideTimer = null;
-    function showPopoverAt(el, innerHtml) {
-      clearTimeout(popoverHideTimer);
-      const pop = document.getElementById('popover');
-      pop.innerHTML = innerHtml;
-      pop.classList.add('active');
-      // temporarily show off-screen to measure size
-      pop.style.left = '-9999px';
-      pop.style.top = '-9999px';
-      const rect = el.getBoundingClientRect();
-      const popRect = pop.getBoundingClientRect();
-      const gap = 12;
-      // Anchor near the progress-bar area (right half of the item), not over the name on the left
-      let left = rect.left + rect.width * 0.55;
-      let top = rect.top;
-      if (left + popRect.width > window.innerWidth - gap) left = window.innerWidth - popRect.width - gap;
-      if (left < gap) left = gap;
-      if (top + popRect.height > window.innerHeight - gap) top = window.innerHeight - popRect.height - gap;
-      if (top < gap) top = gap;
-      pop.style.left = left + 'px';
-      pop.style.top = top + 'px';
-    }
-    function hidePopoverSoon() {
-      clearTimeout(popoverHideTimer);
-      popoverHideTimer = setTimeout(() => {
-        document.getElementById('popover').classList.remove('active');
-      }, 160);
-    }
-    function bindPopoverTriggers(selector, buildHtmlFn) {
-      document.querySelectorAll(selector).forEach(el => {
-        const handler = () => showPopoverAt(el, buildHtmlFn(el));
-        el.addEventListener('mouseenter', handler);
-        el.addEventListener('mouseleave', hidePopoverSoon);
-        el.addEventListener('click', (e) => { e.stopPropagation(); handler(); });
-      });
-    }
-
-    function breakdownPopoverHtml(title, totalLabel, entries) {
-      const total = entries.reduce((s, [,v]) => s + v, 0);
-      let body = '';
-      if (!entries.length) {
-        body = '<div class="empty-hint" style="padding:20px 0;">暂无数据</div>';
+  // ---- CSV parsing ----
+  function parseCSV(text) {
+    const rows = [];
+    let row = [], field = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (inQuotes) {
+        if (c === '"') { if (text[i+1] === '"') { field += '"'; i++; } else inQuotes = false; }
+        else field += c;
       } else {
-        body = entries.map(([name, amount], idx) => {
-          const pct = total ? (amount / total * 100) : 0;
-          const color = PALETTE[idx % PALETTE.length];
-          return `
-            <div class="hbar-item">
-              <div class="hbar-top">
-                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${name}</span></span>
-                <span class="hbar-value">${fmt(amount)} <span style="color:var(--text-3);font-weight:500;">(${pct.toFixed(1)}%)</span></span>
-              </div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
-            </div>`;
-        }).join('');
-      }
-      return `<div class="popover-title">${title}</div><div class="popover-total">${totalLabel} <b>${fmt(total)}</b></div>${body}`;
-    }
-
-    function groupDetailPopoverHtml(groupName) {
-      const dealsForGroup = groupDealsMap[groupName] || [];
-      const total = dealsForGroup.reduce((s, d) => s + d.amount, 0);
-      let body = '';
-      if (!dealsForGroup.length) {
-        body = '<div class="empty-hint" style="padding:20px 0;">暂无合作明细</div>';
-      } else {
-        const sorted = [...dealsForGroup].sort((a,b) => b.amount - a.amount);
-        body = `<table class="mini-table">
-          <tr><th>产品</th><th>价格</th><th>分类</th><th>模式</th><th>到期</th></tr>
-          ${sorted.map(d => `
-            <tr>
-              <td>${d.product.split('/')[0]}</td>
-              <td>${fmt(d.amount)}</td>
-              <td>${d.productType || '-'}</td>
-              <td>${d.method || '-'}</td>
-              <td>${d.expiry || '-'}</td>
-            </tr>`).join('')}
-        </table>`;
-      }
-      return `<div class="popover-title">${groupName} · 合作明细</div><div class="popover-total">合计收款 <b>${fmt(total)}</b> · 共 ${dealsForGroup.length} 笔</div>${body}`;
-    }
-
-    async function loadData() {
-      try {
-        const res = await fetch(CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const text = await res.text();
-        const rows = parseCSV(text);
-        render(rows);
-        document.getElementById('errorBox').innerHTML = '';
-        document.getElementById('lastUpdated').textContent =
-          '已同步 ' + new Date().toLocaleTimeString('zh-CN', { hour12: false });
-      } catch (e) {
-        document.getElementById('errorBox').innerHTML =
-          '<div class="error">⚠️ 数据加载失败：' + e.message + '（60秒后自动重试）</div>';
+        if (c === '"') inQuotes = true;
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\r') { /* skip */ }
+        else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+        else field += c;
       }
     }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    return rows;
+  }
 
-    function render(rows) {
-      const summaryRow = rows.find(r => r[0] === '数据汇总' && numOf(r[4]) > 0);
-      const totalTarget = summaryRow ? numOf(summaryRow[4]) : 0;
-      const totalCurrent = summaryRow ? numOf(summaryRow[5]) : 0;
-      const totalPct = pctOf(totalTarget, totalCurrent);
+  function numOf(s) {
+    if (!s) return 0;
+    const n = parseFloat(String(s).replace(/,/g, ''));
+    return isNaN(n) ? 0 : n;
+  }
+  function pctOf(target, current) { if (!target) return 0; return Math.min(100, (current / target) * 100); }
+  function fmt(n) {
+    const wan = n / 10000;
+    let s = wan.toFixed(2);
+    if (s.endsWith('.00')) s = s.slice(0, -3);
+    else if (s.endsWith('0')) s = s.slice(0, -1);
+    if (s === '-0') s = '0';
+    return s + '万';
+  }
+  function tickWan(v) {
+    const wan = v / 10000;
+    const rounded = Math.round(wan * 10) / 10;
+    return rounded + '万';
+  }
+  function parseFlexDate(s) {
+    if (!s) return null;
+    const m = String(s).trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (!m) return null;
+    return new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]));
+  }
+  function rankBadge(idx) {
+    const cls = idx === 0 ? 'r1' : idx === 1 ? 'r2' : idx === 2 ? 'r3' : '';
+    const label = idx < 3 ? ['①','②','③'][idx] : (idx + 1);
+    return `<span class="rank-badge ${cls}">${label}</span>`;
+  }
 
-      const typeNames = ['约炮','棋牌','直播','黄游','播放器','外围','AI服务','VPN'];
-      const typeRows = rows.filter(r => typeNames.includes(r[0]))
-        .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]) }));
-
-      const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','程晨'];
-      const bizRows = rows.filter(r => bizNames.includes(r[0]))
-        .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]) }))
-        .sort((a,b) => b.current - a.current);
-
-      const summaryIdx = rows.findIndex(r => r[0] === '各产品收款汇总');
-      const productRows = [];
-      if (summaryIdx >= 0) {
-        for (let i = summaryIdx + 2; i < rows.length; i++) {
-          const r = rows[i];
-          if (!r[0] || r[0] === '数据汇总') break;
-          productRows.push({ name: r[0], total: numOf(r[1]), target: numOf(r[2]) });
-        }
+  // ---- Side nav: scroll-to + scroll-spy ----
+  function initSideNav() {
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+  let scrollSpyTicking = false;
+  function initScrollSpy() {
+    window.removeEventListener('scroll', onScrollSpy);
+    window.addEventListener('scroll', onScrollSpy, { passive: true });
+    onScrollSpy();
+  }
+  function onScrollSpy() {
+    if (scrollSpyTicking) return;
+    scrollSpyTicking = true;
+    requestAnimationFrame(() => {
+      const sections = document.querySelectorAll('.section');
+      const headerEl = document.querySelector('.header');
+      const headerH = headerEl ? headerEl.getBoundingClientRect().height : 0;
+      const triggerLine = headerH + 40;
+      let activeId = null;
+      sections.forEach(sec => {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top <= triggerLine) activeId = sec.id;
+      });
+      if (!activeId && sections.length) activeId = sections[0].id;
+      const scrollBottom = window.innerHeight + window.scrollY;
+      if (scrollBottom >= document.documentElement.scrollHeight - 4 && sections.length) {
+        activeId = sections[sections.length - 1].id;
       }
-      productRows.sort((a,b) => b.total - a.total);
-
-      // 商务 × 分类 新增/续费明细（对应"每人每分类完成情况"截图需求）
-      const bizCategoryNewRenew = {};
-      bizNames.forEach(bn => { bizCategoryNewRenew[bn] = {}; });
-
-      const dailyStartIdx = rows.findIndex(r => /^\d{4}-\d{1,2}-\d{1,2}$/.test(r[0] || ''));
-      const dailyRows = [];
-      if (dailyStartIdx >= 0) {
-        for (let i = dailyStartIdx; i < rows.length; i++) {
-          const r = rows[i];
-          if (!r[0] || !/^\d{4}-\d{1,2}-\d{1,2}$/.test(r[0])) break;
-          dailyRows.push({ date: r[0], amount: numOf(r[1]) });
-        }
-      }
-
-      const blockStart = 8;
-      const blockWidth = 10;
-      const numBlocks = 19;
-      const productNames = [];
-      const headerRow = rows[0] || [];
-      for (let b = 0; b < numBlocks; b++) {
-        productNames.push(headerRow[blockStart + b * blockWidth] || `产品${b+1}`);
-      }
-      const detailEndIdx = rows.findIndex(r => r[0] === '各产品收款汇总');
-      const detailRowsEnd = detailEndIdx >= 0 ? detailEndIdx : rows.length;
-
-      const deals = [];
-      for (let r = 2; r < detailRowsEnd; r++) {
-        const row = rows[r];
-        if (!row) continue;
-        for (let b = 0; b < numBlocks; b++) {
-          const base = blockStart + b * blockWidth;
-          const amount = numOf(row[base + 4]);
-          if (!amount) continue;
-          deals.push({
-            payDate: row[base] || '',
-            group: row[base + 1] || '',
-            productType: row[base + 2] || '',
-            method: (row[base + 3] || '').trim().toUpperCase(),
-            amount,
-            biz: row[base + 5] || '',
-            expiry: row[base + 6] || '',
-            newRenew: row[base + 7] || '',
-            client: row[base + 8] || '',
-            product: productNames[b],
-          });
-        }
-      }
-
-      const methodTotals = {};
-      deals.forEach(d => { if (d.method) methodTotals[d.method] = (methodTotals[d.method] || 0) + d.amount; });
-      const methodEntries = Object.entries(methodTotals).sort((a,b) => b[1] - a[1]);
-      const methodGrandTotal = methodEntries.reduce((s, [,v]) => s + v, 0);
-
-      deals.forEach(d => {
-        const bizName = d.biz.trim() || '未标注';
-        const cat = d.productType.trim() || '未标注';
-        if (!bizCategoryNewRenew[bizName]) bizCategoryNewRenew[bizName] = {};
-        if (!bizCategoryNewRenew[bizName][cat]) bizCategoryNewRenew[bizName][cat] = { newAmount: 0, renewAmount: 0 };
-        const nr = d.newRenew.trim();
-        if (nr === '新增') bizCategoryNewRenew[bizName][cat].newAmount += d.amount;
-        else if (nr === '续费') bizCategoryNewRenew[bizName][cat].renewAmount += d.amount;
-      });
-
-      categoryBizBreakdown = {};
-      typeNames.forEach(tn => { categoryBizBreakdown[tn] = {}; });
-      deals.forEach(d => {
-        const cat = d.productType.trim();
-        const bizName = d.biz.trim() || '未标注';
-        if (!categoryBizBreakdown[cat]) categoryBizBreakdown[cat] = {};
-        categoryBizBreakdown[cat][bizName] = (categoryBizBreakdown[cat][bizName] || 0) + d.amount;
-      });
-
-      bizCategoryBreakdown = {};
-      bizNames.forEach(bn => { bizCategoryBreakdown[bn] = {}; });
-      deals.forEach(d => {
-        const bizName = d.biz.trim() || '未标注';
-        const cat = d.productType.trim() || '未标注';
-        if (!bizCategoryBreakdown[bizName]) bizCategoryBreakdown[bizName] = {};
-        bizCategoryBreakdown[bizName][cat] = (bizCategoryBreakdown[bizName][cat] || 0) + d.amount;
-      });
-
-      // 商务 新增/续费/合作数 明细（按合作群组去重，同一广告主只算一个）
-      const bizDealStats = {};
-      bizNames.forEach(bn => { bizDealStats[bn] = { newAmount: 0, renewAmount: 0, newPartners: new Set(), renewPartners: new Set() }; });
-      deals.forEach(d => {
-        const bizName = d.biz.trim() || '未标注';
-        if (!bizDealStats[bizName]) bizDealStats[bizName] = { newAmount: 0, renewAmount: 0, newPartners: new Set(), renewPartners: new Set() };
-        const nr = d.newRenew.trim();
-        const partnerKey = d.group.trim() || d.client.trim() || '未命名';
-        if (nr === '新增') {
-          bizDealStats[bizName].newAmount += d.amount;
-          bizDealStats[bizName].newPartners.add(partnerKey);
-        }
-        else if (nr === '续费') {
-          bizDealStats[bizName].renewAmount += d.amount;
-          bizDealStats[bizName].renewPartners.add(partnerKey);
-        }
-      });
-
-      productCategoryBreakdown = {};
-      deals.forEach(d => {
-        const prod = d.product;
-        const cat = d.productType.trim() || '未标注';
-        if (!productCategoryBreakdown[prod]) productCategoryBreakdown[prod] = {};
-        productCategoryBreakdown[prod][cat] = (productCategoryBreakdown[prod][cat] || 0) + d.amount;
-      });
-
-      methodCategoryBreakdown = {};
-      deals.forEach(d => {
-        if (!d.method) return;
-        const cat = d.productType.trim() || '未标注';
-        if (!methodCategoryBreakdown[d.method]) methodCategoryBreakdown[d.method] = {};
-        methodCategoryBreakdown[d.method][cat] = (methodCategoryBreakdown[d.method][cat] || 0) + d.amount;
-      });
-
-      newRenewCategoryBreakdown = {};
-      deals.forEach(d => {
-        const key = d.newRenew.trim() || '未标注';
-        const cat = d.productType.trim() || '未标注';
-        if (!newRenewCategoryBreakdown[key]) newRenewCategoryBreakdown[key] = {};
-        newRenewCategoryBreakdown[key][cat] = (newRenewCategoryBreakdown[key][cat] || 0) + d.amount;
-      });
-
-      groupDealsMap = {};
-      deals.forEach(d => {
-        const key = d.group.trim() || d.client.trim() || '未命名';
-        if (!groupDealsMap[key]) groupDealsMap[key] = [];
-        groupDealsMap[key].push(d);
-      });
-
-      const newRenewTotals = {};
-      deals.forEach(d => {
-        const key = d.newRenew.trim() || '未标注';
-        newRenewTotals[key] = (newRenewTotals[key] || 0) + d.amount;
-      });
-      const newRenewEntries = Object.entries(newRenewTotals).sort((a,b) => b[1] - a[1]);
-      const newRenewGrandTotal = newRenewEntries.reduce((s, [,v]) => s + v, 0);
-
-      const groupTotals = {};
-      deals.forEach(d => {
-        const key = d.group.trim() || d.client.trim() || '未命名';
-        groupTotals[key] = (groupTotals[key] || 0) + d.amount;
-      });
-      const groupEntries = Object.entries(groupTotals).sort((a,b) => b[1] - a[1]).slice(0, 10);
-
-      const today = new Date(); today.setHours(0,0,0,0);
-      // expiringDeals kept for backward-compat but will be replaced by multi-sheet version
-      const expiringDeals = [];
-
-      const dealCount = deals.length;
-      const avgDeal = dealCount ? (deals.reduce((s,d) => s + d.amount, 0) / dealCount) : 0;
-      const newDealCount = (() => {
-        const seen = new Set();
-        deals.forEach(d => {
-          if (d.newRenew.trim() === '新增') seen.add(d.group.trim() || d.client.trim() || '未命名');
+      if (activeId) {
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.target === activeId);
         });
-        return seen.size;
-      })();
+      }
+      scrollSpyTicking = false;
+    });
+  }
 
-      document.getElementById('heroValue').textContent = fmt(totalCurrent);
-      document.getElementById('heroTarget').textContent = fmt(totalTarget);
-      document.getElementById('heroBarFill').style.width = totalPct + '%';
-      document.getElementById('heroPct').textContent = totalPct.toFixed(2) + '% 已完成';
-
-      document.getElementById('kpiTotalCurrent').textContent = fmt(totalCurrent);
-      document.getElementById('kpiTotalTarget').textContent = fmt(totalTarget);
-      document.getElementById('kpiAchieveRate').textContent = totalPct.toFixed(1) + '%';
-      document.getElementById('kpiNewDealCount').textContent = newDealCount;
-
-      const topBiz = bizRows[0];
-      const topProduct = productRows[0];
-      document.getElementById('topBizName').textContent = topBiz ? `${topBiz.name} · ${fmt(topBiz.current)}` : '暂无数据';
-      document.getElementById('topProductName').textContent = topProduct ? `${topProduct.name.split('/')[0]} · ${fmt(topProduct.total)}` : '暂无数据';
-      document.getElementById('dealStats').textContent = dealCount ? `${dealCount}单 / ${fmt(avgDeal)}` : '暂无数据';
-
-      const container = document.getElementById('sectionsContainer');
-      container.innerHTML = '';
-
-      // ===== Section: 商务业绩排名 =====
-      let bizListHtml = '';
-      bizRows.forEach((b, idx) => {
-        const pct = pctOf(b.target, b.current);
-        const widthPct = pct;
+  // ---- Popover ----
+  let popoverHideTimer = null;
+  function showPopoverAt(el, innerHtml) {
+    clearTimeout(popoverHideTimer);
+    const pop = document.getElementById('popover');
+    pop.innerHTML = innerHtml;
+    pop.classList.add('active');
+    pop.style.left = '-9999px';
+    pop.style.top = '-9999px';
+    const rect = el.getBoundingClientRect();
+    const popRect = pop.getBoundingClientRect();
+    const gap = 12;
+    let left = rect.left + rect.width * 0.55;
+    let top = rect.top;
+    if (left + popRect.width > window.innerWidth - gap) left = window.innerWidth - popRect.width - gap;
+    if (left < gap) left = gap;
+    if (top + popRect.height > window.innerHeight - gap) top = window.innerHeight - popRect.height - gap;
+    if (top < gap) top = gap;
+    pop.style.left = left + 'px';
+    pop.style.top = top + 'px';
+  }
+  function hidePopoverSoon() {
+    clearTimeout(popoverHideTimer);
+    popoverHideTimer = setTimeout(() => {
+      document.getElementById('popover').classList.remove('active');
+    }, 160);
+  }
+  function bindPopoverTriggers(selector, buildHtmlFn) {
+    document.querySelectorAll(selector).forEach(el => {
+      const handler = () => showPopoverAt(el, buildHtmlFn(el));
+      el.addEventListener('mouseenter', handler);
+      el.addEventListener('mouseleave', hidePopoverSoon);
+      el.addEventListener('click', (e) => { e.stopPropagation(); handler(); });
+    });
+  }
+  function breakdownPopoverHtml(title, totalLabel, entries) {
+    const total = entries.reduce((s, [,v]) => s + v, 0);
+    let body = '';
+    if (!entries.length) {
+      body = '<div class="empty-hint" style="padding:20px 0;">暂无数据</div>';
+    } else {
+      body = entries.map(([name, amount], idx) => {
+        const pct = total ? (amount / total * 100) : 0;
         const color = PALETTE[idx % PALETTE.length];
-        bizListHtml += `
-          <div class="hbar-item clickable" data-biz="${b.name}">
-            <div class="hbar-top">
-              <span class="hbar-name">${rankBadge(idx)} <span class="txt">${b.name}</span></span>
-              <span class="hbar-value">${fmt(b.current)}</span>
-            </div>
-            <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">目标 ${fmt(b.target)} · 完成 ${pct.toFixed(1)}% · 悬停查看分类占比</div>
-          </div>`;
-      });
-      container.innerHTML += `
-        <div class="section" id="sec-biz"><div class="card">
-          <h2>商务业绩排名 <span class="tag">TEAM PERFORMANCE</span></h2>
-          <div class="panel-split">
-            <div>
-              <div class="chart-canvas-holder"><canvas id="bizChart"></canvas></div>
-              <div class="doughnut-legend" id="bizLegend"></div>
-            </div>
-            <div>${bizListHtml}</div>
-          </div>
-        </div></div>`;
-
-      // ===== Section: 商务目标达成表 =====
-      let bizTableHtml = `<div class="section" id="sec-bizgoal"><div class="card"><h2>商务目标达成表 <span class="tag">TARGET ACHIEVEMENT</span></h2>`;
-      if (bizRows.length) {
-        bizTableHtml += `<table class="mini-table"><tr>
-          <th>商务</th><th>基础目标</th><th>已收款</th><th>新增金额</th><th>续费金额</th><th>新增笔数</th><th>续费笔数</th><th>完成进度</th>
-        </tr>`;
-        bizRows.forEach(b => {
-          const pct = pctOf(b.target, b.current);
-          const stats = bizDealStats[b.name] || { newAmount: 0, renewAmount: 0, newCount: 0 };
-          const pillClass = pct >= 100 ? 'ok' : pct >= 50 ? 'warn' : 'danger';
-          bizTableHtml += `<tr>
-            <td>${b.name}</td>
-            <td>${fmt(b.target)}</td>
-            <td>${fmt(b.current)}</td>
-            <td>${fmt(stats.newAmount)}</td>
-            <td>${fmt(stats.renewAmount)}</td>
-            <td>${stats.newPartners ? stats.newPartners.size : 0}</td>
-            <td>${stats.renewPartners ? stats.renewPartners.size : 0}</td>
-            <td><span class="pill ${pillClass}">${pct.toFixed(1)}%</span></td>
-          </tr>`;
-        });
-        bizTableHtml += `</table>`;
-      } else {
-        bizTableHtml += `<div class="empty-hint">暂无商务目标数据</div>`;
-      }
-      bizTableHtml += '</div></div>';
-      container.innerHTML += bizTableHtml;
-
-      // ===== Section: 商务表现速览 (perf cards) =====
-      let perfHtml = `<div class="section" id="sec-perfcards"><div class="card"><h2>商务表现速览 <span class="tag">PERFORMANCE CARDS</span></h2><div class="perf-grid">`;
-      bizRows.forEach((b, idx) => {
-        const pct = pctOf(b.target, b.current);
-        const color = pct >= 100 ? '#34d399' : pct >= 50 ? '#fbbf24' : '#fb7185';
-        perfHtml += `
-          <div class="perf-card" data-biz="${b.name}">
-            <div class="perf-rank">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '#'+(idx+1)}</div>
-            <div class="perf-name">${b.name}</div>
-            <div class="perf-amount" style="color:${color}">${fmt(b.current)}</div>
-            <div class="perf-target">目标 ${fmt(b.target)}</div>
-            <div class="perf-ring-bg"><div class="perf-ring-fill" style="width:${Math.min(100,pct)}%;background:${color}"></div></div>
-            <div class="perf-pct" style="color:${color}">${pct.toFixed(1)}% 已完成</div>
-          </div>`;
-      });
-      perfHtml += `</div></div></div>`;
-      container.innerHTML += perfHtml;
-
-      // ===== Section: 商务分类完成明细（每人每分类 新增/续费，转盘+进度条风格） =====
-      let bizCatDetailHtml = `<div class="section" id="sec-bizcatdetail"><div class="card"><h2>商务分类完成明细 <span class="tag">BY BIZ &amp; CATEGORY</span></h2>`;
-      const bizCatChartConfigs = [];
-      if (bizRows.length) {
-        bizRows.forEach((b, bIdx) => {
-          const catMap = bizCategoryNewRenew[b.name] || {};
-          const catEntries = Object.entries(catMap)
-            .map(([cat, v]) => [cat, v.newAmount + v.renewAmount, v])
-            .filter(([, sum]) => sum > 0)
-            .sort((a, b2) => b2[1] - a[1]);
-          const chartId = `bizCatChart-${bIdx}`;
-          const legendId = `bizCatLegend-${bIdx}`;
-          bizCatDetailHtml += `
-            <div style="margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.06);">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-                <span style="font-size:14px;font-weight:700;color:#fff;">${b.name}</span>
-                <span style="font-size:11px;color:var(--text-3);">目标 ${fmt(b.target)} · 已完成 ${fmt(b.current)}</span>
-              </div>`;
-          if (catEntries.length) {
-            // 进度条按分类金额占该商务月业绩目标的百分比
-            const bizTarget = b.target > 0 ? b.target : 1;
-            let barsHtml = '';
-            catEntries.forEach(([cat, sum, v], idx) => {
-              const widthPct = Math.min(100, (sum / bizTarget) * 100);
-              const pctLabel = b.target > 0 ? (sum / b.target * 100).toFixed(1) + '%' : '-';
-              const color = PALETTE[idx % PALETTE.length];
-              barsHtml += `
-                <div class="hbar-item">
-                  <div class="hbar-top">
-                    <span class="hbar-name"><span class="legend-dot" style="background:${color}"></span><span class="txt">${cat}</span></span>
-                    <span class="hbar-value">${fmt(sum)} <span style="color:var(--text-3);font-weight:500;">(${pctLabel})</span></span>
-                  </div>
-                  <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-                  <div class="hbar-sub">新增 ${v.newAmount ? fmt(v.newAmount) : '0万'} · 续费 ${v.renewAmount ? fmt(v.renewAmount) : '0万'}</div>
-                </div>`;
-            });
-            bizCatDetailHtml += `
-              <div class="panel-split">
-                <div>
-                  <div class="chart-canvas-holder" style="height:200px;"><canvas id="${chartId}"></canvas></div>
-                  <div class="doughnut-legend" id="${legendId}"></div>
-                </div>
-                <div>${barsHtml}</div>
-              </div>`;
-            bizCatChartConfigs.push({ chartId, legendId, labels: catEntries.map(e => e[0]), data: catEntries.map(e => e[1]) });
-          } else {
-            bizCatDetailHtml += `<div class="empty-hint" style="padding:14px 0;">暂无分类数据</div>`;
-          }
-          bizCatDetailHtml += `</div>`;
-        });
-      } else {
-        bizCatDetailHtml += `<div class="empty-hint">暂无商务数据</div>`;
-      }
-      bizCatDetailHtml += `</div></div>`;
-      container.innerHTML += bizCatDetailHtml;
-
-      // ===== Section: 销售端口月度目标统计（转盘+进度条风格）=====
-      let portProgressHtml = '';
-      const sortedTypeRows = [...typeRows].sort((a,b) => pctOf(b.target,b.current) - pctOf(a.target,a.current));
-      sortedTypeRows.forEach((t, idx) => {
-        const pct = pctOf(t.target, t.current);
-        const widthPct = t.target ? pct : 0;
-        const color = PALETTE[idx % PALETTE.length];
-        portProgressHtml += `
+        return `
           <div class="hbar-item">
             <div class="hbar-top">
-              <span class="hbar-name"><span class="legend-dot" style="background:${color}"></span><span class="txt">${t.name}</span></span>
-              <span class="hbar-value">${fmt(t.current)}</span>
+              <span class="hbar-name">${rankBadge(idx)} <span class="txt">${name}</span></span>
+              <span class="hbar-value">${fmt(amount)} <span style="color:var(--text-3);font-weight:500;">(${pct.toFixed(1)}%)</span></span>
             </div>
-            <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">月度目标 ${fmt(t.target)} · 完成率 ${t.target ? pct.toFixed(1)+'%' : '-'}</div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
           </div>`;
-      });
-      container.innerHTML += `
-        <div class="section" id="sec-porttable"><div class="card">
-          <h2>销售端口月度目标统计 <span class="tag">MONTHLY PORT TARGET</span></h2>
-          <div class="panel-split">
-            <div>
-              <div class="chart-canvas-holder"><canvas id="portChart"></canvas></div>
-              <div class="doughnut-legend" id="portLegend"></div>
-            </div>
-            <div>${portProgressHtml}</div>
-          </div>
-        </div></div>`;
+      }).join('');
+    }
+    return `<div class="popover-title">${title}</div><div class="popover-total">${totalLabel} <b>${fmt(total)}</b></div>${body}`;
+  }
 
-      // ===== Section: 伊甸维度产品业绩进度 =====
-      let prodHtml = `<div class="section" id="sec-product"><div class="card"><h2>伊甸维度产品业绩进度 <span class="tag">% OF MONTHLY PRODUCT TARGET</span></h2>`;
-      productRows.forEach((p, idx) => {
-        const pct = pctOf(p.target, p.total);
-        const widthPct = p.target ? pct : 0;
-        const color = PALETTE[idx % PALETTE.length];
-        prodHtml += `
-          <div class="hbar-item clickable" data-product="${p.name}">
-            <div class="hbar-top">
-              <span class="hbar-name">${rankBadge(idx)} <span class="txt">${p.name}</span></span>
-              <span class="hbar-value">${fmt(p.total)}</span>
-            </div>
-            <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-            <div class="hbar-sub">本产品月目标 ${p.target ? fmt(p.target) : '未设定'} · 占本产品月目标进度 ${p.target ? pct.toFixed(1)+'%' : '-'} · 悬停查看分类占比</div>
-          </div>`;
-      });
-      prodHtml += '</div></div>';
-      container.innerHTML += prodHtml;
+  // ---- Main data load ----
+  async function loadData() {
+    try {
+      const res = await fetch(CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const rows = parseCSV(text);
+      render(rows);
+      document.getElementById('errorBox').innerHTML = '';
+      document.getElementById('lastUpdated').textContent =
+        '已同步 ' + new Date().toLocaleTimeString('zh-CN', { hour12: false });
+    } catch (e) {
+      document.getElementById('errorBox').innerHTML =
+        '<div class="error">⚠️ 数据加载失败：' + e.message + '（60秒后自动重试）</div>';
+    }
+  }
 
-      // ===== Section: 合作方式占比 =====
-      let methodHtml = `<div class="section" id="sec-method"><div class="card"><h2>合作方式占比 <span class="tag">BY DEAL TYPE</span></h2>`;
-      if (methodEntries.length) {
-        methodEntries.forEach(([method, amount], idx) => {
-          const pct = methodGrandTotal ? (amount / methodGrandTotal) * 100 : 0;
-          const color = PALETTE[idx % PALETTE.length];
-          methodHtml += `
-            <div class="hbar-item clickable" data-method="${method}">
-              <div class="hbar-top">
-                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${method}</span></span>
-                <span class="hbar-value">${fmt(amount)}</span>
-              </div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
-              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}% · 悬停查看分类占比</div>
-            </div>`;
-        });
-      } else {
-        methodHtml += `<div class="empty-hint">暂无合作方式数据</div>`;
+  function render(rows) {
+    // ---- Summary rows ----
+    const summaryRow = rows.find(r => r[0] === '数据汇总' && numOf(r[4]) > 0);
+    const totalTarget = summaryRow ? numOf(summaryRow[4]) : 0;
+    let totalCurrent = summaryRow ? numOf(summaryRow[5]) : 0;
+    let totalPct = pctOf(totalTarget, totalCurrent);
+
+    // ---- Time progress ----
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0-indexed
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const dayOfMonth = now.getDate();
+    const timePct = (dayOfMonth / daysInMonth) * 100;
+
+    // ---- Type rows ----
+    const typeNames = ['约炮','棋牌','直播','黄游','播放器','外围','AI服务','VPN'];
+    let typeRows = rows.filter(r => typeNames.includes(r[0]))
+      .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]) }));
+
+    // ---- Biz rows ----
+    const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','程晨'];
+    const bizRows = rows.filter(r => bizNames.includes(r[0]))
+      .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]),
+        newAdd: numOf(r[1]), renew: numOf(r[2]) }))
+      .sort((a, b) => b.current - a.current);
+
+    // ---- Product rows ----
+    const summaryIdx = rows.findIndex(r => r[0] === '各产品收款汇总');
+    const productRows = [];
+    if (summaryIdx >= 0) {
+      for (let i = summaryIdx + 2; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r[0] || r[0] === '数据汇总') break;
+        productRows.push({ name: r[0], total: numOf(r[1]), target: numOf(r[2]) });
       }
-      methodHtml += '</div></div>';
-      container.innerHTML += methodHtml;
+    }
+    productRows.sort((a, b) => b.total - a.total);
 
-      // ===== Section: 新增 / 续费构成 =====
-      let newRenewHtml = `<div class="section" id="sec-newrenew"><div class="card"><h2>新增 / 续费构成 <span class="tag">NEW VS RENEWAL</span></h2>`;
-      if (newRenewEntries.length) {
-        const nrColors = { '新增': '#34d399', '续费': '#60a5fa' };
-        newRenewEntries.forEach(([label, amount], idx) => {
-          const pct = newRenewGrandTotal ? (amount / newRenewGrandTotal) * 100 : 0;
-          const color = nrColors[label] || PALETTE[idx % PALETTE.length];
-          newRenewHtml += `
-            <div class="hbar-item clickable" data-newrenew="${label}">
-              <div class="hbar-top">
-                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${label}</span></span>
-                <span class="hbar-value">${fmt(amount)}</span>
-              </div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}"></div></div>
-              <div class="hbar-sub">占总收款 ${pct.toFixed(1)}% · 悬停查看分类占比</div>
-            </div>`;
-        });
-      } else {
-        newRenewHtml += `<div class="empty-hint">暂无新增/续费数据</div>`;
+    // ---- Daily rows ----
+    const dailyStartIdx = rows.findIndex(r => /^\d{4}-\d{1,2}-\d{1,2}$/.test(r[0] || ''));
+    const dailyRows = [];
+    if (dailyStartIdx >= 0) {
+      for (let i = dailyStartIdx; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r[0] || !/^\d{4}-\d{1,2}-\d{1,2}$/.test(r[0])) break;
+        dailyRows.push({ date: r[0], amount: numOf(r[1]) });
       }
-      newRenewHtml += '</div></div>';
-      container.innerHTML += newRenewHtml;
+    }
 
-      // ===== Section: 合作群组/客户 Top榜 =====
-      let groupHtml = `<div class="section" id="sec-partners"><div class="card"><h2>合作群组 / 客户 Top榜 <span class="tag">TOP PARTNERS</span></h2>`;
-      if (groupEntries.length) {
-        const maxGroup = Math.max(...groupEntries.map(([,v]) => v), 1);
-        groupEntries.forEach(([name, amount], idx) => {
-          const widthPct = (amount / maxGroup) * 100;
-          const color = PALETTE[idx % PALETTE.length];
-          groupHtml += `
-            <div class="hbar-item clickable" data-group="${name}">
-              <div class="hbar-top">
-                <span class="hbar-name">${rankBadge(idx)} <span class="txt">${name}</span></span>
-                <span class="hbar-value">${fmt(amount)}</span>
-              </div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
-              <div class="hbar-sub">悬停查看合作明细</div>
-            </div>`;
+    // ---- Deal details ----
+    const blockStart = 8;
+    const blockWidth = 10;
+    const numBlocks = 19;
+    const productNames = [];
+    const headerRow = rows[0] || [];
+    for (let b = 0; b < numBlocks; b++) {
+      productNames.push(headerRow[blockStart + b * blockWidth] || `产品${b+1}`);
+    }
+    const detailEndIdx = rows.findIndex(r => r[0] === '各产品收款汇总');
+    const detailRowsEnd = detailEndIdx >= 0 ? detailEndIdx : rows.length;
+
+    const deals = [];
+    for (let r = 2; r < detailRowsEnd; r++) {
+      const row = rows[r];
+      if (!row) continue;
+      for (let b = 0; b < numBlocks; b++) {
+        const base = blockStart + b * blockWidth;
+        const amount = numOf(row[base + 4]);
+        if (!amount) continue;
+        deals.push({
+          payDate: row[base] || '',
+          group: row[base + 1] || '',
+          productType: row[base + 2] || '',
+          method: (row[base + 3] || '').trim().toUpperCase(),
+          amount,
+          biz: row[base + 5] || '',
+          expiry: row[base + 6] || '',
+          newRenew: row[base + 7] || '',
+          client: row[base + 8] || '',
+          product: productNames[b],
         });
-      } else {
-        groupHtml += `<div class="empty-hint">暂无合作群组数据</div>`;
       }
-      groupHtml += '</div></div>';
-      container.innerHTML += groupHtml;
-
-      // ===== Section: 即将到期提醒（8月+9月双表，按群组去重，只显示未到期）=====
-      container.innerHTML += `<div class="section" id="sec-expiry"><div class="card"><h2>即将到期提醒 <span class="tag">8月+9月 合并 · 群组去重</span></h2><div id="expiryContent"><div class="empty-hint">加载中...</div></div></div></div>`;
-
-      // ===== Section: 每日流水趋势 =====
-      container.innerHTML += `
-        <div class="section" id="sec-daily"><div class="card">
-          <h2>每日流水趋势 <span class="tag">SEPTEMBER DAILY</span></h2>
-          <div class="chart-canvas-holder tall"><canvas id="dailyChart"></canvas></div>
-        </div></div>`;
-
-      renderPortChart(typeRows);
-      renderBizChart(bizRows);
-      bizCatChartConfigs.forEach(cfg => renderBizCatChart(cfg));
-      renderDailyChart(dailyRows);
-      initScrollSpy();
-
-      // --- bind popover triggers (hover + click) ---
-      bindPopoverTriggers('.hbar-item.clickable[data-category]', (el) => {
-        const cat = el.dataset.category;
-        const entries = Object.entries(categoryBizBreakdown[cat] || {}).sort((a,b) => b[1]-a[1]);
-        return breakdownPopoverHtml(`${cat} · 各商务完成情况`, '该分类总收款', entries);
-      });
-      bindPopoverTriggers('.hbar-item.clickable[data-biz]', (el) => {
-        const bizName = el.dataset.biz;
-        const entries = Object.entries(bizCategoryBreakdown[bizName] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
-        return breakdownPopoverHtml(`${bizName} · 各分类业绩占比`, `${bizName} 本月总业绩`, entries);
-      });
-      bindPopoverTriggers('.perf-card[data-biz]', (el) => {
-        const bizName = el.dataset.biz;
-        const entries = Object.entries(bizCategoryBreakdown[bizName] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
-        return breakdownPopoverHtml(`${bizName} · 各分类业绩占比`, `${bizName} 本月总业绩`, entries);
-      });
-      bindPopoverTriggers('.hbar-item.clickable[data-product]', (el) => {
-        const name = el.dataset.product;
-        const entries = Object.entries(productCategoryBreakdown[name] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
-        return breakdownPopoverHtml(`产品「${name.split('/')[0]}」· 分类占比`, '总收款', entries);
-      });
-      bindPopoverTriggers('.hbar-item.clickable[data-method]', (el) => {
-        const name = el.dataset.method;
-        const entries = Object.entries(methodCategoryBreakdown[name] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
-        return breakdownPopoverHtml(`合作方式「${name}」· 分类占比`, '总收款', entries);
-      });
-      bindPopoverTriggers('.hbar-item.clickable[data-newrenew]', (el) => {
-        const name = el.dataset.newrenew;
-        const entries = Object.entries(newRenewCategoryBreakdown[name] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
-        return breakdownPopoverHtml(`${name} · 分类占比`, '总收款', entries);
-      });
-      bindPopoverTriggers('.hbar-item.clickable[data-group]', (el) => {
-        return groupDetailPopoverHtml(el.dataset.group);
-      });
     }
 
-    function renderTypeChart(typeRows) {
-      const ctx = document.getElementById('typeChart');
-      if (!ctx) return;
-      const labels = typeRows.map(t => t.name);
-      const data = typeRows.map(t => t.current);
-      const hasData = data.some(v => v > 0);
-      const displayData = hasData ? data : typeRows.map(t => t.target || 1);
-      const colors = labels.map((_, i) => PALETTE[i % PALETTE.length]);
+    // ---- Breakdowns ----
+    categoryBizBreakdown = {};
+    typeNames.forEach(tn => { categoryBizBreakdown[tn] = {}; });
+    deals.forEach(d => {
+      const cat = d.productType.trim();
+      const bizName = d.biz.trim() || '未标注';
+      if (!categoryBizBreakdown[cat]) categoryBizBreakdown[cat] = {};
+      categoryBizBreakdown[cat][bizName] = (categoryBizBreakdown[cat][bizName] || 0) + d.amount;
+    });
 
-      if (typeChartInstance) typeChartInstance.destroy();
-      typeChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: { labels, datasets: [{ data: displayData, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false, cutout: '68%',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
-              callbacks: { label: (c) => c.label + ': ' + fmt(c.parsed) }
-            }
-          }
-        }
-      });
-      const legend = document.getElementById('typeLegend');
-      legend.innerHTML = labels.map((l, i) =>
-        `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
-      ).join('');
-    }
+    bizCategoryBreakdown = {};
+    bizNames.forEach(bn => { bizCategoryBreakdown[bn] = {}; });
+    deals.forEach(d => {
+      const bizName = d.biz.trim() || '未标注';
+      const cat = d.productType.trim() || '未标注';
+      if (!bizCategoryBreakdown[bizName]) bizCategoryBreakdown[bizName] = {};
+      bizCategoryBreakdown[bizName][cat] = (bizCategoryBreakdown[bizName][cat] || 0) + d.amount;
+    });
 
-    function renderBizChart(bizRows) {
-      const ctx = document.getElementById('bizChart');
-      if (!ctx) return;
-      const labels = bizRows.map(b => b.name);
-      const data = bizRows.map(b => b.current);
-      const hasData = data.some(v => v > 0);
-      const displayData = hasData ? data : bizRows.map(b => b.target || 1);
-      const colors = labels.map((_, i) => PALETTE[i % PALETTE.length]);
+    productCategoryBreakdown = {};
+    deals.forEach(d => {
+      const prod = d.product;
+      const cat = d.productType.trim() || '未标注';
+      if (!productCategoryBreakdown[prod]) productCategoryBreakdown[prod] = {};
+      productCategoryBreakdown[prod][cat] = (productCategoryBreakdown[prod][cat] || 0) + d.amount;
+    });
 
-      if (bizChartInstance) bizChartInstance.destroy();
-      bizChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: { labels, datasets: [{ data: displayData, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false, cutout: '68%',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
-              callbacks: { label: (c) => c.label + ': ' + fmt(c.parsed) }
-            }
-          }
-        }
-      });
-      const legend = document.getElementById('bizLegend');
-      legend.innerHTML = labels.map((l, i) =>
-        `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
-      ).join('');
-    }
+    methodCategoryBreakdown = {};
+    deals.forEach(d => {
+      if (!d.method) return;
+      const cat = d.productType.trim() || '未标注';
+      if (!methodCategoryBreakdown[d.method]) methodCategoryBreakdown[d.method] = {};
+      methodCategoryBreakdown[d.method][cat] = (methodCategoryBreakdown[d.method][cat] || 0) + d.amount;
+    });
 
-    let portChartInstance = null;
-    function renderPortChart(typeRows) {
-      const ctx = document.getElementById('portChart');
-      if (!ctx) return;
-      const labels = typeRows.map(t => t.name);
-      const data = typeRows.map(t => t.current);
-      const hasData = data.some(v => v > 0);
-      const displayData = hasData ? data : typeRows.map(t => t.target || 1);
-      const colors = labels.map((_, i) => PALETTE[i % PALETTE.length]);
-      if (portChartInstance) portChartInstance.destroy();
-      portChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: { labels, datasets: [{ data: displayData, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false, cutout: '68%',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
-              callbacks: { label: (c) => c.label + ': ' + fmt(c.parsed) }
-            }
-          }
-        }
-      });
-      const legend = document.getElementById('portLegend');
-      if (legend) legend.innerHTML = labels.map((l, i) =>
-        `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
-      ).join('');
-    }
+    newRenewCategoryBreakdown = {};
+    deals.forEach(d => {
+      const key = d.newRenew.trim() || '未标注';
+      const cat = d.productType.trim() || '未标注';
+      if (!newRenewCategoryBreakdown[key]) newRenewCategoryBreakdown[key] = {};
+      newRenewCategoryBreakdown[key][cat] = (newRenewCategoryBreakdown[key][cat] || 0) + d.amount;
+    });
 
-    const bizCatChartInstances = {};
-    function renderBizCatChart({ chartId, legendId, labels, data }) {
-      const ctx = document.getElementById(chartId);
-      if (!ctx) return;
-      const colors = labels.map((_, i) => PALETTE[i % PALETTE.length]);
-      if (bizCatChartInstances[chartId]) bizCatChartInstances[chartId].destroy();
-      bizCatChartInstances[chartId] = new Chart(ctx, {
-        type: 'doughnut',
-        data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false, cutout: '68%',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
-              callbacks: { label: (c) => c.label + ': ' + fmt(c.parsed) }
-            }
-          }
-        }
-      });
-      const legend = document.getElementById(legendId);
-      if (legend) legend.innerHTML = labels.map((l, i) =>
-        `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`
-      ).join('');
-    }
+    groupDealsMap = {};
+    deals.forEach(d => {
+      const key = d.group.trim() || d.client.trim() || '未命名';
+      if (!groupDealsMap[key]) groupDealsMap[key] = [];
+      groupDealsMap[key].push(d);
+    });
 
-    function renderDailyChart(dailyRows) {
-      const ctx = document.getElementById('dailyChart');
-      if (!ctx || !dailyRows.length) return;
-      const c2d = ctx.getContext('2d');
-      const gradient = c2d.createLinearGradient(0, 0, 0, 320);
-      gradient.addColorStop(0, 'rgba(139,92,246,0.45)');
-      gradient.addColorStop(1, 'rgba(34,211,238,0.02)');
+    // Biz new/renew amounts
+    const bizNewRenewData = {};
+    bizNames.forEach(bn => { bizNewRenewData[bn] = { newAmount: 0, renewAmount: 0 }; });
+    deals.forEach(d => {
+      const bizName = d.biz.trim() || '未标注';
+      if (!bizNewRenewData[bizName]) bizNewRenewData[bizName] = { newAmount: 0, renewAmount: 0 };
+      const nr = d.newRenew.trim();
+      if (nr === '新增') bizNewRenewData[bizName].newAmount += d.amount;
+      else if (nr === '续费') bizNewRenewData[bizName].renewAmount += d.amount;
+    });
 
-      const labels = dailyRows.map(d => d.date.split('-').slice(1).join('/'));
-      const data = dailyRows.map(d => d.amount);
-
-      if (dailyChartInstance) dailyChartInstance.destroy();
-      dailyChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            data, fill: true, backgroundColor: gradient, borderColor: '#8b5cf6',
-            borderWidth: 2.5, tension: 0.35, pointRadius: 0, pointHoverRadius: 5,
-            pointHoverBackgroundColor: '#22d3ee', pointHoverBorderColor: '#fff',
-          }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-              titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
-              callbacks: { label: (c) => fmt(c.parsed.y) }
-            }
-          },
-          scales: {
-            x: { grid: { display: false }, ticks: { color: '#8b93ab', font: { size: 10 }, maxRotation: 0 } },
-            y: {
-              grid: { color: 'rgba(255,255,255,0.05)' },
-              ticks: { color: '#8b93ab', font: { size: 10 }, callback: (v) => tickWan(v) }
-            }
-          }
-        }
-      });
-    }
-
-    // popover: stay open while hovered, close when clicking elsewhere on page
-    document.getElementById('popover').addEventListener('mouseenter', () => clearTimeout(popoverHideTimer));
-    document.getElementById('popover').addEventListener('mouseleave', hidePopoverSoon);
-    document.addEventListener('click', (e) => {
-      const pop = document.getElementById('popover');
-      if (!pop.contains(e.target) && !e.target.closest('.hbar-item.clickable')) {
-        pop.classList.remove('active');
+    // Method analysis
+    const methodTotals = {};
+    const methodDealCount = {};
+    deals.forEach(d => {
+      if (d.method) {
+        methodTotals[d.method] = (methodTotals[d.method] || 0) + d.amount;
+        methodDealCount[d.method] = (methodDealCount[d.method] || 0) + 1;
       }
     });
 
-    async function loadExpiryData() {
-      try {
-        const [resAug, resSep] = await Promise.all([
-          fetch(AUG_CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
-          fetch(CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
-        ]);
-        const [textAug, textSep] = await Promise.all([resAug.text(), resSep.text()]);
-        const rowsAug = parseCSV(textAug);
-        const rowsSep = parseCSV(textSep);
+    // New/Renew totals
+    let newTotalAmt = 0, renewTotalAmt = 0, newDealCount = 0, renewDealCount = 0;
+    const newPartners = new Set();
+    deals.forEach(d => {
+      const nr = d.newRenew.trim();
+      if (nr === '新增') {
+        newTotalAmt += d.amount;
+        newDealCount++;
+        newPartners.add(d.group.trim() || d.client.trim() || '未命名');
+      } else if (nr === '续费') {
+        renewTotalAmt += d.amount;
+        renewDealCount++;
+      }
+    });
+    const grandTotal = deals.reduce((s, d) => s + d.amount, 0);
 
-        const today = new Date(); today.setHours(0,0,0,0);
-        const numBlocks = 18;
+    // Reconcile dashboard KPIs with the product detail blocks.
+    // The left summary area can lag when a new product type appears (e.g. 社区发帖),
+    // while the daily rows/product blocks already contain the actual booked revenue.
+    const detailTypeTotals = {};
+    deals.forEach(d => {
+      const cat = d.productType.trim() || '未标注';
+      detailTypeTotals[cat] = (detailTypeTotals[cat] || 0) + d.amount;
+    });
+    const typeRowMap = new Map(typeRows.map(t => [t.name, { ...t, current: detailTypeTotals[t.name] ?? t.current }]));
+    Object.entries(detailTypeTotals).forEach(([name, current]) => {
+      if (!typeRowMap.has(name)) typeRowMap.set(name, { name, target: 0, current });
+    });
+    typeRows = Array.from(typeRowMap.values())
+      .filter(t => t.current > 0 || t.target > 0)
+      .sort((a, b) => b.current - a.current);
+    if (grandTotal && Math.abs(grandTotal - totalCurrent) > 0.5) {
+      totalCurrent = grandTotal;
+      totalPct = pctOf(totalTarget, totalCurrent);
+    }
 
-        function extractExpiries(rows, sheetLabel) {
-          const map = {};
-          for (let r = 2; r < rows.length; r++) {
-            const row = rows[r];
-            if (!row) continue;
-            for (let b = 0; b < numBlocks; b++) {
-              const base = 8 + b * 10;
-              const expiryStr = row[base + 6] || '';
-              if (!expiryStr.trim()) continue;
-              const amt = numOf(row[base + 4]);
-              if (!amt) continue;
-              const expDate = parseFlexDate(expiryStr);
-              if (!expDate || expDate < today) continue;
-              const group = (row[base + 1] || '').trim() || (row[base + 8] || '').trim() || '未命名';
-              const biz = (row[base + 5] || '').trim();
-              const method = (row[base + 3] || '').trim().toUpperCase();
-              const cat = (row[base + 2] || '').trim();
-              if (!map[group] || expDate < map[group].expDate) {
-                map[group] = { group, biz, method, cat, expDate, expiryStr, sheet: sheetLabel };
+    // Partner count (unique groups)
+    const uniquePartners = new Set(deals.map(d => d.group.trim() || d.client.trim() || '未命名'));
+    const partnerCount = uniquePartners.size;
+    const dealCount = deals.length;
+    const avgDeal = dealCount ? grandTotal / dealCount : 0;
+    const newPct = grandTotal ? (newTotalAmt / grandTotal) * 100 : 0;
+
+    // ---- TOP KPI ----
+    const achieveDiff = totalPct - timePct;
+    document.getElementById('kpiTotalCurrent').textContent = fmt(totalCurrent);
+    document.getElementById('kpiAchieveRate').textContent = totalPct.toFixed(1) + '%';
+    const badgeEl = document.getElementById('kpiAchieveBadge');
+    if (Math.abs(achieveDiff) < 0.5) {
+      badgeEl.innerHTML = `<span class="kpi-foot-badge neutral">与时间进度持平</span>`;
+    } else if (achieveDiff > 0) {
+      badgeEl.innerHTML = `<span class="kpi-foot-badge ahead">领先时间进度 ${achieveDiff.toFixed(1)}pp</span>`;
+    } else {
+      badgeEl.innerHTML = `<span class="kpi-foot-badge behind">落后时间进度 ${Math.abs(achieveDiff).toFixed(1)}pp</span>`;
+    }
+    document.getElementById('kpiTimePct').textContent = timePct.toFixed(1) + '%';
+    document.getElementById('kpiTimeDay').textContent = `第${dayOfMonth}天 / ${daysInMonth}天`;
+    document.getElementById('kpiPartnerCount').textContent = partnerCount;
+    document.getElementById('kpiAvgDeal').textContent = fmt(avgDeal);
+    document.getElementById('kpiNewPct').textContent = newPct.toFixed(1) + '%';
+
+    // ---- Build sections ----
+    const container = document.getElementById('sectionsContainer');
+    container.innerHTML = '';
+
+    // ============================================================
+    // Section 2: 商务表现
+    // ============================================================
+    const bizSortedByPerf = [...bizRows]; // already sorted by current desc
+
+    // Bar chart data (horizontal)
+    let bizBarHtml = '';
+    const bizMaxCurrent = Math.max(...bizSortedByPerf.map(b => b.current), 1);
+    bizSortedByPerf.forEach((b, idx) => {
+      const pct = pctOf(b.target, b.current);
+      const widthPct = (b.current / bizMaxCurrent) * 100;
+      const color = PALETTE[idx % PALETTE.length];
+      bizBarHtml += `
+        <div class="hbar-item clickable" data-biz="${b.name}">
+          <div class="hbar-top">
+            <span class="hbar-name">${rankBadge(idx)} <span class="txt">${b.name}</span></span>
+            <span class="hbar-value">${fmt(b.current)}</span>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
+          <div class="hbar-sub">目标 ${fmt(b.target)} · 悬停查看分类明细</div>
+        </div>`;
+    });
+
+    // Goal completion progress bars (美化版)
+    let bizGoalHtml = '';
+    bizSortedByPerf.forEach((b, idx) => {
+      const pct = pctOf(b.target, b.current);
+      const color = pct >= 80 ? '#2ecc8e' : pct >= 50 ? '#f5be3e' : '#f0506e';
+      bizGoalHtml += `
+        <div class="goal-bar-item">
+          <div class="goal-bar-head">
+            <span class="goal-bar-name">${b.name}</span>
+            <span class="goal-bar-meta">${fmt(b.current)} / ${fmt(b.target)}</span>
+          </div>
+          <div class="goal-bar-track">
+            <div class="goal-bar-fill" style="width:${Math.min(100, pct)}%;background:${color};box-shadow:0 0 8px ${color}55;"></div>
+          </div>
+          <div class="goal-bar-footer">
+            <span style="color:${color};font-size:10px;font-weight:700;">${pct.toFixed(1)}%</span>
+            <span style="color:var(--text-3);font-size:9.5px;">目标 ${fmt(b.target)}</span>
+          </div>
+        </div>`;
+    });
+
+    container.innerHTML += `
+      <div class="section" id="sec-biz">
+        <div class="card">
+          <h2>商务表现 <span class="tag">BIZ PERFORMANCE</span></h2>
+          <div class="two-col">
+            <div>
+              <div style="font-size:11px;color:var(--text-3);font-weight:700;letter-spacing:0.5px;margin-bottom:12px;">TOP 收款排名</div>
+              ${bizBarHtml}
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-3);font-weight:700;letter-spacing:0.5px;margin-bottom:12px;">目标完成率</div>
+              ${bizGoalHtml}
+            </div>
+          </div>
+          <div style="margin-top:24px;">
+            <div style="font-size:11px;color:var(--text-3);font-weight:700;letter-spacing:0.5px;margin-bottom:12px;">新增 / 续费堆叠对比</div>
+            <div class="chart-canvas-holder medium"><canvas id="bizStackedChart"></canvas></div>
+          </div>
+        </div>
+      </div>`;
+
+    // ============================================================
+    // Section 3: 产品表现（2个子板块）
+    // ============================================================
+    let prodContribHtml = '';
+    const prodMaxTotal = Math.max(...productRows.map(p => p.total), 1);
+    productRows.forEach((p, idx) => {
+      const widthPct = (p.total / prodMaxTotal) * 100;
+      const color = PALETTE[idx % PALETTE.length];
+      prodContribHtml += `
+        <div class="hbar-item clickable" data-product="${p.name}">
+          <div class="hbar-top">
+            <span class="hbar-name">${rankBadge(idx)} <span class="txt">${p.name}</span></span>
+            <span class="hbar-value">${fmt(p.total)}</span>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${color}"></div></div>
+          <div class="hbar-sub">占总收款 ${grandTotal ? (p.total/grandTotal*100).toFixed(1) : 0}% · 悬停查看分类</div>
+        </div>`;
+    });
+
+    let prodGoalHtml = '';
+    productRows.forEach((p, idx) => {
+      const pct = pctOf(p.target, p.total);
+      const barColor = pct >= 80 ? '#2ecc8e' : pct >= 50 ? '#f5be3e' : '#f0506e';
+      const widthPct = p.target ? Math.min(100, pct) : 0;
+      prodGoalHtml += `
+        <div class="hbar-item clickable" data-product="${p.name}">
+          <div class="hbar-top">
+            <span class="hbar-name">${rankBadge(idx)} <span class="txt">${p.name}</span></span>
+            <span class="hbar-value" style="color:${barColor}">${p.target ? pct.toFixed(1)+'%' : '-'}</span>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:${widthPct}%;background:${barColor};box-shadow:0 0 6px ${barColor}44;"></div></div>
+          <div class="hbar-sub">${fmt(p.total)} / 目标 ${p.target ? fmt(p.target) : '未设定'}</div>
+        </div>`;
+    });
+
+    container.innerHTML += `
+      <div class="section" id="sec-product">
+        <div class="card">
+          <h2>产品表现 <span class="tag">PRODUCT PERFORMANCE</span></h2>
+          <div class="two-col">
+            <div>
+              <div style="font-size:11px;color:var(--text-3);font-weight:700;letter-spacing:0.5px;margin-bottom:12px;">收款贡献排行</div>
+              ${prodContribHtml}
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-3);font-weight:700;letter-spacing:0.5px;margin-bottom:12px;">目标完成情况 <span style="color:var(--text-3);font-weight:400;">&lt;50% 🔴 · 50-80% 🟡 · &gt;80% 🟢</span></div>
+              ${prodGoalHtml}
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    // ============================================================
+    // Section 4: 收款质量分析
+    // ============================================================
+    // New vs Renew table
+    const newAvg = newDealCount ? newTotalAmt / newDealCount : 0;
+    const renewAvg = renewDealCount ? renewTotalAmt / renewDealCount : 0;
+    const newRenewTableHtml = `
+      <table class="mini-table">
+        <tr><th>类型</th><th>金额</th><th>单数</th><th>客单价</th><th>占比</th></tr>
+        <tr>
+          <td><span style="color:#34d399;font-weight:700;">● 新增</span></td>
+          <td>${fmt(newTotalAmt)}</td>
+          <td>${newDealCount}</td>
+          <td>${fmt(newAvg)}</td>
+          <td>${grandTotal ? (newTotalAmt/grandTotal*100).toFixed(1)+'%' : '-'}</td>
+        </tr>
+        <tr>
+          <td><span style="color:#60a5fa;font-weight:700;">● 续费</span></td>
+          <td>${fmt(renewTotalAmt)}</td>
+          <td>${renewDealCount}</td>
+          <td>${fmt(renewAvg)}</td>
+          <td>${grandTotal ? (renewTotalAmt/grandTotal*100).toFixed(1)+'%' : '-'}</td>
+        </tr>
+        <tr style="border-top:1px solid rgba(255,255,255,0.1)">
+          <td><strong>合计</strong></td>
+          <td><strong>${fmt(grandTotal)}</strong></td>
+          <td><strong>${dealCount}</strong></td>
+          <td><strong>${fmt(avgDeal)}</strong></td>
+          <td>100%</td>
+        </tr>
+      </table>`;
+
+    // Method table
+    const methodEntries = Object.entries(methodTotals).sort((a,b) => b[1]-a[1]);
+    const methodRows2 = methodEntries.map(([m, amt]) => {
+      const cnt = methodDealCount[m] || 0;
+      const avg = cnt ? amt / cnt : 0;
+      return `<tr>
+        <td>${m || '-'}</td>
+        <td>${fmt(amt)}</td>
+        <td>${cnt}</td>
+        <td>${fmt(avg)}</td>
+      </tr>`;
+    }).join('');
+    const methodTableHtml = `
+      <table class="mini-table">
+        <tr><th>合作方式</th><th>金额</th><th>单数</th><th>客单价</th></tr>
+        ${methodRows2 || '<tr><td colspan="4" style="text-align:center;color:var(--text-3)">暂无数据</td></tr>'}
+      </table>`;
+
+    // TOP3 concentration
+    const top3Total = productRows.slice(0, 3).reduce((s, p) => s + p.total, 0);
+    const top3Pct = grandTotal ? (top3Total / grandTotal) * 100 : 0;
+    const top3Names = productRows.slice(0, 3).map(p => p.name.split('/')[0]).join('、');
+    const concHtml = `
+      <div class="conc-bar">
+        <div style="font-size:13px;font-weight:800;color:#fff;">${top3Pct.toFixed(1)}%</div>
+        <div style="font-size:10px;color:var(--text-3);margin:3px 0 6px;">TOP3 产品 (${top3Names}) 占总收款</div>
+        <div class="conc-bar-track"><div class="conc-bar-fill" style="width:${top3Pct}%"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:9.5px;color:var(--text-3);">
+          <span>TOP3: ${fmt(top3Total)}</span><span>总计: ${fmt(grandTotal)}</span>
+        </div>
+      </div>`;
+
+    container.innerHTML += `
+      <div class="section" id="sec-quality">
+        <div class="card">
+          <h2>收款质量分析 <span class="tag">QUALITY ANALYSIS</span></h2>
+          <div class="three-col">
+            <div class="quality-stat-card">
+              <h3>新增 vs 续费</h3>
+              ${newRenewTableHtml}
+            </div>
+            <div class="quality-stat-card">
+              <h3>合作方式对比</h3>
+              ${methodTableHtml}
+            </div>
+            <div class="quality-stat-card">
+              <h3>TOP3 产品收入集中度</h3>
+              ${productRows.length ? concHtml : '<div class="empty-hint">暂无产品数据</div>'}
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    // ============================================================
+    // Section 5: 趋势分析
+    // ============================================================
+    container.innerHTML += `
+      <div class="section" id="sec-daily">
+        <div class="card">
+          <h2>趋势分析 <span class="tag">DAILY TREND + CUMULATIVE TARGET</span></h2>
+          <div class="chart-canvas-holder tall"><canvas id="dailyChart"></canvas></div>
+          <div style="display:flex;gap:18px;margin-top:10px;flex-wrap:wrap;">
+            <div class="legend-item"><span class="legend-dot" style="background:#8b5cf6"></span>每日收款</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#f5be3e;border-radius:0"></span>累计实际</div>
+            <div class="legend-item" style="opacity:0.7"><span style="display:inline-block;width:22px;height:2px;border-top:2px dashed #f0506e;margin-right:5px;vertical-align:middle;"></span>线性目标进度</div>
+          </div>
+        </div>
+      </div>`;
+
+    // ============================================================
+    // Section 6: 续费风险
+    // ============================================================
+    container.innerHTML += `
+      <div class="section" id="sec-expiry">
+        <div class="card">
+          <h2>续费风险 <span class="tag">8月+9月 合并 · 按到期区间分组</span></h2>
+          <div id="expiryContent"><div class="empty-hint">加载中...</div></div>
+        </div>
+      </div>`;
+
+    // ---- Render charts ----
+    renderBizStackedChart(bizSortedByPerf, bizNewRenewData);
+    renderDailyChart(dailyRows, totalTarget);
+
+    initScrollSpy();
+
+    // ---- Popover triggers ----
+    bindPopoverTriggers('.hbar-item.clickable[data-biz]', (el) => {
+      const bizName = el.dataset.biz;
+      const entries = Object.entries(bizCategoryBreakdown[bizName] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+      return breakdownPopoverHtml(`${bizName} · 各分类业绩`, `${bizName} 本月总业绩`, entries);
+    });
+    bindPopoverTriggers('.hbar-item.clickable[data-product]', (el) => {
+      const name = el.dataset.product;
+      const entries = Object.entries(productCategoryBreakdown[name] || {}).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+      return breakdownPopoverHtml(`产品「${name.split('/')[0]}」· 分类占比`, '总收款', entries);
+    });
+  }
+
+  // ---- Chart: Biz Stacked Bar ----
+  function renderBizStackedChart(bizRows, bizNewRenewData) {
+    const ctx = document.getElementById('bizStackedChart');
+    if (!ctx) return;
+    if (bizStackedChartInstance) bizStackedChartInstance.destroy();
+    const labels = bizRows.map(b => b.name);
+    const newData = bizRows.map(b => (bizNewRenewData[b.name] || {}).newAmount || 0);
+    const renewData = bizRows.map(b => (bizNewRenewData[b.name] || {}).renewAmount || 0);
+    bizStackedChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: '新增',
+            data: newData,
+            backgroundColor: 'rgba(52,211,153,0.75)',
+            borderRadius: 4,
+            borderSkipped: false,
+          },
+          {
+            label: '续费',
+            data: renewData,
+            backgroundColor: 'rgba(96,165,250,0.75)',
+            borderRadius: 4,
+            borderSkipped: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+        plugins: {
+          legend: { display: true, position: 'top', labels: { color: '#8893b4', font: { size: 11 }, boxWidth: 12, padding: 14 } },
+          tooltip: {
+            backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+            titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
+            callbacks: { label: (c) => c.dataset.label + ': ' + fmt(c.parsed.x) }
+          }
+        },
+        scales: {
+          x: {
+            stacked: true,
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { color: '#8b93ab', font: { size: 10 }, callback: (v) => tickWan(v) }
+          },
+          y: { stacked: true, grid: { display: false }, ticks: { color: '#d0d7f0', font: { size: 11 } } }
+        }
+      }
+    });
+  }
+
+  // ---- Chart: Daily + Cumulative ----
+  function renderDailyChart(dailyRows, totalTarget) {
+    const ctx = document.getElementById('dailyChart');
+    if (!ctx || !dailyRows.length) return;
+    const c2d = ctx.getContext('2d');
+    const gradient = c2d.createLinearGradient(0, 0, 0, 320);
+    gradient.addColorStop(0, 'rgba(139,92,246,0.45)');
+    gradient.addColorStop(1, 'rgba(34,211,238,0.02)');
+
+    const labels = dailyRows.map(d => d.date.split('-').slice(1).join('/'));
+    const dailyData = dailyRows.map(d => d.amount);
+
+    // Cumulative actual
+    let cumSum = 0;
+    const cumData = dailyData.map(v => { cumSum += v; return cumSum; });
+
+    // Linear target line: spread totalTarget evenly over daysInMonth
+    const now = new Date();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const linearTarget = dailyRows.map((d, i) => {
+      // i is 0-based day index
+      return totalTarget > 0 ? ((i + 1) / daysInMonth) * totalTarget : null;
+    });
+
+    if (dailyChartInstance) dailyChartInstance.destroy();
+    dailyChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: '每日收款',
+            data: dailyData,
+            fill: true,
+            backgroundColor: gradient,
+            borderColor: '#8b5cf6',
+            borderWidth: 2,
+            tension: 0.35,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: '#22d3ee',
+            pointHoverBorderColor: '#fff',
+            yAxisID: 'y',
+          },
+          {
+            label: '累计实际',
+            data: cumData,
+            fill: false,
+            borderColor: '#f5be3e',
+            borderWidth: 2,
+            tension: 0.3,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            yAxisID: 'y2',
+          },
+          {
+            label: '线性目标',
+            data: linearTarget,
+            fill: false,
+            borderColor: '#f0506e',
+            borderWidth: 1.5,
+            borderDash: [6, 4],
+            tension: 0,
+            pointRadius: 0,
+            yAxisID: 'y2',
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#12141c', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+            titleColor: '#fff', bodyColor: '#d7dae4', padding: 10,
+            callbacks: {
+              label: (c) => {
+                const labels2 = ['每日', '累计', '目标'];
+                return (labels2[c.datasetIndex] || c.dataset.label) + ': ' + fmt(c.parsed.y);
               }
             }
           }
-          return map;
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#8b93ab', font: { size: 10 }, maxRotation: 0 } },
+          y: {
+            type: 'linear', position: 'left',
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { color: '#8b93ab', font: { size: 10 }, callback: (v) => tickWan(v) }
+          },
+          y2: {
+            type: 'linear', position: 'right',
+            grid: { drawOnChartArea: false },
+            ticks: { color: '#8b93ab', font: { size: 10 }, callback: (v) => tickWan(v) }
+          }
         }
-
-        const augMap = extractExpiries(rowsAug, '8月');
-        const sepMap = extractExpiries(rowsSep, '9月');
-
-        // Merge: 9月 overrides 8月 for same group
-        const merged = { ...augMap, ...sepMap };
-        const items = Object.values(merged).sort((a,b) => a.expDate - b.expDate).slice(0, 10);
-
-        const el = document.getElementById('expiryContent');
-        if (!el) return;
-        if (!items.length) {
-          el.innerHTML = '<div class="empty-hint">暂无未到期合作 ✅</div>';
-          return;
-        }
-        let html = `<table class="mini-table"><tr><th>群组/合作方</th><th>商务</th><th>模式</th><th>分类</th><th>来源</th><th>到期日</th><th>状态</th></tr>`;
-        items.forEach(d => {
-          const daysLeft = Math.round((d.expDate - today) / 86400000);
-          const pillClass = daysLeft <= 3 ? 'danger' : daysLeft <= 10 ? 'warn' : 'ok';
-          const pillText = daysLeft === 0 ? '今天到期' : `${daysLeft}天后`;
-          html += `<tr>
-            <td>${d.group.slice(0, 25)}</td>
-            <td>${d.biz}</td>
-            <td>${d.method || '-'}</td>
-            <td>${d.cat || '-'}</td>
-            <td><span style="color:var(--text-3);font-size:10.5px;">${d.sheet}</span></td>
-            <td>${d.expiryStr}</td>
-            <td><span class="pill ${pillClass}">${pillText}</span></td>
-          </tr>`;
-        });
-        html += `</table>`;
-        el.innerHTML = html;
-      } catch (e) {
-        const el = document.getElementById('expiryContent');
-        if (el) el.innerHTML = `<div class="empty-hint">加载失败: ${e.message}</div>`;
       }
-    }
+    });
+  }
 
-    initSideNav();
-    loadData();
-    loadExpiryData();
-    setInterval(loadData, REFRESH_MS);
-    setInterval(loadExpiryData, REFRESH_MS);
-  </script>
+  // ---- Popover helpers ----
+  document.getElementById('popover').addEventListener('mouseenter', () => clearTimeout(popoverHideTimer));
+  document.getElementById('popover').addEventListener('mouseleave', hidePopoverSoon);
+  document.addEventListener('click', (e) => {
+    const pop = document.getElementById('popover');
+    if (!pop.contains(e.target) && !e.target.closest('.hbar-item.clickable')) {
+      pop.classList.remove('active');
+    }
+  });
+
+  // ---- Expiry data load (8月+9月 merge) ----
+  async function loadExpiryData() {
+    try {
+      const [resAug, resSep] = await Promise.all([
+        fetch(AUG_CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
+        fetch(CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
+      ]);
+      const [textAug, textSep] = await Promise.all([resAug.text(), resSep.text()]);
+      const rowsAug = parseCSV(textAug);
+      const rowsSep = parseCSV(textSep);
+
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const numBlocks = 18;
+
+      function extractExpiries(rows, sheetLabel) {
+        const map = {};
+        for (let r = 2; r < rows.length; r++) {
+          const row = rows[r];
+          if (!row) continue;
+          for (let b = 0; b < numBlocks; b++) {
+            const base = 8 + b * 10;
+            const expiryStr = row[base + 6] || '';
+            if (!expiryStr.trim()) continue;
+            const amt = numOf(row[base + 4]);
+            if (!amt) continue;
+            const expDate = parseFlexDate(expiryStr);
+            if (!expDate || expDate < today) continue;
+            const group = (row[base + 1] || '').trim() || (row[base + 8] || '').trim() || '未命名';
+            const biz = (row[base + 5] || '').trim();
+            const method = (row[base + 3] || '').trim().toUpperCase();
+            const cat = (row[base + 2] || '').trim();
+            if (!map[group] || expDate < map[group].expDate) {
+              map[group] = { group, biz, method, cat, expDate, expiryStr, sheet: sheetLabel };
+            }
+          }
+        }
+        return map;
+      }
+
+      const augMap = extractExpiries(rowsAug, '8月');
+      const sepMap = extractExpiries(rowsSep, '9月');
+      const merged = { ...augMap, ...sepMap };
+      const allItems = Object.values(merged).sort((a, b) => a.expDate - b.expDate);
+
+      // Split into 3 groups
+      const group1 = []; // today + 7 days
+      const group2 = []; // 8-15 days
+      const group3 = []; // 16-30 days
+
+      allItems.forEach(d => {
+        const daysLeft = Math.round((d.expDate - today) / 86400000);
+        if (daysLeft <= 7) group1.push({ ...d, daysLeft });
+        else if (daysLeft <= 15) group2.push({ ...d, daysLeft });
+        else if (daysLeft <= 30) group3.push({ ...d, daysLeft });
+      });
+
+      function renderGroup(items, cls, icon, title, maxShow) {
+        const shown = items.slice(0, maxShow);
+        let inner = '';
+        if (!shown.length) {
+          inner = `<div class="expiry-empty">暂无</div>`;
+        } else {
+          inner = shown.map(d => {
+            const dayText = d.daysLeft === 0 ? '今天到期' : `${d.daysLeft}天后`;
+            return `<div class="expiry-item">
+              <div class="expiry-item-name">${d.group.slice(0, 28)}</div>
+              <div class="expiry-item-meta">${d.biz || '-'} · ${d.cat || '-'} · ${d.expiryStr} · <strong>${dayText}</strong></div>
+            </div>`;
+          }).join('');
+          if (items.length > maxShow) {
+            inner += `<div class="expiry-item-meta" style="padding:5px 0;text-align:center;">还有 ${items.length - maxShow} 条...</div>`;
+          }
+        }
+        return `<div class="expiry-group ${cls}">
+          <div class="expiry-group-title">${icon} ${title} (${items.length})</div>
+          ${inner}
+        </div>`;
+      }
+
+      const el = document.getElementById('expiryContent');
+      if (!el) return;
+      if (!allItems.length) {
+        el.innerHTML = '<div class="empty-hint">暂无未到期合作 ✅</div>';
+        return;
+      }
+      el.innerHTML = `<div class="expiry-groups">
+        ${renderGroup(group1, 'danger', '🔴', '今日到期 & 7天内', 5)}
+        ${renderGroup(group2, 'warn', '🟡', '8–15 天到期', 5)}
+        ${renderGroup(group3, 'ok', '🟢', '16–30 天到期', 5)}
+      </div>`;
+    } catch (e) {
+      const el = document.getElementById('expiryContent');
+      if (el) el.innerHTML = `<div class="empty-hint">加载失败: ${e.message}</div>`;
+    }
+  }
+
+  initSideNav();
+  loadData();
+  loadExpiryData();
+  setInterval(loadData, REFRESH_MS);
+  setInterval(loadExpiryData, REFRESH_MS);
+</script>
 </body>
 </html>
