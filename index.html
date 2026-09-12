@@ -560,12 +560,12 @@
     const timePct = (dayOfMonth / daysInMonth) * 100;
 
     // ---- Type rows ----
-    const typeNames = ['约炮','棋牌','直播','黄游','播放器','外围','AI服务','VPN'];
+    const typeNames = ['约炮','棋牌','直播','黄游','播放器','社区发帖','外围','AI服务','VPN'];
     let typeRows = rows.filter(r => typeNames.includes(r[0]))
       .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]) }));
 
     // ---- Biz rows ----
-    const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','程晨'];
+    const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','谢文','程晨'];
     const bizRows = rows.filter(r => bizNames.includes(r[0]))
       .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]),
         newAdd: numOf(r[1]), renew: numOf(r[2]) }))
@@ -1187,7 +1187,7 @@
       const rowsSep = parseCSV(textSep);
 
       const today = new Date(); today.setHours(0, 0, 0, 0);
-      const numBlocks = 18;
+      const numBlocks = 19;
 
       function extractExpiries(rows, sheetLabel) {
         const map = {};
