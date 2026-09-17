@@ -603,14 +603,8 @@
     for (let b = 0; b < numBlocks; b++) {
       productNames.push(headerRow[blockStart + b * blockWidth] || `产品${b+1}`);
     }
-    const detailEndIdx = rows.findIndex(r => r[0] === '各产品收款汇总');
-    // The row marked "各产品收款汇总" in column A can still contain a
-    // product-block detail entry. Include it so dashboard drilldowns match
-    // the sheet summary and scheduled BI report.
-    const detailRowsEnd = detailEndIdx >= 0 ? detailEndIdx + 1 : rows.length;
-
     const deals = [];
-    for (let r = 2; r < detailRowsEnd; r++) {
+    for (let r = 2; r < rows.length; r++) {
       const row = rows[r];
       if (!row) continue;
       for (let b = 0; b < numBlocks; b++) {
