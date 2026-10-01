@@ -284,7 +284,7 @@
     <div class="brand-icon">🧧</div>
     <div>
       <h1>伊甸各产品收款 BI 看板</h1>
-      <div class="sub">Google Sheets 实时数据同步 · 9月收款明细登记表</div>
+      <div class="sub">Google Sheets 实时数据同步 · 10月收款明细登记表</div>
     </div>
   </div>
   <div class="status-pill"><span class="dot"></span><span id="lastUpdated">同步中...</span></div>
@@ -356,8 +356,8 @@
 <div class="popover" id="popover"></div>
 
 <script>
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=1198459175";
-  const AUG_CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=876833840";
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=99518387";
+  const PREV_CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=1198459175";
   const REFRESH_MS = 60 * 1000;
 
   // Chart instances
@@ -986,7 +986,7 @@
     container.innerHTML += `
       <div class="section" id="sec-expiry">
         <div class="card">
-          <h2>续费风险 <span class="tag">8月+9月 合并 · 按到期区间分组</span></h2>
+          <h2>续费风险 <span class="tag">9月+10月 合并 · 按到期区间分组</span></h2>
           <div id="expiryContent"><div class="empty-hint">加载中...</div></div>
         </div>
       </div>`;
@@ -1172,16 +1172,16 @@
     }
   });
 
-  // ---- Expiry data load (8月+9月 merge) ----
+  // ---- Expiry data load (9月+10月 merge) ----
   async function loadExpiryData() {
     try {
-      const [resAug, resSep] = await Promise.all([
-        fetch(AUG_CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
+      const [resPrev, resCur] = await Promise.all([
+        fetch(PREV_CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
         fetch(CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
       ]);
-      const [textAug, textSep] = await Promise.all([resAug.text(), resSep.text()]);
-      const rowsAug = parseCSV(textAug);
-      const rowsSep = parseCSV(textSep);
+      const [textPrev, textCur] = await Promise.all([resPrev.text(), resCur.text()]);
+      const rowsPrev = parseCSV(textPrev);
+      const rowsCur = parseCSV(textCur);
 
       const today = new Date(); today.setHours(0, 0, 0, 0);
       const numBlocks = 19;
@@ -1211,9 +1211,9 @@
         return map;
       }
 
-      const augMap = extractExpiries(rowsAug, '8月');
-      const sepMap = extractExpiries(rowsSep, '9月');
-      const merged = { ...augMap, ...sepMap };
+      const prevMap = extractExpiries(rowsPrev, '9月');
+      const curMap = extractExpiries(rowsCur, '10月');
+      const merged = { ...prevMap, ...curMap };
       const allItems = Object.values(merged).sort((a, b) => a.expDate - b.expDate);
 
       // Split into 3 groups
