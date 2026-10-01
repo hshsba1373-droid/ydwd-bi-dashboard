@@ -561,7 +561,7 @@
 
     // ---- Type rows ----
     // Read categories directly from the sheet so each team's custom taxonomy is shown.
-    const typeRows = [];
+    let typeRows = [];
     for (let i = 1; i < rows.length; i++) {
       const r = rows[i] || [];
       const name = (r[0] || '').trim();
