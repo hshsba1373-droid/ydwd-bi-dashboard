@@ -560,9 +560,16 @@
     const timePct = (dayOfMonth / daysInMonth) * 100;
 
     // ---- Type rows ----
-    const typeNames = ['约炮','棋牌','直播','黄游','播放器','社区发帖','外围','AI服务','VPN'];
-    let typeRows = rows.filter(r => typeNames.includes(r[0]))
-      .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]) }));
+    // Read categories directly from the sheet so each team's custom taxonomy is shown.
+    const typeRows = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i] || [];
+      const name = (r[0] || '').trim();
+      if (!name) continue;
+      if (name === '数据汇总') break;
+      typeRows.push({ name, target: numOf(r[4]), current: numOf(r[5]) });
+    }
+    const typeNames = typeRows.map(r => r.name);
 
     // ---- Biz rows ----
     const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','谢文','程晨'];
@@ -883,6 +890,7 @@
     // Section 4: 分类进度表
     // ============================================================
     const categoryProgressRows = typeRows
+      .filter(t => t.target || t.current)
       .map(t => {
         const pct = pctOf(t.target, t.current);
         const share = grandTotal ? (t.current / grandTotal * 100) : 0;
