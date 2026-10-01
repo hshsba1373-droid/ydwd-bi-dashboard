@@ -357,7 +357,6 @@
 
 <script>
   const CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=99518387";
-  const PREV_CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=1198459175";
   const REFRESH_MS = 60 * 1000;
 
   // Chart instances
@@ -986,7 +985,7 @@
     container.innerHTML += `
       <div class="section" id="sec-expiry">
         <div class="card">
-          <h2>续费风险 <span class="tag">9月+10月 合并 · 按到期区间分组</span></h2>
+          <h2>续费风险 <span class="tag">10月数据 · 按到期区间分组</span></h2>
           <div id="expiryContent"><div class="empty-hint">加载中...</div></div>
         </div>
       </div>`;
@@ -1172,15 +1171,11 @@
     }
   });
 
-  // ---- Expiry data load (9月+10月 merge) ----
+  // ---- Expiry data load (current month only) ----
   async function loadExpiryData() {
     try {
-      const [resPrev, resCur] = await Promise.all([
-        fetch(PREV_CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
-        fetch(CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }),
-      ]);
-      const [textPrev, textCur] = await Promise.all([resPrev.text(), resCur.text()]);
-      const rowsPrev = parseCSV(textPrev);
+      const resCur = await fetch(CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' });
+      const textCur = await resCur.text();
       const rowsCur = parseCSV(textCur);
 
       const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -1211,9 +1206,8 @@
         return map;
       }
 
-      const prevMap = extractExpiries(rowsPrev, '9月');
       const curMap = extractExpiries(rowsCur, '10月');
-      const merged = { ...prevMap, ...curMap };
+      const merged = curMap;
       const allItems = Object.values(merged).sort((a, b) => a.expDate - b.expDate);
 
       // Split into 3 groups
