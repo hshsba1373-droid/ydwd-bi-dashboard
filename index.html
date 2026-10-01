@@ -295,6 +295,7 @@
     <button class="nav-btn active" data-target="sec-overview"><span class="emoji">📊</span>经营总览</button>
     <button class="nav-btn" data-target="sec-biz"><span class="emoji">🏆</span>商务表现</button>
     <button class="nav-btn" data-target="sec-product"><span class="emoji">📦</span>产品表现</button>
+    <button class="nav-btn" data-target="sec-category"><span class="emoji">🧭</span>分类进度</button>
     <button class="nav-btn" data-target="sec-quality"><span class="emoji">🔍</span>收款质量</button>
     <button class="nav-btn" data-target="sec-daily"><span class="emoji">📈</span>趋势分析</button>
     <button class="nav-btn" data-target="sec-expiry"><span class="emoji">⏰</span>续费风险</button>
@@ -879,7 +880,36 @@
       </div>`;
 
     // ============================================================
-    // Section 4: 收款质量分析
+    // Section 4: 分类进度表
+    // ============================================================
+    const categoryProgressRows = typeRows
+      .map(t => {
+        const pct = pctOf(t.target, t.current);
+        const share = grandTotal ? (t.current / grandTotal * 100) : 0;
+        const color = pct >= 80 ? '#2ecc8e' : pct >= 50 ? '#f5be3e' : '#f0506e';
+        return `<tr>
+          <td style="font-weight:700;color:#fff;">${t.name}</td>
+          <td>${t.target ? fmt(t.target) : '0'}</td>
+          <td>${fmt(t.current)}</td>
+          <td style="color:${color};font-weight:800;">${t.target ? pct.toFixed(2) + '%' : '0.00%'}</td>
+          <td>${share.toFixed(2)}%</td>
+        </tr>`;
+      })
+      .join('');
+
+    container.innerHTML += `
+      <div class="section" id="sec-category">
+        <div class="card">
+          <h2>分类进度 <span class="tag">CATEGORY TARGET / COLLECTION</span></h2>
+          <table class="mini-table">
+            <tr><th>分类</th><th>本月目标</th><th>当前收款</th><th>完成率</th><th>团队占比</th></tr>
+            ${categoryProgressRows || '<tr><td colspan="5" style="text-align:center;color:var(--text-3)">暂无分类数据</td></tr>'}
+          </table>
+        </div>
+      </div>`;
+
+    // ============================================================
+    // Section 5: 收款质量分析
     // ============================================================
     // New vs Renew table
     const newAvg = newDealCount ? newTotalAmt / newDealCount : 0;
