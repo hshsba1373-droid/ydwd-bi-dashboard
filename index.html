@@ -359,6 +359,7 @@
 <script>
   const CSV_URL = "https://docs.google.com/spreadsheets/d/1jukli47VGtjei0dSxdTX-ql1UBbLKv3rhSns8e3fOLU/export?format=csv&gid=99518387";
   const REFRESH_MS = 60 * 1000;
+  const PRODUCT_BLOCKS = 21;
 
   // Chart instances
   let dailyChartInstance = null;
@@ -572,7 +573,7 @@
     const typeNames = typeRows.map(r => r.name);
 
     // ---- Biz rows ----
-    const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','谢文','程晨'];
+    const bizNames = ['黄凯悦','周伟','吴倩','郭怀玉','谢文','程晨','林怡','咖喱'];
     const bizRows = rows.filter(r => bizNames.includes(r[0]))
       .map(r => ({ name: r[0], target: numOf(r[4]), current: numOf(r[5]),
         newAdd: numOf(r[1]), renew: numOf(r[2]) }))
@@ -604,7 +605,7 @@
     // ---- Deal details ----
     const blockStart = 8;
     const blockWidth = 10;
-    const numBlocks = 19;
+    const numBlocks = PRODUCT_BLOCKS;
     const productNames = [];
     const headerRow = rows[0] || [];
     for (let b = 0; b < numBlocks; b++) {
@@ -1217,7 +1218,7 @@
       const rowsCur = parseCSV(textCur);
 
       const today = new Date(); today.setHours(0, 0, 0, 0);
-      const numBlocks = 19;
+      const numBlocks = PRODUCT_BLOCKS;
 
       function extractExpiries(rows, sheetLabel) {
         const map = {};
